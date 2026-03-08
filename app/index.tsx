@@ -1,15 +1,5 @@
-import { Text, View } from "react-native";
+import UserProfile from "@/src/screens/userProfile/UserProfile"
 
-export default function Index() {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>hola mundo!      </Text>
-    </View>
-  );
+export default function App() {
+  return <UserProfile />
 }
