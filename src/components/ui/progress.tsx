@@ -1,31 +1,45 @@
-'use client'
-
-import * as ProgressPrimitive from '@radix-ui/react-progress'
 import * as React from 'react'
+import { View, StyleSheet, ViewStyle } from 'react-native'
+import { useAppTheme } from '@/src/constants/designSystem'
 
-import { cn } from '@/src/lib/utils'
+interface ProgressProps {
+  value?: number
+  style?: ViewStyle
+}
 
-function Progress({
-  className,
-  value,
-  ...props
-}: React.ComponentProps<typeof ProgressPrimitive.Root>) {
+function Progress({ value = 0, style }: ProgressProps) {
+  const theme = useAppTheme()
+  
+  // Clamp value between 0 and 100
+  const clampedValue = Math.min(Math.max(value, 0), 100)
+
   return (
-    <ProgressPrimitive.Root
-      data-slot="progress"
-      className={cn(
-        'bg-primary/20 relative h-2 w-full overflow-hidden rounded-full',
-        className,
-      )}
-      {...props}
-    >
-      <ProgressPrimitive.Indicator
-        data-slot="progress-indicator"
-        className="bg-primary h-full w-full flex-1 transition-all"
-        style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
+    <View style={[styles.container, { backgroundColor: theme.colors.primary + '30' }, style]}>
+      <View 
+        style={[
+          styles.indicator, 
+          { 
+            width: `${clampedValue}%`,
+            backgroundColor: theme.colors.primary,
+          }
+        ]} 
       />
-    </ProgressPrimitive.Root>
+    </View>
   )
 }
 
+const styles = StyleSheet.create({
+  container: {
+    height: 8,
+    width: '100%',
+    borderRadius: 999,
+    overflow: 'hidden',
+  },
+  indicator: {
+    height: '100%',
+    borderRadius: 999,
+  },
+})
+
 export { Progress }
+export type { ProgressProps }

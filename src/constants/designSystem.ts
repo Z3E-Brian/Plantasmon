@@ -13,8 +13,10 @@ interface ThemeColors {
   primary: string;
   primaryStrong: string;
   primarySoft: string;
+  primaryForeground: string;
   secondary: string;
   secondarySoft: string;
+  secondaryForeground: string;
   border: string;
   chip: string;
   success: string;
@@ -83,8 +85,10 @@ const lightColors: ThemeColors = {
   primary: COLORS.primary,
   primaryStrong: "#2E5739",
   primarySoft: "#D9E7D8",
+  primaryForeground: "#FFFFFF",
   secondary: "#C9A468",
   secondarySoft: "#E9D9BC",
+  secondaryForeground: "#1D3426",
   border: "#ceaea0",
   chip: "#c0dba3",
   success: "#6A9A62"
@@ -101,8 +105,10 @@ const darkColors: ThemeColors = {
   primary: COLORS.primary,
   primaryStrong: "#6DA875",
   primarySoft: "#2A3A2E",
+  primaryForeground: "#0D1F12",
   secondary: "#D8B980",
   secondarySoft: "#4C4029",
+  secondaryForeground: "#0D1F12",
   border: "#324337",
   chip: "#293629",
   success: "#89C283"

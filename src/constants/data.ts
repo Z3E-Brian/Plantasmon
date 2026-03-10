@@ -180,3 +180,88 @@ export function getAccountAge(joinDate: Date): number {
   const diff = now.getTime() - joinDate.getTime()
   return Math.floor(diff / (1000 * 60 * 60 * 24))
 }
+
+// ==================== HOME SCREEN DATA ====================
+
+export interface PlantOfTheDay {
+  id: number
+  name: string
+  scientificName: string
+  image: string
+  fact: string
+  rarity: "common" | "uncommon" | "rare" | "legendary"
+}
+
+export const PLANT_OF_THE_DAY: PlantOfTheDay = {
+  id: 999,
+  name: "Orquídea Fantasma",
+  scientificName: "Dendrophylax lindenii",
+  image: "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=600",
+  fact: "Esta planta es tan rara que solo florece 2 semanas al año en los pantanos de Florida. Se la considera el 'Santo Grial' de la botánica y puede vivir décadas sin ser vista. No tiene hojas y realiza fotosíntesis a través de sus raíces verdes.",
+  rarity: "legendary",
+}
+
+export interface DailyMission {
+  id: number
+  title: string
+  completed: boolean
+  xpReward: number
+  icon: string
+}
+
+export const DAILY_MISSIONS: DailyMission[] = [
+  { id: 1, title: "Identifica 1 planta", completed: true, xpReward: 50, icon: "📷" },
+  { id: 2, title: "Identifica 3 plantas", completed: false, xpReward: 150, icon: "🌿" },
+  { id: 3, title: "Encuentra una suculenta", completed: false, xpReward: 100, icon: "🌵" },
+]
+
+export interface DailyTip {
+  id: number
+  title: string
+  description: string
+  icon: string
+}
+
+export const DAILY_TIP: DailyTip = {
+  id: 1,
+  title: "Tip del día",
+  description: "Las fotos con buena iluminación natural mejoran la precisión de identificación hasta un 40%. Intenta fotografiar tus plantas cerca de una ventana o al aire libre.",
+  icon: "💡",
+}
+
+export interface RecentAchievement {
+  id: number
+  name: string
+  description: string
+  icon: string
+  unlockedAt: string
+}
+
+export const RECENT_ACHIEVEMENT: RecentAchievement | null = {
+  id: 3,
+  name: "Experto en Helechos",
+  description: "Has identificado 20 especies diferentes de helechos",
+  icon: "🏆",
+  unlockedAt: "Hace 2 días",
+}
+
+// Helper para obtener la última planta identificada
+export function getLastIdentifiedPlant(): Plant | null {
+  return PLANTS.length > 0 ? PLANTS[0] : null
+}
+
+// Helper para calcular progreso al siguiente nivel
+export function getLevelProgress(xp: number): {
+  currentLevel: number
+  xpInLevel: number
+  xpForNextLevel: number
+  progressPercentage: number
+} {
+  const xpPerLevel = 5000
+  const currentLevel = Math.floor(xp / xpPerLevel)
+  const xpInLevel = xp % xpPerLevel
+  const xpForNextLevel = xpPerLevel - xpInLevel
+  const progressPercentage = (xpInLevel / xpPerLevel) * 100
+
+  return { currentLevel, xpInLevel, xpForNextLevel, progressPercentage }
+}

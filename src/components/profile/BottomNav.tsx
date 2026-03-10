@@ -2,50 +2,58 @@ import { useThemedStyles } from "@/src/styles/themedStyles"
 import * as Haptics from "expo-haptics"
 import { Pressable, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
+import { useRouter, usePathname } from "expo-router"
 
 const NAV_ITEMS = [
-  { icon: "home", label: "Home", active: false },
-  { icon: "search", label: "Explore", active: false },
-  { icon: "camera", label: "Identify", active: false, isCenter: true },
-  { icon: "book", label: "Journal", active: false },
-  { icon: "user", label: "Profile", active: true },
-]
+  { icon: "home", label: "Home", route: "/" },
+  { icon: "search", label: "Explore", route: "/explore" },
+  { icon: "camera", label: "Identify", route: "/identify", isCenter: true },
+  { icon: "book", label: "Journal", route: "/journal" },
+  { icon: "user", label: "Profile", route: "/profile" },
+] as const
 
 export function BottomNav() {
   const insets = useSafeAreaInsets()
   const { theme, styles } = useThemedStyles("bottomNav")
+  const router = useRouter()
+  const pathname = usePathname()
 
-  const handlePress = () => {
+  const handlePress = (route: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+    router.push(route)
   }
 
   return (
     <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, 8) }]}>
       <View style={styles.navRow}>
-        {NAV_ITEMS.map((item) => (
-          <Pressable
-            key={item.label}
-            onPress={handlePress}
-            style={[styles.navItem, item.isCenter && styles.navItemCenter]}
-          >
-            {item.isCenter ? (
-              <View style={styles.centerButton}>
-                <NavIcon icon={item.icon} active={true} theme={theme} />
-              </View>
-            ) : (
-              <NavIcon icon={item.icon} active={item.active} theme={theme} />
-            )}
-            <Text
-              style={[
-                styles.navLabel,
-                item.active && styles.navLabelActive,
-                item.isCenter && styles.navLabelCenter,
-              ]}
+        {NAV_ITEMS.map((item) => {
+          const isActive = pathname === item.route
+          
+          return (
+            <Pressable
+              key={item.label}
+              onPress={() => handlePress(item.route)}
+              style={[styles.navItem, item.isCenter && styles.navItemCenter]}
             >
-              {item.label}
-            </Text>
-          </Pressable>
-        ))}
+              {item.isCenter ? (
+                <View style={styles.centerButton}>
+                  <NavIcon icon={item.icon} active={true} theme={theme} />
+                </View>
+              ) : (
+                <NavIcon icon={item.icon} active={isActive} theme={theme} />
+              )}
+              <Text
+                style={[
+                  styles.navLabel,
+                  isActive && styles.navLabelActive,
+                  item.isCenter && styles.navLabelCenter,
+                ]}
+              >
+                {item.label}
+              </Text>
+            </Pressable>
+          )
+        })}
       </View>
     </View>
   )

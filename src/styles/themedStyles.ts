@@ -457,6 +457,288 @@ export const createProfileAboutStyles = (theme: AppTheme) =>
     },
   });
 
+// ==================== HOME SCREEN ====================
+export const createHomeScreenStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    scrollContent: {
+      paddingBottom: 70,
+    },
+  });
+
+// ==================== HOME HEADER ====================
+export const createHomeHeaderStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    container: {
+      padding: 20,
+      paddingBottom: theme.spacing.md,
+    },
+    greeting: {
+      fontSize: 28,
+      fontWeight: "bold",
+      color: theme.colors.textPrimary,
+      marginBottom: theme.spacing.md,
+    },
+    statsRow: {
+      flexDirection: "row",
+      gap: theme.spacing.sm,
+      flexWrap: "wrap",
+    },
+  });
+
+// ==================== PLANT OF THE DAY ====================
+export const createPlantOfTheDayStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    container: {
+      marginHorizontal: 20,
+      marginBottom: theme.spacing.lg,
+      borderRadius: 20,
+      overflow: "hidden",
+      backgroundColor: theme.colors.surface,
+      elevation: 8,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 8,
+    },
+    header: {
+      padding: theme.spacing.lg,
+      backgroundColor: theme.colors.primarySoft,
+      borderBottomWidth: 2,
+      borderBottomColor: theme.colors.primary + "30",
+    },
+    headerBadge: {
+      fontSize: 14,
+      fontWeight: "700",
+      color: theme.colors.primary,
+      letterSpacing: 1,
+    },
+    image: {
+      width: "100%",
+      height: 240,
+    },
+    content: {
+      padding: 20,
+    },
+    name: {
+      fontSize: 24,
+      fontWeight: "700",
+      color: theme.colors.textPrimary,
+      marginBottom: 4,
+    },
+    scientificName: {
+      fontSize: 16,
+      fontStyle: "italic",
+      color: theme.colors.textSecondary,
+      marginBottom: theme.spacing.lg,
+    },
+    factBox: {
+      backgroundColor: theme.colors.primarySoft,
+      padding: theme.spacing.lg,
+      borderRadius: theme.radius.md,
+      marginBottom: theme.spacing.lg,
+      borderLeftWidth: 4,
+      borderLeftColor: theme.colors.primary,
+    },
+    factTitle: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: theme.colors.textPrimary,
+      marginBottom: theme.spacing.sm,
+    },
+    factText: {
+      fontSize: 14,
+      lineHeight: 22,
+      color: theme.colors.textSecondary,
+    },
+  });
+
+// ==================== LAST IDENTIFIED ====================
+export const createLastIdentifiedStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    container: {
+      marginHorizontal: 20,
+      marginBottom: theme.spacing.lg,
+      padding: theme.spacing.lg,
+      borderRadius: theme.radius.md,
+      backgroundColor: theme.colors.surface,
+    },
+    header: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: theme.spacing.md,
+    },
+    title: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: theme.colors.textPrimary,
+    },
+    content: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.md,
+    },
+    image: {
+      width: 80,
+      height: 80,
+      borderRadius: theme.radius.md,
+    },
+    info: {
+      flex: 1,
+    },
+    name: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: theme.colors.textPrimary,
+      marginBottom: 4,
+    },
+    time: {
+      fontSize: 12,
+      color: theme.colors.textSecondary,
+    },
+    chevron: {
+      fontSize: 24,
+      color: theme.colors.textSecondary,
+    },
+  });
+
+// ==================== USER PROGRESS ====================
+export const createUserProgressStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    container: {
+      marginHorizontal: 20,
+      marginBottom: theme.spacing.lg,
+      padding: theme.spacing.lg,
+      borderRadius: theme.radius.md,
+      backgroundColor: theme.colors.surface,
+    },
+    header: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: theme.spacing.md,
+    },
+    title: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: theme.colors.textPrimary,
+    },
+    progressText: {
+      fontSize: 14,
+      color: theme.colors.textSecondary,
+      textAlign: "center",
+      marginTop: theme.spacing.sm,
+    },
+  });
+
+// ==================== DAILY MISSIONS ====================
+export const createDailyMissionsStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    container: {
+      marginHorizontal: 20,
+      marginBottom: theme.spacing.lg,
+      padding: theme.spacing.lg,
+      borderRadius: theme.radius.md,
+      backgroundColor: theme.colors.surface,
+    },
+    title: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: theme.colors.textPrimary,
+      marginBottom: theme.spacing.md,
+    },
+    missionsList: {
+      gap: theme.spacing.md,
+    },
+    missionItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
+    },
+    missionIcon: {
+      fontSize: 20,
+      width: 24,
+    },
+    missionText: {
+      flex: 1,
+      fontSize: 14,
+      color: theme.colors.textPrimary,
+    },
+    missionComplete: {
+      textDecorationLine: "line-through",
+      color: theme.colors.textSecondary,
+    },
+  });
+
+// ==================== RECENT ACHIEVEMENT ====================
+export const createRecentAchievementStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    container: {
+      marginHorizontal: 20,
+      marginBottom: theme.spacing.lg,
+      padding: theme.spacing.lg,
+      borderRadius: theme.radius.md,
+      backgroundColor: theme.colors.primarySoft,
+      borderWidth: 2,
+      borderColor: theme.colors.primary,
+    },
+    content: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.lg,
+    },
+    badge: {
+      fontSize: 48,
+    },
+    info: {
+      flex: 1,
+    },
+    label: {
+      fontSize: 12,
+      color: theme.colors.textSecondary,
+      marginBottom: 4,
+    },
+    name: {
+      fontSize: 18,
+      fontWeight: "600",
+      color: theme.colors.textPrimary,
+    },
+  });
+
+// ==================== TIP CARD ====================
+export const createTipCardStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    container: {
+      marginHorizontal: 20,
+      marginBottom: theme.spacing.lg,
+      padding: theme.spacing.lg,
+      borderRadius: theme.radius.md,
+      backgroundColor: theme.colors.surface,
+      flexDirection: "row",
+      gap: theme.spacing.md,
+    },
+    icon: {
+      fontSize: 24,
+    },
+    content: {
+      flex: 1,
+    },
+    text: {
+      fontSize: 14,
+      lineHeight: 20,
+      color: theme.colors.textSecondary,
+    },
+    bold: {
+      fontWeight: "600",
+      color: theme.colors.textPrimary,
+    },
+  });
+
 // ==================== HOOK CENTRALIZADO ====================
 const stylesByComponent = {
   achievements: {
@@ -479,6 +761,38 @@ const stylesByComponent = {
     light: createProfileAboutStyles(getAppTheme("light")),
     dark: createProfileAboutStyles(getAppTheme("dark")),
   },
+  homeScreen: {
+    light: createHomeScreenStyles(getAppTheme("light")),
+    dark: createHomeScreenStyles(getAppTheme("dark")),
+  },
+  homeHeader: {
+    light: createHomeHeaderStyles(getAppTheme("light")),
+    dark: createHomeHeaderStyles(getAppTheme("dark")),
+  },
+  plantOfTheDay: {
+    light: createPlantOfTheDayStyles(getAppTheme("light")),
+    dark: createPlantOfTheDayStyles(getAppTheme("dark")),
+  },
+  lastIdentified: {
+    light: createLastIdentifiedStyles(getAppTheme("light")),
+    dark: createLastIdentifiedStyles(getAppTheme("dark")),
+  },
+  userProgress: {
+    light: createUserProgressStyles(getAppTheme("light")),
+    dark: createUserProgressStyles(getAppTheme("dark")),
+  },
+  dailyMissions: {
+    light: createDailyMissionsStyles(getAppTheme("light")),
+    dark: createDailyMissionsStyles(getAppTheme("dark")),
+  },
+  recentAchievement: {
+    light: createRecentAchievementStyles(getAppTheme("light")),
+    dark: createRecentAchievementStyles(getAppTheme("dark")),
+  },
+  tipCard: {
+    light: createTipCardStyles(getAppTheme("light")),
+    dark: createTipCardStyles(getAppTheme("dark")),
+  },
 } as const;
 
 type ComponentName = keyof typeof stylesByComponent;
@@ -493,6 +807,22 @@ type StylesForComponent<T extends ComponentName> = ReturnType<
     ? typeof createPlantCollectionStyles
     : T extends "profileAbout"
     ? typeof createProfileAboutStyles
+    : T extends "homeScreen"
+    ? typeof createHomeScreenStyles
+    : T extends "homeHeader"
+    ? typeof createHomeHeaderStyles
+    : T extends "plantOfTheDay"
+    ? typeof createPlantOfTheDayStyles
+    : T extends "lastIdentified"
+    ? typeof createLastIdentifiedStyles
+    : T extends "userProgress"
+    ? typeof createUserProgressStyles
+    : T extends "dailyMissions"
+    ? typeof createDailyMissionsStyles
+    : T extends "recentAchievement"
+    ? typeof createRecentAchievementStyles
+    : T extends "tipCard"
+    ? typeof createTipCardStyles
     : never
 >;
 

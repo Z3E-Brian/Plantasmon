@@ -1,5 +1,3 @@
-import UserProfile from "@/src/screens/userProfile/UserProfile"
+import HomeScreen from "@/src/screens/home/HomeScreen"
 
-export default function App() {
-  return <UserProfile />
-}
+export default HomeScreen
