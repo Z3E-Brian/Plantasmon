@@ -90,10 +90,6 @@ export function ProfileHero({
     <View style={styles.container}>
       {/* Header bar */}
       <View style={styles.header}>
-        <Pressable style={styles.backButton}>
-          <Text style={styles.backArrow}>‹</Text>
-          <Text style={styles.backText}>PROFILE</Text>
-        </Pressable>
         <Pressable
           onPress={() => handlePress(onToggleSettings)}
           style={[styles.settingsButton, showSettings && styles.settingsButtonActive]}
