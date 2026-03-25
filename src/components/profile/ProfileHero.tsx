@@ -10,10 +10,11 @@ import {
   View
 } from "react-native"
 
-import { USER, getAccountAge } from "@/src/constants/data"
+import { getAccountAge } from "@/src/constants/data"
 import { BG_THEMES, COLORS, FLAG_THEMES, TIER_COLORS, TITLE_OPTIONS, TierKey } from "@/src/constants/theme"
 
 interface ProfileHeroProps {
+  // Tema / settings (igual que antes)
   flagTheme: number
   bgTheme: number
   titleIndex: number
@@ -24,6 +25,14 @@ interface ProfileHeroProps {
   onTitleChange: (index: number) => void
   onToggleSettings: () => void
   onSettingsTabChange: (tab: "banner" | "background" | "title") => void
+  // Datos del usuario (antes venían de USER)
+  name: string
+  handle: string
+  level: number
+  xp: number
+  xpToNextLevel: number
+  plantsOwned: number
+  avatarUrl?: string
 }
 
 export function ProfileHero({
@@ -37,8 +46,14 @@ export function ProfileHero({
   onTitleChange,
   onToggleSettings,
   onSettingsTabChange,
+  name,
+  handle,
+  level,
+  xp,
+  xpToNextLevel,
+  plantsOwned,
+  avatarUrl,
 }: ProfileHeroProps) {
-  const accountAge = getAccountAge(USER.joinDate)
   const colors = FLAG_THEMES[flagTheme].colors
   const currentTitle = TITLE_OPTIONS[titleIndex].title
   const currentTier = TITLE_OPTIONS[titleIndex].tier as TierKey
@@ -47,7 +62,6 @@ export function ProfileHero({
   const spinAnim = useRef(new Animated.Value(0)).current
 
   useEffect(() => {
-    // Float animation
     Animated.loop(
       Animated.sequence([
         Animated.timing(floatAnim, {
@@ -65,7 +79,6 @@ export function ProfileHero({
       ])
     ).start()
 
-    // Spin animation
     Animated.loop(
       Animated.timing(spinAnim, {
         toValue: 1,
@@ -221,9 +234,9 @@ export function ProfileHero({
 
       {/* Username and handle */}
       <View style={styles.userInfo}>
-        <Text style={styles.userName}>{USER.name}</Text>
+        <Text style={styles.userName}>{name}</Text>
         <View style={styles.handleRow}>
-          <Text style={styles.userHandle}>{USER.handle}</Text>
+          <Text style={styles.userHandle}>{handle}</Text>
           <Pressable style={styles.copyButton}>
             <Text style={{ fontSize: 12, color: "rgba(255,255,255,0.5)" }}>⎘</Text>
           </Pressable>
@@ -236,10 +249,7 @@ export function ProfileHero({
 
       {/* Avatar with frame */}
       <Animated.View style={[styles.avatarContainer, { transform: [{ translateY: floatAnim }] }]}>
-        {/* Glow effect */}
         <View style={[styles.avatarGlow, { backgroundColor: colors[2] + "40" }]} />
-
-        {/* Spinning ring */}
         <Animated.View style={[styles.spinningRing, { transform: [{ rotate: spinInterpolate }] }]}>
           <Image
             source={require("@/assets/images/spinning-ring.png")}
@@ -247,25 +257,17 @@ export function ProfileHero({
             contentFit="contain"
           />
         </Animated.View>
-
-        {/* Avatar image */}
-        <View
-          style={[styles.avatarFrame, { backgroundColor: colors[1] }]}
-        >
+        <View style={[styles.avatarFrame, { backgroundColor: colors[1] }]}>
           <View style={styles.avatarInner}>
             <Image
-              source="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200"
+              source={avatarUrl || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200"}
               style={styles.avatarImage}
               contentFit="cover"
             />
           </View>
         </View>
-
-        {/* Level badge */}
-        <View
-          style={[styles.levelBadge, { backgroundColor: colors[2] }]}
-        >
-          <Text style={styles.levelText}>{USER.level}</Text>
+        <View style={[styles.levelBadge, { backgroundColor: colors[2] }]}>
+          <Text style={styles.levelText}>{level}</Text>
         </View>
       </Animated.View>
 
@@ -277,10 +279,9 @@ export function ProfileHero({
 
       {/* Stats row */}
       <View style={styles.statsRow}>
-        <StatItem icon="leaf" value={accountAge} label="Days" />
-        <StatItem icon="pot" value={USER.plantsOwned} label="Owned" />
-        <StatItem icon="scan" value={USER.plantsDiscovered} label="Found" />
-        <StatItem icon="star" value={USER.xp.toLocaleString()} label="XP" />
+        <StatItem icon="pot" value={plantsOwned} label="Owned" />
+        <StatItem icon="star" value={xp.toLocaleString()} label="XP" />
+        <StatItem icon="next" value={xpToNextLevel.toLocaleString()} label="To Next" />
       </View>
 
       {/* Decorative sawtooth border */}
@@ -292,6 +293,8 @@ export function ProfileHero({
     </View>
   )
 }
+
+// ─── Helpers ───────────────────────────────────────────────────────────────
 
 const TITLE_EMOJI: Record<string, string> = {
   shield: "🛡️",
@@ -324,9 +327,7 @@ function BannerRibbon({ title, colors, tier }: { title: string; colors: readonly
   return (
     <View style={styles.bannerContainer}>
       <View style={[styles.bannerGlow, { backgroundColor: glowColor }]} />
-      <View
-        style={[styles.bannerRibbon, { backgroundColor: colors[1] }]}
-      >
+      <View style={[styles.bannerRibbon, { backgroundColor: colors[1] }]}>
         <Text style={styles.bannerText}>{title.toUpperCase()}</Text>
       </View>
     </View>
@@ -346,18 +347,11 @@ function PlantEmblem({ colors }: { colors: readonly string[] }) {
 }
 
 function StatItem({ icon, value, label }: { icon: string; value: string | number; label: string }) {
-  const iconColor = {
-    leaf: COLORS.primary,
-    pot: COLORS.chart3,
-    scan: COLORS.chart2,
-    star: COLORS.accent,
-  }[icon] || COLORS.primary
-
   return (
     <View style={styles.statItem}>
       <View style={styles.statIcon}>
         <Text style={{ fontSize: 14 }}>
-          {icon === "leaf" ? "🌿" : icon === "pot" ? "🪴" : icon === "scan" ? "🔍" : "⭐"}
+          {icon === "pot" ? "🪴" : icon === "star" ? "⭐" : "🔼"}
         </Text>
       </View>
       <Text style={styles.statValue}>{value}</Text>

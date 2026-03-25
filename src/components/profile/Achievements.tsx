@@ -1,22 +1,26 @@
-import { ACHIEVEMENTS, Achievement } from "@/src/constants/data"
+import { UserAchievement } from "@/src/services/userAchievementsService"
 import { useThemedStyles } from "@/src/styles/themedStyles"
 import * as Haptics from "expo-haptics"
 import { Pressable, Text, View } from "react-native"
 
 const EARNED_COLORS = ["#40916C", "#74C69D", "#52B788", "#95D5B2"]
 
-export function Achievements() {
+interface AchievementsProps {
+  achievements: UserAchievement[]
+}
+
+export function Achievements({ achievements }: AchievementsProps) {
   const { theme, styles } = useThemedStyles("achievements")
-  const earned = ACHIEVEMENTS.filter((a) => a.earned).length
+  const earned = achievements.filter((a) => a.earned).length
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>{earned}/{ACHIEVEMENTS.length} earned</Text>
+        <Text style={styles.headerText}>{earned}/{achievements.length} earned</Text>
       </View>
 
       <View style={styles.grid}>
-        {ACHIEVEMENTS.map((achievement, index) => (
+        {achievements.map((achievement, index) => (
           <AchievementBadge
             key={achievement.id}
             achievement={achievement}
@@ -36,7 +40,7 @@ function AchievementBadge({
   theme,
   styles,
 }: {
-  achievement: Achievement
+  achievement: UserAchievement
   color: string
   theme: any
   styles: any
@@ -61,10 +65,7 @@ function AchievementBadge({
           { backgroundColor: achievement.earned ? color + "20" : theme.colors.surfaceMuted },
         ]}
       >
-        <BadgeIcon
-          emoji={achievement.emoji}
-          earned={achievement.earned}
-        />
+        <BadgeIcon emoji={achievement.emoji} earned={achievement.earned} />
       </View>
       <Text
         style={[
@@ -97,4 +98,3 @@ function BadgeIcon({ emoji, earned }: { emoji: string; earned: boolean }) {
     </Text>
   )
 }
-

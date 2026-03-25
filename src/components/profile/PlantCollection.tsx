@@ -1,4 +1,3 @@
-import { PLANTS, Plant } from "@/src/constants/data"
 import { COLORS } from "@/src/constants/theme"
 import { useThemedStyles } from "@/src/styles/themedStyles"
 import * as Haptics from "expo-haptics"
@@ -11,6 +10,7 @@ import {
   TextInput,
   View,
 } from "react-native"
+import { togglePlantFavorite, UserPlant } from "../../services/userPlantsService"
 
 const HEALTH_COLORS = {
   thriving: { bg: "rgba(64, 145, 108, 0.2)", text: COLORS.primary, border: "rgba(64, 145, 108, 0.3)" },
@@ -22,15 +22,19 @@ const WATER_COUNT = { low: 1, medium: 2, high: 3 }
 
 type FilterType = "all" | "favorites" | "needs-care"
 
-export function PlantCollection() {
+interface PlantCollectionProps {
+  plants: UserPlant[]
+}
+
+export function PlantCollection({ plants }: PlantCollectionProps) {
   const { theme, styles } = useThemedStyles("plantCollection")
   const [filter, setFilter] = useState<FilterType>("all")
   const [searchQuery, setSearchQuery] = useState("")
-  const [favorites, setFavorites] = useState<Set<number>>(
-    new Set(PLANTS.filter((p) => p.favorite).map((p) => p.id))
+  const [favorites, setFavorites] = useState<Set<string>>(
+    new Set(plants.filter((p) => p.favorite).map((p) => p.id))
   )
 
-  const filtered = PLANTS.filter((plant) => {
+  const filtered = plants.filter((plant) => {
     const matchesFilter =
       filter === "all" ||
       (filter === "favorites" && favorites.has(plant.id)) ||
@@ -41,17 +45,14 @@ export function PlantCollection() {
     return matchesFilter && matchesSearch
   })
 
-  const toggleFavorite = (id: number) => {
+  const toggleFavorite = async (id: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-    setFavorites((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) {
-        next.delete(id)
-      } else {
-        next.add(id)
-      }
-      return next
-    })
+    const next = new Set(favorites)
+    const isFav = next.has(id)
+    isFav ? next.delete(id) : next.add(id)
+    setFavorites(next)
+    // Persistir en Firebase
+    await togglePlantFavorite(id, !isFav)
   }
 
   const handleFilterPress = (f: FilterType) => {
@@ -92,7 +93,7 @@ export function PlantCollection() {
       {filtered.length > 0 ? (
         <FlatList
           data={filtered}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => item.id}
           numColumns={2}
           columnWrapperStyle={styles.row}
           scrollEnabled={false}
@@ -124,7 +125,7 @@ function PlantCard({
   onToggleFavorite,
   styles,
 }: {
-  plant: Plant
+  plant: UserPlant
   isFavorite: boolean
   onToggleFavorite: () => void
   styles: any
@@ -143,12 +144,7 @@ function PlantCard({
         </Pressable>
 
         {/* Health tag */}
-        <View
-          style={[
-            styles.healthTag,
-            { backgroundColor: healthStyle.bg, borderColor: healthStyle.border },
-          ]}
-        >
+        <View style={[styles.healthTag, { backgroundColor: healthStyle.bg, borderColor: healthStyle.border }]}>
           <Text style={[styles.healthText, { color: healthStyle.text }]}>
             {plant.health === "needs-care" ? "Needs Care" : plant.health}
           </Text>
@@ -157,23 +153,17 @@ function PlantCard({
 
       {/* Info */}
       <View style={styles.cardInfo}>
-        <Text style={styles.cardName} numberOfLines={1}>
-          {plant.name}
-        </Text>
-        <Text style={styles.cardScientific} numberOfLines={1}>
-          {plant.scientificName}
-        </Text>
+        <Text style={styles.cardName} numberOfLines={1}>{plant.name}</Text>
+        <Text style={styles.cardScientific} numberOfLines={1}>{plant.scientificName}</Text>
 
         {/* Care row */}
         <View style={styles.careRow}>
           <View style={styles.careIcons}>
-            {/* Water drops */}
             <View style={styles.waterDrops}>
               {Array.from({ length: 3 }).map((_, i) => (
                 <Text key={i} style={{ fontSize: 10, opacity: i < WATER_COUNT[plant.waterLevel] ? 1 : 0.2 }}>💧</Text>
               ))}
             </View>
-            {/* Sun */}
             <Text style={{ fontSize: 12, opacity: plant.sunlight === "shade" ? 0.2 : plant.sunlight === "partial" ? 0.6 : 1 }}>☀️</Text>
           </View>
           <Text style={styles.daysOwned}>{plant.daysOwned}d</Text>

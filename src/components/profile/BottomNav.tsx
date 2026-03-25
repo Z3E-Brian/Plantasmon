@@ -2,15 +2,22 @@ import { useThemedStyles } from "@/src/styles/themedStyles"
 import * as Haptics from "expo-haptics"
 import { Pressable, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { useRouter, usePathname } from "expo-router"
+import { useRouter, usePathname, Href } from "expo-router"
 
-const NAV_ITEMS = [
-  { icon: "home", label: "Home", route: "/" },
-  { icon: "search", label: "Explore", route: "/explore" },
+type NavItem = {
+  icon: string
+  label: string
+  route: string
+  isCenter?: boolean
+}
+
+const NAV_ITEMS: NavItem[] = [
+  { icon: "home",   label: "Home",     route: "/"         },
+  { icon: "search", label: "Explore",  route: "/explore"  },
   { icon: "camera", label: "Identify", route: "/identify", isCenter: true },
-  { icon: "book", label: "Journal", route: "/journal" },
-  { icon: "user", label: "Profile", route: "/profile" },
-] as const
+  { icon: "book",   label: "Journal",  route: "/journal"  },
+  { icon: "user",   label: "Profile",  route: "/profile"  },
+]
 
 export function BottomNav() {
   const insets = useSafeAreaInsets()
@@ -20,7 +27,7 @@ export function BottomNav() {
 
   const handlePress = (route: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-    router.push(route)
+    router.push(route as Href)
   }
 
   return (
@@ -28,7 +35,7 @@ export function BottomNav() {
       <View style={styles.navRow}>
         {NAV_ITEMS.map((item) => {
           const isActive = pathname === item.route
-          
+
           return (
             <Pressable
               key={item.label}
@@ -60,21 +67,16 @@ export function BottomNav() {
 }
 
 const NAV_EMOJI: Record<string, string> = {
-  home: "🏠",
+  home:   "🏠",
   search: "🔍",
   camera: "📷",
-  book: "📖",
-  user: "👤",
+  book:   "📖",
+  user:   "👤",
 }
 
 function NavIcon({ icon, active, theme }: { icon: string; active: boolean; theme: any }) {
   return (
-    <Text 
-      style={{ 
-        fontSize: 20, 
-        opacity: active ? 1 : theme.mode === "light" ? 0.35 : 0.5
-      }}
-    >
+    <Text style={{ fontSize: 20, opacity: active ? 1 : theme.mode === "light" ? 0.35 : 0.5 }}>
       {NAV_EMOJI[icon] ?? "🌿"}
     </Text>
   )
