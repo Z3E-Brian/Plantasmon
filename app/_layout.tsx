@@ -1,31 +1,56 @@
 import { BottomNav } from "@/src/components/profile/BottomNav"
-import { COLORS } from "@/src/constants/theme"
-import { Stack } from "expo-router"
-import { StatusBar } from "expo-status-bar"
-import { StyleSheet, View } from "react-native"
-import { GestureHandlerRootView } from "react-native-gesture-handler"
+import { onAuthChange } from "@/src/services/authService"
+import { Stack, usePathname, useRouter, useSegments } from "expo-router"
+import { User } from "firebase/auth"
+import { useEffect, useState } from "react"
+import { ActivityIndicator, View } from "react-native"
 
 export default function RootLayout() {
-  return (
-    <GestureHandlerRootView style={styles.container}>
-      <StatusBar style="light" />
-      <View style={styles.container}>
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor: COLORS.background },
-            animation: "fade",
-          }}
-        />
-        <BottomNav />
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
+  const router = useRouter()
+  const segments = useSegments()
+  const pathname = usePathname()
+
+  const showNav = user && pathname !== "/login"
+
+  useEffect(() => {
+    const unsubscribe = onAuthChange((firebaseUser) => {
+      setUser(firebaseUser)
+      setLoading(false)
+    })
+    return unsubscribe
+  }, [])
+
+  useEffect(() => {
+    if (loading) return
+    const inLoginScreen = segments[0] === "login"
+    if (!user && !inLoginScreen) {
+      router.replace("/login")
+    } else if (user && inLoginScreen) {
+      router.replace("/")
+    }
+  }, [user, loading, segments])
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
       </View>
-    </GestureHandlerRootView>
+    )
+  }
+
+  return (
+    <View style={{ flex: 1 }}>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="explore" />
+        <Stack.Screen name="identify" />
+        <Stack.Screen name="journal" />
+        <Stack.Screen name="profile" />
+        <Stack.Screen name="login" />
+      </Stack>
+      {showNav && <BottomNav />}
+    </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-  },
-})

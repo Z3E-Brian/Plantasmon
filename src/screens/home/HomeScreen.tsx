@@ -1,17 +1,17 @@
-import { ScrollView } from "react-native"
-import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { useRouter } from "expo-router"
 import * as Haptics from "expo-haptics"
+import { useRouter } from "expo-router"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
-import ScreenWrapper from "@/src/components/screenWrapper/ScreenWrapper"
-import { HomeHeader } from "@/src/components/home/HomeHeader"
-import { PlantOfTheDay } from "@/src/components/home/PlantOfTheDay"
-import { LastIdentified } from "@/src/components/home/LastIdentified"
-import { UserProgress } from "@/src/components/home/UserProgress"
 import { DailyMissions } from "@/src/components/home/DailyMissions"
+import { HomeHeader } from "@/src/components/home/HomeHeader"
+import { LastIdentified } from "@/src/components/home/LastIdentified"
+import { PlantOfTheDay } from "@/src/components/home/PlantOfTheDay"
 import { RecentAchievement } from "@/src/components/home/RecentAchievement"
 import { TipCard } from "@/src/components/home/TipCard"
+import { UserProgress } from "@/src/components/home/UserProgress"
+import ScreenWrapper from "@/src/components/screenWrapper/ScreenWrapper"
 import { useThemedStyles } from "@/src/styles/themedStyles"
+import { ScrollView } from "react-native"
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets()
