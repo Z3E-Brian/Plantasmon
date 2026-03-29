@@ -1,14 +1,17 @@
 import { useState } from "react"
 import {
   ActivityIndicator,
+  Alert,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
   useColorScheme,
-  View
+  View,
 } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
+import { signOut } from "firebase/auth"
+import { auth } from "@/src/config/firebase"
 
 import { Achievements } from "@/src/components/profile/Achievements"
 import { ActivityFeed } from "@/src/components/profile/ActivityFeed"
@@ -19,25 +22,51 @@ import ScreenWrapper from "@/src/components/screenWrapper/ScreenWrapper"
 import { BG_THEMES, COLORS } from "@/src/constants/theme"
 import { useProfile } from "@/src/hooks/useProfile"
 import styles from "@/src/screens/userProfile/UserProfile.styles"
+import { useRouter } from "expo-router"
 
 type TabKey = "collection" | "activity" | "badges"
 
 export default function UserProfile() {
-  const insets = useSafeAreaInsets()
+  const router      = useRouter()
+  const insets      = useSafeAreaInsets()
   const colorScheme = useColorScheme()
-  const [flagTheme, setFlagTheme] = useState(0)
-  const [bgTheme, setBgTheme] = useState(0)
-  const [titleIndex, setTitleIndex] = useState(0)
-  const [showSettings, setShowSettings] = useState(false)
+  const [flagTheme,        setFlagTheme       ] = useState(0)
+  const [bgTheme,          setBgTheme         ] = useState(0)
+  const [titleIndex,       setTitleIndex      ] = useState(0)
+  const [showSettings,     setShowSettings    ] = useState(false)
   const [activeSettingsTab, setActiveSettingsTab] = useState<"banner" | "background" | "title">("banner")
-  const [activeTab, setActiveTab] = useState<TabKey>("collection")
-
-  // Estado local para bio (se actualiza sin recargar toda la pantalla)
-  const [localBio, setLocalBio] = useState<string | null>(null)
+  const [activeTab,        setActiveTab       ] = useState<TabKey>("collection")
+  const [signingOut,       setSigningOut      ] = useState(false)
 
   const { user, plants, achievements, loading } = useProfile()
-
   const currentBg = BG_THEMES[bgTheme]
+
+  const handleSignOut = () => {
+    Alert.alert(
+      "Cerrar sesión",
+      "¿Estás seguro que querés cerrar sesión?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Cerrar sesión",
+          style: "destructive",
+          onPress: async () => {
+            setSigningOut(true)
+            try {
+              await signOut(auth)
+              // Expo Router redirige automáticamente si tenés guards de auth
+              // Si no, navegá manualmente:
+              router.replace("/login")
+            } catch (error) {
+              Alert.alert("Error", "No se pudo cerrar sesión. Intenta de nuevo.")
+            } finally {
+              setSigningOut(false)
+            }
+          },
+        },
+      ]
+    )
+  }
 
   if (loading) {
     return (
@@ -90,10 +119,11 @@ export default function UserProfile() {
 
           <View style={[
             styles.contentSection,
-            { backgroundColor: colorScheme === 'dark'
-              ? 'rgba(15, 30, 20, 0.7)'
-              : 'rgba(240, 245, 242, 0.9)'
-            }
+            {
+              backgroundColor: colorScheme === "dark"
+                ? "rgba(15, 30, 20, 0.7)"
+                : "rgba(240, 245, 242, 0.9)",
+            },
           ]}>
             <View style={styles.divider}>
               <View style={styles.dividerLine} />
@@ -103,15 +133,35 @@ export default function UserProfile() {
               <View style={styles.dividerLine} />
             </View>
 
+            {/* Fila de acciones: Editar perfil + Cerrar sesión */}
+            <View style={localStyles.actionsRow}>
+              <Pressable
+                onPress={() => router.push("/editProfile")}
+                style={localStyles.editBtn}
+              >
+                <Text style={localStyles.editBtnText}>✏️ Editar perfil</Text>
+              </Pressable>
+
+              <Pressable
+                onPress={handleSignOut}
+                style={localStyles.signOutBtn}
+                disabled={signingOut}
+              >
+                {signingOut
+                  ? <ActivityIndicator size="small" color={COLORS.destructive} />
+                  : <Text style={localStyles.signOutBtnText}>🚪 Salir</Text>
+                }
+              </Pressable>
+            </View>
+
             <ProfileAbout
-              bio={localBio ?? user.bio}   // local tiene prioridad tras editar
+              bio={user.bio}
               location={user.location}
               streak={user.streak}
               careScore={user.careScore}
               rarestFind={user.rarestFind}
               achievements={user.achievements}
               totalAchievements={user.totalAchievements}
-              onBioUpdated={(newBio) => setLocalBio(newBio)}
             />
 
             <View style={styles.tabsContainer}>
@@ -132,8 +182,8 @@ export default function UserProfile() {
 
               <View style={styles.tabContent}>
                 {activeTab === "collection" && <PlantCollection plants={plants} />}
-                {activeTab === "activity" && <ActivityFeed />}
-                {activeTab === "badges" && <Achievements achievements={achievements} />}
+                {activeTab === "activity"   && <ActivityFeed />}
+                {activeTab === "badges"     && <Achievements achievements={achievements} />}
               </View>
             </View>
           </View>
@@ -143,12 +193,56 @@ export default function UserProfile() {
   )
 }
 
-// ─── Helpers ───────────────────────────────────────────────────────────────
+const localStyles = StyleSheet.create({
+  actionsRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    marginBottom: 12,
+    gap: 10,
+  },
+  editBtn: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    backgroundColor: "rgba(64,145,108,0.15)",
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+  },
+  editBtnText: {
+    fontSize: 13,
+    color: COLORS.primary,
+    fontWeight: "600",
+  },
+  signOutBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(239,68,68,0.1)",
+    borderWidth: 1,
+    borderColor: COLORS.destructive + "60",
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    minWidth: 80,
+  },
+  signOutBtnText: {
+    fontSize: 13,
+    color: COLORS.destructive,
+    fontWeight: "600",
+  },
+})
 
 const TAB_EMOJI: Record<TabKey, string> = {
   collection: "🌿",
-  activity: "🕒",
-  badges: "⭐",
+  activity:   "🕒",
+  badges:     "⭐",
 }
 
 function TabIcon({ type, active }: { type: TabKey; active: boolean }) {

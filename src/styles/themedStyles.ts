@@ -1,5 +1,6 @@
 import { AppTheme, getAppTheme, useAppTheme } from "@/src/constants/designSystem";
 import { Dimensions, StyleSheet } from "react-native";
+import { COLORS } from "@/src/constants/theme";
 
 // ==================== ACHIEVEMENTS ====================
 export const createAchievementsStyles = (theme: AppTheme) =>
@@ -739,6 +740,166 @@ export const createTipCardStyles = (theme: AppTheme) =>
     },
   });
 
+// ==================== IDENTIFY SCREEN ====================
+export const createIdentifyStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    content: {
+      paddingHorizontal: 20,
+    },
+    devBadge: {
+      backgroundColor: theme.colors.primarySoft,
+      borderRadius: theme.radius.sm,
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderWidth: 1,
+      borderColor: theme.colors.primary + "40",
+      marginBottom: 20,
+      alignSelf: "flex-start",
+    },
+    devBadgeText: {
+      color: theme.colors.primary,
+      fontSize: 11,
+      fontWeight: "700",
+      letterSpacing: 0.5,
+    },
+    title: {
+      color: theme.colors.textPrimary,
+      fontSize: 28,
+      fontWeight: "900",
+      marginBottom: 6,
+    },
+    subtitle: {
+      color: theme.colors.textSecondary,
+      fontSize: 14,
+      lineHeight: 20,
+      marginBottom: 24,
+    },
+    label: {
+      color: theme.colors.textTertiary,
+      fontSize: 12,
+      fontWeight: "700",
+      textTransform: "uppercase",
+      letterSpacing: 1,
+      marginBottom: 8,
+      marginTop: 16,
+    },
+    shortcuts: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 8,
+      marginBottom: 4,
+    },
+    shortcut: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radius.sm,
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    shortcutSelected: {
+      borderColor: theme.colors.primary,
+      backgroundColor: theme.colors.primarySoft,
+    },
+    shortcutText: {
+      color: theme.colors.textPrimary,
+      fontSize: 12,
+      fontWeight: "600",
+    },
+    shortcutTextSelected: {
+      color: theme.colors.primary,
+    },
+    shortcutId: {
+      color: theme.colors.textTertiary,
+      fontSize: 10,
+      marginTop: 2,
+    },
+    idRow: {
+      flexDirection: "row",
+      gap: 8,
+    },
+    idInput: {
+      flex: 1,
+    },
+    checkBtn: {
+      backgroundColor: theme.colors.primary,
+      borderRadius: theme.radius.sm,
+      paddingHorizontal: 14,
+      paddingVertical: 12,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    checkBtnDisabled: {
+      opacity: 0.5,
+    },
+    checkBtnText: {
+      color: theme.colors.primaryForeground,
+      fontSize: 13,
+      fontWeight: "700",
+    },
+    input: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radius.sm,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      paddingHorizontal: 14,
+      paddingVertical: 12,
+      color: theme.colors.textPrimary,
+      fontSize: 14,
+    },
+    inputError: {
+      borderColor: COLORS.destructive,
+    },
+    textarea: {
+      minHeight: 80,
+      textAlignVertical: "top",
+    },
+    errorText: {
+      color: COLORS.destructive,
+      fontSize: 12,
+      marginTop: 4,
+      marginLeft: 2,
+    },
+    preview: {
+      fontSize: 13,
+      marginTop: 6,
+      marginLeft: 2,
+      fontWeight: "500",
+    },
+    previewOk: {
+      color: theme.colors.success,
+    },
+    previewErr: {
+      color: COLORS.destructive,
+    },
+    submitBtn: {
+      backgroundColor: theme.colors.primary,
+      borderRadius: theme.radius.md,
+      paddingVertical: 14,
+      alignItems: "center",
+      marginTop: 28,
+    },
+    submitBtnDisabled: {
+      opacity: 0.5,
+    },
+    submitBtnText: {
+      color: theme.colors.primaryForeground,
+      fontSize: 16,
+      fontWeight: "700",
+    },
+    hint: {
+      color: theme.colors.textTertiary,
+      fontSize: 12,
+      lineHeight: 18,
+      marginTop: 20,
+      textAlign: "center",
+    },
+    hintBold: {
+      fontWeight: "700",
+      color: theme.colors.textSecondary,
+    },
+  });
+
 // ==================== HOOK CENTRALIZADO ====================
 const stylesByComponent = {
   achievements: {
@@ -793,6 +954,10 @@ const stylesByComponent = {
     light: createTipCardStyles(getAppTheme("light")),
     dark: createTipCardStyles(getAppTheme("dark")),
   },
+  identify: {
+    light: createIdentifyStyles(getAppTheme("light")),
+    dark: createIdentifyStyles(getAppTheme("dark")),
+  },
 } as const;
 
 type ComponentName = keyof typeof stylesByComponent;
@@ -823,6 +988,8 @@ type StylesForComponent<T extends ComponentName> = ReturnType<
     ? typeof createRecentAchievementStyles
     : T extends "tipCard"
     ? typeof createTipCardStyles
+    : T extends "identify"
+    ? typeof createIdentifyStyles
     : never
 >;
 
@@ -836,4 +1003,3 @@ export function useThemedStyles<T extends ComponentName>(componentName: T): {
     styles: stylesByComponent[componentName][theme.mode] as StylesForComponent<T>,
   };
 }
-

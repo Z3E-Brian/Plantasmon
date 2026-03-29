@@ -11,11 +11,12 @@ import {
   View,
 } from "react-native"
 import { togglePlantFavorite, UserPlant } from "../../services/userPlantsService"
+import { CompanionPlantCard } from "@/src/components/profile/CompanionPlantCard"
 
 const HEALTH_COLORS = {
-  thriving: { bg: "rgba(64, 145, 108, 0.2)", text: COLORS.primary, border: "rgba(64, 145, 108, 0.3)" },
-  good: { bg: "rgba(45, 138, 112, 0.2)", text: COLORS.chart2, border: "rgba(45, 138, 112, 0.3)" },
-  "needs-care": { bg: "rgba(239, 68, 68, 0.2)", text: COLORS.destructive, border: "rgba(239, 68, 68, 0.3)" },
+  thriving:     { bg: "rgba(64, 145, 108, 0.2)",  text: COLORS.primary,     border: "rgba(64, 145, 108, 0.3)"  },
+  good:         { bg: "rgba(45, 138, 112, 0.2)",  text: COLORS.chart2,      border: "rgba(45, 138, 112, 0.3)"  },
+  "needs-care": { bg: "rgba(239, 68, 68, 0.2)",   text: COLORS.destructive, border: "rgba(239, 68, 68, 0.3)"   },
 }
 
 const WATER_COUNT = { low: 1, medium: 2, high: 3 }
@@ -28,13 +29,19 @@ interface PlantCollectionProps {
 
 export function PlantCollection({ plants }: PlantCollectionProps) {
   const { theme, styles } = useThemedStyles("plantCollection")
-  const [filter, setFilter] = useState<FilterType>("all")
+  const [filter, setFilter]       = useState<FilterType>("all")
   const [searchQuery, setSearchQuery] = useState("")
   const [favorites, setFavorites] = useState<Set<string>>(
     new Set(plants.filter((p) => p.favorite).map((p) => p.id))
   )
 
-  const filtered = plants.filter((plant) => {
+  // Planta compañera (primera con isCompanion, o ninguna)
+  const companion = plants.find((p) => p.isCompanion) ?? null
+
+  // Plantas que van a la grilla (excluye la compañera para no duplicarla)
+  const nonCompanion = plants.filter((p) => !p.isCompanion)
+
+  const filtered = nonCompanion.filter((plant) => {
     const matchesFilter =
       filter === "all" ||
       (filter === "favorites" && favorites.has(plant.id)) ||
@@ -51,7 +58,6 @@ export function PlantCollection({ plants }: PlantCollectionProps) {
     const isFav = next.has(id)
     isFav ? next.delete(id) : next.add(id)
     setFavorites(next)
-    // Persistir en Firebase
     await togglePlantFavorite(id, !isFav)
   }
 
@@ -62,7 +68,10 @@ export function PlantCollection({ plants }: PlantCollectionProps) {
 
   return (
     <View style={styles.container}>
-      {/* Search */}
+      {/* ── Planta compañera ── */}
+      {companion && <CompanionPlantCard plant={companion} />}
+
+      {/* ── Search ── */}
       <View style={styles.searchContainer}>
         <Text style={[styles.searchIcon, { fontSize: 14, color: theme.colors.textTertiary }]}>🔍</Text>
         <TextInput
@@ -74,7 +83,7 @@ export function PlantCollection({ plants }: PlantCollectionProps) {
         />
       </View>
 
-      {/* Filters */}
+      {/* ── Filters ── */}
       <View style={styles.filters}>
         {(["all", "favorites", "needs-care"] as FilterType[]).map((f) => (
           <Pressable
@@ -89,7 +98,7 @@ export function PlantCollection({ plants }: PlantCollectionProps) {
         ))}
       </View>
 
-      {/* Cards */}
+      {/* ── Cards ── */}
       {filtered.length > 0 ? (
         <FlatList
           data={filtered}
@@ -134,29 +143,20 @@ function PlantCard({
 
   return (
     <View style={styles.card}>
-      {/* Image */}
       <View style={styles.cardImageContainer}>
         <Image source={plant.image} style={styles.cardImage} contentFit="cover" />
-
-        {/* Favorite button */}
         <Pressable onPress={onToggleFavorite} style={styles.favoriteButton}>
           <Text style={{ fontSize: 12 }}>{isFavorite ? "❤️" : "🤍"}</Text>
         </Pressable>
-
-        {/* Health tag */}
         <View style={[styles.healthTag, { backgroundColor: healthStyle.bg, borderColor: healthStyle.border }]}>
           <Text style={[styles.healthText, { color: healthStyle.text }]}>
             {plant.health === "needs-care" ? "Needs Care" : plant.health}
           </Text>
         </View>
       </View>
-
-      {/* Info */}
       <View style={styles.cardInfo}>
         <Text style={styles.cardName} numberOfLines={1}>{plant.name}</Text>
         <Text style={styles.cardScientific} numberOfLines={1}>{plant.scientificName}</Text>
-
-        {/* Care row */}
         <View style={styles.careRow}>
           <View style={styles.careIcons}>
             <View style={styles.waterDrops}>

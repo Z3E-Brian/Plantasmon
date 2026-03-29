@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
-import { getUserProfile, UserProfile } from "@/src/services/userService";
-import { getUserPlants, UserPlant } from "@/src/services/userPlantsService";
 import { getUserAchievements, UserAchievement } from "@/src/services/userAchievementsService";
+import { getUserPlants, UserPlant } from "@/src/services/userPlantsService";
+import { getUserProfile, UserProfile } from "@/src/services/userService";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 
 interface ProfileState {
   user: UserProfile | null;
@@ -20,7 +21,7 @@ export function useProfile() {
     error: null,
   });
 
-  const loadProfile = async () => {
+  const loadProfile = useCallback(async () => {
     setState((prev) => ({ ...prev, loading: true, error: null }));
 
     try {
@@ -49,11 +50,14 @@ export function useProfile() {
         error: "Error cargando el perfil",
       }));
     }
-  };
-
-  useEffect(() => {
-    loadProfile();
   }, []);
+
+  // Se ejecuta cada vez que la pantalla recibe foco (al volver de editProfile)
+  useFocusEffect(
+    useCallback(() => {
+      loadProfile();
+    }, [loadProfile])
+  );
 
   return {
     ...state,

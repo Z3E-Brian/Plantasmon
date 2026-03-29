@@ -4,6 +4,7 @@ import { Stack, usePathname, useRouter, useSegments } from "expo-router"
 import { User } from "firebase/auth"
 import { useEffect, useState } from "react"
 import { ActivityIndicator, View } from "react-native"
+import Toast from "react-native-toast-message"
 
 export default function RootLayout() {
   const [user, setUser] = useState<User | null>(null)
@@ -11,7 +12,6 @@ export default function RootLayout() {
   const router = useRouter()
   const segments = useSegments()
   const pathname = usePathname()
-
   const showNav = user && pathname !== "/login"
 
   useEffect(() => {
@@ -49,8 +49,11 @@ export default function RootLayout() {
         <Stack.Screen name="journal" />
         <Stack.Screen name="profile" />
         <Stack.Screen name="login" />
+        <Stack.Screen name="editProfile" />
+        <Stack.Screen name="companionPlant" options={{ headerShown: false }} />
       </Stack>
       {showNav && <BottomNav />}
+      <Toast />
     </View>
   )
 }
