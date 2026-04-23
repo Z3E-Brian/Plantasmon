@@ -14,7 +14,7 @@ type NavItem = {
 const NAV_ITEMS: NavItem[] = [
   { icon: "home",   label: "Home",     route: "/"         },
   { icon: "search", label: "Explore",  route: "/explore"  },
-  { icon: "camera", label: "Identify", route: "/identify", isCenter: true },
+  { icon: "camera", label: "Identify", route: "/camera", isCenter: true },
   { icon: "book",   label: "Journal",  route: "/journal"  },
   { icon: "user",   label: "Profile",  route: "/profile"  },
 ]

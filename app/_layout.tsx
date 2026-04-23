@@ -12,7 +12,7 @@ export default function RootLayout() {
   const router = useRouter()
   const segments = useSegments()
   const pathname = usePathname()
-  const showNav = user && pathname !== "/login"
+  const showNav = user && pathname !== "/login" && pathname !== "/camera"
 
   useEffect(() => {
     const unsubscribe = onAuthChange((firebaseUser) => {
@@ -44,6 +44,7 @@ export default function RootLayout() {
     <View style={{ flex: 1 }}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
+        <Stack.Screen name="camera" />
         <Stack.Screen name="explore" />
         <Stack.Screen name="identify" />
         <Stack.Screen name="journal" />
