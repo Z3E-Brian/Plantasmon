@@ -9,9 +9,7 @@
 ## Phases
 
 - [ ] **Phase 1: Authentication Foundation** - Fix auth integration and connect user data
-- [ ] **Phase 2: Plant Core** - Plant identification and collection features
-- [ ] **Phase 3: Care Reminders** - Smart reminder system
-- [ ] **Phase 4: Polish** - Complete remaining screens
+- [ ] **Phase 2: Lab3** - API + Sincronización
 
 ---
 
@@ -41,82 +39,29 @@
 
 ---
 
-### Phase 2: Plant Core
+### Phase 2: Lab3
 
-**Goal:** Users can identify plants from photos and build their personal plant collection
+**Goal:** API + Sincronización - Plant identification with AI API and offline support
 
 **Depends on:** Phase 1
 
 **Requirements:**
-- ID-01, ID-02, ID-03, ID-04, ID-05
-- COLL-01, COLL-02, COLL-03, COLL-04, COLL-05
+- Plant identification via API (Pl@ntNet)
+- Offline support with local storage
+- Sync queue for pending operations
+- Module analysis for offline capability
 
 **Success Criteria** (what must be TRUE):
-1. User can take a photo of a plant using the camera
-2. User receives plant identification result with species name
-3. User sees confidence score for identification
-4. User can add identified plant to their collection
-5. User can view their full plant collection
-6. User can add plants manually (without identification)
-7. User can edit and remove plants from collection
+1. User can take photo of plant and identify using AI API
+2. App works without internet (offline modules)
+3. Data syncs when connection restored
+4. User sees feedback about sync status
+5. API deployed to cloud (Render)
 
-**Plans:** TBD
-
-**UI hint:** yes
-
----
-
-### Phase 3: Care Reminders
-
-**Goal:** Users receive intelligent reminders to care for their plants
-
-**Depends on:** Phase 2
-
-**Requirements:**
-- REM-01, REM-02, REM-03, REM-04
-
-**Success Criteria** (what must be TRUE):
-1. User receives push notification reminders to water plants
-2. User receives push notification reminders to fertilize plants
-3. User can customize reminder schedule per plant
-4. User can snooze or dismiss individual reminders
-
-**Plans:** TBD
-
----
-
-### Phase 4: Polish
-
-**Goal:** Complete incomplete screens and add defensive coding
-
-**Depends on:** Phase 3
-
-**Requirements:**
-- EXPL-01 (Explore functionality)
-- JOUR-01 (Journal functionality)
-
-**Success Criteria** (what must be TRUE):
-1. User can browse plants in Explore screen
-2. User can keep a plant care journal with entries
-3. App handles errors gracefully with error boundaries
-4. App has basic test coverage for critical flows
-
-**Plans:** TBD
-
----
-
-## Coverage Map
-
-| Phase | Requirements | Coverage |
-|-------|--------------|----------|
-| 1 - Auth Foundation | AUTH-01 to AUTH-05, HOME-01 to HOME-05, PROF-01 to PROF-04 | 14/28 |
-| 2 - Plant Core | ID-01 to ID-05, COLL-01 to COLL-05 | 10/28 |
-| 3 - Care Reminders | REM-01 to REM-04 | 4/28 |
-| 4 - Polish | EXPL-01, JOUR-01 | 0/28* |
-
-*EXPL-01 and JOUR-01 were marked "deferred" but belong in v1 for complete app
-
-**Total:** 28/28 requirements mapped ✓
+**Plans:** 3 plans
+- [ ] 02-lab3-01-PLAN.md — Plant identification API (Pl@ntNet)
+- [ ] 02-lab3-02-PLAN.md — Offline support and sync queue
+- [ ] 02-lab3-03-PLAN.md — Module analysis and sync indicators
 
 ---
 
@@ -125,10 +70,8 @@
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1 - Auth Foundation | 0/1 | Not started | - |
-| 2 - Plant Core | 0/1 | Not started | - |
-| 3 - Care Reminders | 0/1 | Not started | - |
-| 4 - Polish | 0/1 | Not started | - |
+| 2 - Lab3 | 0/3 | Not started | - |
 
 ---
 
-*Roadmap created: 2026-04-22*
+*Roadmap updated: 2026-04-24*
