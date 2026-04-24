@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
 const PLANT_API_KEY = process.env.PLANT_API_KEY;
-const PLANT_API_URL = 'https://plant.id/api/v3/identify';
+const PLANT_API_URL = 'https://api.plant.id/v3/identification';
 
 app.get('/', (req, res) => {
   res.json({ status: 'ok', message: 'PlantasMon API running' });
@@ -25,6 +25,10 @@ app.post('/api/identify', async (req, res) => {
     return res.status(400).json({ error: 'No images provided' });
   }
   
+  if (!PLANT_API_KEY) {
+    return res.status(500).json({ error: 'Server misconfigured: missing PLANT_API_KEY' });
+  }
+
   try {
     const response = await fetch(PLANT_API_URL, {
       method: 'POST',
@@ -41,7 +45,24 @@ app.post('/api/identify', async (req, res) => {
       })
     });
     
-    const data = await response.json();
+    const raw = await response.text();
+    let data;
+
+    try {
+      data = JSON.parse(raw);
+    } catch {
+      data = { raw };
+    }
+
+    if (!response.ok) {
+      console.error('Plant.id upstream error:', response.status, raw);
+      return res.status(response.status).json({
+        error: 'Plant.id request failed',
+        upstreamStatus: response.status,
+        upstreamBody: data,
+      });
+    }
+
     console.log('Plant.id response received, suggestions:', data.suggestions?.length || 0);
     res.json(data);
   } catch (error) {

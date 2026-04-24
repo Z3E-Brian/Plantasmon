@@ -1,4 +1,4 @@
-const API_URL = 'http://192.168.1.16:3000';
+const API_URL = 'https://plantasmon.onrender.com';
 
 export interface PlantIdentificationResult {
   id: string;
@@ -29,7 +29,7 @@ export async function identifyPlant(photoUri: string): Promise<PlantIdentificati
     const errorText = await response.text();
     console.log("Detalle del error del servidor:", errorText);
     console.log("Status Code:", response.status);
-    throw new Error('Identification failed');
+    throw new Error(`Identification failed (${response.status})`);
   }
 
   const data = await response.json();
