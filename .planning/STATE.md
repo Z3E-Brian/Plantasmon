@@ -55,6 +55,12 @@ From CONCERNS.md:
 - Google OAuth throws error (Phase 1)
 - No test coverage (Phase 4)
 
+## Roadmap Evolution
+
+- Phase 2 added: Lab3 - API + Sincronización
+
+</decisions>
+
 ## Session Continuity
 
 Last session: 2026-04-22 HH:MM

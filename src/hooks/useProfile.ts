@@ -13,6 +13,9 @@ interface ProfileState {
 }
 
 export function useProfile() {
+  // Hardcoded for now - fix later
+  const userId = "u_001";
+  
   const [state, setState] = useState<ProfileState>({
     user: null,
     plants: [],
@@ -26,9 +29,9 @@ export function useProfile() {
 
     try {
       const [user, plants, achResult] = await Promise.all([
-        getUserProfile(),
-        getUserPlants(),
-        getUserAchievements(),
+        getUserProfile(userId),
+        getUserPlants(userId),
+        getUserAchievements(userId),
       ]);
 
       if (user) {
@@ -50,7 +53,7 @@ export function useProfile() {
         error: "Error cargando el perfil",
       }));
     }
-  }, []);
+  }, [userId]);
 
   // Se ejecuta cada vez que la pantalla recibe foco (al volver de editProfile)
   useFocusEffect(

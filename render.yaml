@@ -1,0 +1,16 @@
+# render.yaml - PlantasMon API deployment
+services:
+  - type: web
+    name: plantasmon-api
+    env: node
+    region: ohio
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: PLANT_API_KEY
+        sync: false
+      - key: NODE_ENV
+        value: production
