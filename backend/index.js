@@ -30,7 +30,16 @@ app.post('/api/identify', async (req, res) => {
   }
 
   try {
-    const payload = { images };
+    const normalizedImages = images.map((img) => {
+      if (typeof img !== 'string') return img;
+      if (img.startsWith('data:')) {
+        const parts = img.split(',');
+        return parts.length > 1 ? parts[1] : img;
+      }
+      return img;
+    });
+
+    const payload = { images: normalizedImages };
     if (typeof latitude === 'number') payload.latitude = latitude;
     if (typeof longitude === 'number') payload.longitude = longitude;
 
