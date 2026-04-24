@@ -1,7 +1,7 @@
 const API_URL = 'https://plantasmon.onrender.com';
 
 export interface PlantIdentificationResult {
-  id: string;
+  plantId: string;
   commonName: string;
   scientificName: string;
   confidence: number;
@@ -10,6 +10,7 @@ export interface PlantIdentificationResult {
   careInstructions?: string;
   waterSchedule?: string;
   sunlight?: string;
+  id?: string;
 }
 
 export async function identifyPlant(photoUri: string): Promise<PlantIdentificationResult> {
@@ -33,29 +34,83 @@ export async function identifyPlant(photoUri: string): Promise<PlantIdentificati
   }
 
   const data = await response.json();
-  
-  if (data.suggestions && data.suggestions.length > 0) {
-    const suggestion = data.suggestions[0];
+  const suggestions = extractSuggestions(data);
+
+  if (suggestions.length > 0) {
+    const suggestion = suggestions[0] as any;
+    const scientificName =
+      suggestion.plant_name ||
+      suggestion.name ||
+      suggestion.details?.scientific_name ||
+      "Unknown";
+
+    const commonName =
+      suggestion.plant_details?.common_names?.value?.[0] ||
+      suggestion.details?.common_names?.[0] ||
+      scientificName;
+
+    const probability =
+      suggestion.probability ??
+      suggestion.confidence ??
+      0;
+
     return {
-      id: suggestion.id,
-      commonName: suggestion.plant_details?.common_names?.value?.[0] || suggestion.plant_name,
-      scientificName: suggestion.plant_name,
-      confidence: Math.round((suggestion.probability || 0) * 100),
-      description: suggestion.plant_details?.wiki_description?.value,
-      careLevel: suggestion.plant_details?.care_level?.value,
-      careInstructions: suggestion.plant_details?.care_instructions?.value,
-      waterSchedule: suggestion.plant_details?.water_schedule?.value,
-      sunlight: suggestion.plant_details?.sunlight?.value
+      plantId: String(suggestion.id || suggestion.entity_id || scientificName),
+      commonName,
+      scientificName,
+      confidence: Math.round(Number(probability) * 100),
+      description:
+        suggestion.plant_details?.wiki_description?.value ||
+        suggestion.details?.description?.value ||
+        suggestion.details?.description,
+      careLevel:
+        suggestion.plant_details?.care_level?.value ||
+        suggestion.details?.care?.level,
+      careInstructions:
+        suggestion.plant_details?.care_instructions?.value ||
+        suggestion.details?.care?.instructions,
+      waterSchedule:
+        suggestion.plant_details?.water_schedule?.value ||
+        suggestion.details?.care?.watering,
+      sunlight:
+        suggestion.plant_details?.sunlight?.value ||
+        suggestion.details?.care?.sunlight,
     };
   }
+
+  console.log("Plant.id response without suggestions:", JSON.stringify(data));
   
   throw new Error('No plant suggestions found');
+}
+
+function extractSuggestions(data: any): any[] {
+  if (!data || typeof data !== 'object') return [];
+
+  if (Array.isArray(data.suggestions)) return data.suggestions;
+
+  if (Array.isArray(data.result?.classification?.suggestions)) {
+    return data.result.classification.suggestions;
+  }
+
+  if (Array.isArray(data.classification?.suggestions)) {
+    return data.classification.suggestions;
+  }
+
+  if (Array.isArray(data.output?.suggestions)) {
+    return data.output.suggestions;
+  }
+
+  return [];
 }
 
 function blobToBase64(blob: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result as string);
+    reader.onloadend = () => {
+      const result = reader.result as string;
+      const base64 = result.includes(',') ? result.split(',')[1] : result;
+      resolve(base64);
+    };
     reader.onerror = reject;
     reader.readAsDataURL(blob);
   });

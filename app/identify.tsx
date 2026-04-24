@@ -1,6 +1,7 @@
 import ScreenWrapper from "@/src/components/screenWrapper/ScreenWrapper"
 import { useThemedStyles } from "@/src/styles/themedStyles"
 import { identifyPlant, PlantIdentificationResult } from "@/src/services/plantIdService"
+import { addUserPlant } from "@/src/services/userPlantsService"
 import { useState, useEffect } from "react"
 import {
   ActivityIndicator,
@@ -53,13 +54,24 @@ export default function Identify() {
     }
   }
 
-  const handleAddToCollection = () => {
-    if (!result) return
-    Alert.alert(
-      '¡Agregar a colección!',
-      `${result.commonName} fue identificada con ${result.confidence}% de confianza.`,
-      [{ text: 'OK' }]
-    )
+  const handleAddToCollection = async () => {
+    if (!result || !photoUri) return
+
+    const uri = Array.isArray(photoUri) ? photoUri[0] : photoUri
+    
+    setAdding(true)
+    try {
+      await addUserPlant({
+        plantId: result.plantId || result.scientificName,
+        imageUri: uri,
+      })
+      Alert.alert("Éxito", `${result.commonName} agregada a tu colección`)
+      router.push("/")
+    } catch (err: any) {
+      Alert.alert("Error", err.message || "No se pudo agregar")
+    } finally {
+      setAdding(false)
+    }
   }
 
   const handleRetry = () => {

@@ -3,6 +3,7 @@ import {
   doc,
   getDoc,
   updateDoc,
+  setDoc,
 } from "firebase/firestore";
 import { CURRENT_USER_ID } from "./userService";
 
@@ -181,6 +182,57 @@ export async function togglePlantFavorite(
     await updateDoc(userRef, { [fieldPath]: updated });
   } catch (error) {
     console.error("Error actualizando favorito:", error);
+    throw error;
+  }
+}
+
+export interface AddPlantFromIdInput {
+  plantId: string;
+  imageUri: string;
+  userId?: string;
+}
+
+export async function addUserPlant(
+  input: AddPlantFromIdInput
+): Promise<void> {
+  const { plantId, imageUri, userId = CURRENT_USER_ID } = input;
+
+  try {
+    const userRef = doc(db, "users", userId);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      await setDoc(userRef, { userPlants: [] });
+    }
+
+    const userData = userSnap.data();
+    const existingPlants: any[] = userData?.userPlants ?? [];
+    
+    const alreadyExists = existingPlants.some((p: any) => p.id === plantId);
+    if (alreadyExists) {
+      console.log("Planta ya en colección:", plantId);
+      return;
+    }
+
+    const plantRef = doc(db, "plants", plantId);
+    const plantSnap = await getDoc(plantRef);
+    
+    const newPlant = {
+      id: plantId,
+      image: imageUri,
+      firstIdentifiedAt: new Date().toISOString(),
+      lastWatered: null,
+      favorite: false,
+      isCompanion: false,
+    };
+
+    await updateDoc(userRef, {
+      userPlants: [...existingPlants, newPlant],
+    });
+
+    console.log("Planta agregada:", plantId);
+  } catch (error) {
+    console.error("Error agregando planta:", error);
     throw error;
   }
 }
