@@ -5,254 +5,188 @@ type: execute
 wave: 1
 depends_on: []
 files_modified:
-  - app/identify.tsx
-  - src/services/plantIdService.ts
-  - src/types/plant.d.ts
+  - backend/
+  - backend/index.js
+  - backend/package.json
+  - backend/.env
+  - render.yaml
 autonomous: true
 requirements:
-  - LAB3-API-01
-  - LAB3-API-02
-  - LAB3-API-03
-user_setup:
-  - service: plantnet
-    why: "Plant identification API requires API key registration"
-    env_vars:
-      - name: PLANTNET_API_KEY
-        source: "https://my.plantnet.org/api/key"
-    docs: "https://github.com/plantnet/plantnet-api"
-
-must_haves:
-  truths:
-    - "User can take photo and identify plant using Pl@ntNet API"
-    - "Identification results show plant name and details"
-    - "Successfully identified plants can be saved to user collection"
-  artifacts:
-    - path: "src/services/plantIdService.ts"
-      provides: "Pl@ntNet API integration"
-      exports: ["identifyPlant", "PlantIdentificationResult"]
-    - path: "src/types/plant.d.ts"
-      provides: "Plant type definitions"
-      exports: ["PlantIdentificationResult"]
-    - path: "app/identify.tsx"
-      provides: "Camera-based plant identification screen"
-      exports: ["default"]
-  key_links:
-    - from: "app/identify.tsx"
-      to: "src/services/plantIdService.ts"
-      via: "import and call identifyPlant()"
-      pattern: "import.*plantIdService"
-    - from: "src/services/plantIdService.ts"
-      to: "Pl@ntNet API"
-      via: "fetch with multipart/form-data"
-      pattern: "my\\.plantnet\\.org"
+  - Plant identification via API
 ---
 
 <objective>
-Implement real plant identification using the Pl@ntNet API. Replace the stub ID-based flow with camera capture and AI-powered plant identification.
-
-Purpose: User can photograph any plant and get instant identification results
-Output: Working plant identification screen with camera integration and API calls
+Create backend service that receives plant images and returns identification results from Plant.id API.
 </objective>
-
-<execution_context>
-@/home/brian/4_anno/Moviles/Proyecto en clase/plantasmon/.opencode/get-shit-done/workflows/execute-plan.md
-@/home/brian/4_anno/Moviles/Proyecto en clase/plantasmon/.opencode/get-shit-done/templates/summary.md
-</execution_context>
-
-<context>
-@.planning/PROJECT.md
-@.planning/codebase/ARCHITECTURE.md
-@.planning/codebase/STRUCTURE.md
-
-# Existing patterns
-@app/identify.tsx  # Current stub implementation to replace
-@src/services/cameraService.ts  # Camera service with takePhoto()
-@src/services/userPlantsService.ts  # User plant management pattern
-
-# Stack context
-@.planning/research/STACK.md
-</context>
-
-<interfaces>
-<!-- Key types and contracts the executor needs. Extracted from codebase. -->
-
-From src/services/cameraService.ts:
-```typescript
-export interface PhotoResult {
-  uri: string;
-  width: number;
-  height: number;
-  base64?: string;
-}
-
-export interface CaptureOptions {
-  quality?: number;
-  base64?: boolean;
-  skipProcessing?: boolean;
-}
-
-takePhoto(cameraRef: RefObject<CameraView>, options?: CaptureOptions): Promise<PhotoResult>
-```
-
-From src/services/userPlantsService.ts:
-```typescript
-export interface UserPlantUpdate {
-  nickname?: string;
-  notes?: string;
-  lastWatered?: string;
-  lastWeeded?: string;
-  favorite?: boolean;
-  isCompanion?: boolean;
-  location?: string;
-  personality?: string;
-}
-
-updateUserPlant(plantId: string, updates: UserPlantUpdate, userId?: string): Promise<void>
-```
-</interfaces>
 
 <tasks>
 
-<task type="auto" tdd="true">
-  <name>Task 1: Create Pl@ntNet API service</name>
-  <files>src/services/plantIdService.ts, src/types/plant.d.ts</files>
-  <behavior>
-    - Test 1: identifyPlant(uri, apiKey) with valid image returns PlantIdentificationResult
-    - Test 2: identifyPlant with API error throws DescriptiveError
-    - Test 3: identifyPlant with no results returns empty species array
-  </behavior>
+<task type="auto">
+  <name>Task 1: Create backend directory and package.json</name>
+  <files>backend/package.json</files>
   <action>
-Create `src/types/plant.d.ts` with type definitions:
+Create backend directory with package.json:
 
-```typescript
-export interface PlantSpecies {
-  scientificName: string;
-  commonNames: string[];
-  genus: string;
-  family: string;
-  score: number;
-}
-
-export interface PlantIdentificationResult {
-  success: boolean;
-  query: {
-    project: string;
-    images: number;
-  };
-  results: PlantSpecies[];
-  error?: never;
-}
-
-export interface PlantIdError {
-  success: false;
-  error: string;
-  code: 'NETWORK_ERROR' | 'API_ERROR' | 'NO_RESULTS';
+```json
+{
+  "name": "plantasmon-api",
+  "version": "1.0.0",
+  "description": "PlantasMon Plant Identification API",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1"
+  }
 }
 ```
-
-Create `src/services/plantIdService.ts`:
-
-1. Export `identifyPlant(imageUri: string, apiKey: string): Promise<PlantIdentificationResult | PlantIdError>`
-2. Use FormData with image file for multipart upload
-3. Endpoint: `https://my.plantnet.org/v2/identify/all?api-key={apiKey}&project=plantnet`
-4. Support organ types: `flower`, `leaf`, `fruit`, `bark`, `habit`
-5. Return first 5 best matches sorted by score
-6. Handle errors gracefully with typed error responses
-
-**Environment variable:** `PLANTNET_API_KEY` from `process.env.PLANTNET_API_KEY`
   </action>
   <verify>
-    <automated>npx tsc --noEmit src/services/plantIdService.ts src/types/plant.d.ts</automated>
+    <automated>test -f backend/package.json && cat backend/package.json</automated>
   </verify>
-  <done>Pl@ntNet service returns typed PlantIdentificationResult with species array</done>
+  <done>Backend directory and package.json created</done>
 </task>
 
 <task type="auto">
-  <name>Task 2: Integrate camera capture into Identify screen</name>
-  <files>app/identify.tsx</files>
+  <name>Task 2: Implement Express server with Plant.id endpoint</name>
+  <files>backend/index.js</files>
   <action>
-Refactor `app/identify.tsx` to support camera-based identification:
+Create backend/index.js:
 
-1. Add state for camera mode vs form mode
-2. Use expo-camera (CameraView) for photo capture
-3. When photo captured, call plantIdService.identifyPlant()
-4. Display results with species name and confidence score
-5. Allow user to select a result to add to collection
-6. Fall back to existing ID-based flow if camera unavailable
+```javascript
+const express = require('express');
+const cors = require('cors');
+require('dotenv').config();
 
-**Camera integration:**
-- Import CameraView from 'expo-camera'
-- Use cameraRef pattern from cameraService.ts
-- Display camera preview with capture button
-- After capture, show results and offer "Add to Collection" action
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-**Keep existing:** ID-based shortcuts as fallback when camera not available
+app.use(cors());
+app.use(express.json({ limit: '10mb' }));
+
+const PLANT_API_KEY = process.env.PLANT_API_KEY;
+const PLANT_API_URL = 'https://plant.id/api/v3/identify';
+
+app.get('/', (req, res) => {
+  res.json({ status: 'ok', message: 'PlantasMon API running' });
+});
+
+app.post('/api/identify', async (req, res) => {
+  const { images, latitude, longitude } = req.body;
+  
+  console.log('Identification request received');
+  console.log('Images count:', images ? images.length : 0);
+  
+  if (!images || images.length === 0) {
+    return res.status(400).json({ error: 'No images provided' });
+  }
+  
+  try {
+    const response = await fetch(PLANT_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Api-Key': PLANT_API_KEY
+      },
+      body: JSON.stringify({
+        images: images,
+        modifiers: ['crops_fast', 'align_full_image'],
+        plant_details: ['common_names', 'url', 'wiki_description', 'care_level', 'care_instructions', 'water_schedule', 'sunlight'],
+        latitude: latitude || 0,
+        longitude: longitude || 0
+      })
+    });
+    
+    const data = await response.json();
+    console.log('Plant.id response received, suggestions:', data.suggestions?.length || 0);
+    res.json(data);
+  } catch (error) {
+    console.error('Plant ID error:', error);
+    res.status(500).json({ error: 'Identification failed: ' + error.message });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`PlantasMon API running on port ${PORT}`);
+});
+```
   </action>
   <verify>
-    <automated>npx tsc --noEmit app/identify.tsx 2>&1 | head -20</automated>
+    <automated>grep -l "/api/identify" backend/index.js</automated>
   </verify>
-  <done>Camera button triggers capture and displays identification results</done>
+  <done>Backend endpoint /api/identify implemented</done>
 </task>
 
 <task type="auto">
-  <name>Task 3: Add selected plant to user collection</name>
-  <files>app/identify.tsx</files>
+  <name>Task 3: Create environment configuration</name>
+  <files>backend/.env</files>
   <action>
-After user selects a plant from identification results:
+Create backend/.env file:
 
-1. Create a new document in `plants/` collection with the identified plant data
-2. OR use existing plant ID if match found in Firebase
-3. Add the plant to user's `userPlants` array (reuse existing logic)
+```
+PLANT_API_KEY=VQiCcflXT7Q71IyD0qsr40SlBoyvxBwuPZEawXVXK2MlqeJwL
+PORT=3000
+```
 
-**Flow:**
-1. User selects species from results
-2. Create plant entry: { id, commonName, scientificName, genus, family }
-3. Call existing userPlantsService pattern to add to collection
-4. Show success message with plant name
-5. Reset form and return to capture mode
-
-**Note:** Reuse the existing Firestore update pattern from the current identify.tsx onSubmit handler
+Also create backend/.env.example (without real key):
+```
+PLANT_API_KEY=your_api_key_here
+PORT=3000
+```
   </action>
   <verify>
-    <automated>npx tsc --noEmit app/identify.tsx 2>&1 | grep -i error || echo "Type check passed"</automated>
+    <automated>test -f backend/.env && echo "exists"</automated>
   </verify>
-  <done>Selected identification result added to user collection with Firestore update</done>
+  <done>.env files created</done>
+</task>
+
+<task type="auto">
+  <name>Task 4: Create Render blueprint</name>
+  <files>render.yaml</files>
+  <action>
+Create render.yaml in project root:
+
+```yaml
+# render.yaml
+services:
+  - type: web
+    name: plantasmon-api
+    env: node
+    region: ohio
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: PLANT_API_KEY
+        sync: false
+      - key: NODE_ENV
+        value: production
+```
+
+This tells Render to deploy only the backend/ folder.
+  </action>
+  <verify>
+    <automated>test -f render.yaml && grep -l "rootDir: backend" render.yaml</automated>
+  </verify>
+  <done>Render blueprint configured</done>
 </task>
 
 </tasks>
 
-<threat_model>
-## Trust Boundaries
-
-| Boundary | Description |
-|----------|-------------|
-| user → Pl@ntNet API | Untrusted image data posted to external API |
-| API response → app | API response parsed and displayed to user |
-
-## STRIDE Threat Register
-
-| Threat ID | Category | Component | Disposition | Mitigation Plan |
-|-----------|----------|-----------|-------------|-----------------|
-| T-LAB3-01 | S | Pl@ntNet API calls | mitigate | API key stored in env var, not hardcoded; rate limiting handled by API |
-| T-LAB3-02 | T | Image upload | accept | Images are plant photos, no PII; user explicitly uploads |
-| T-LAB3-03 | R | API response parsing | mitigate | Validate response shape before using; TypeScript types enforce structure |
-| T-LAB3-04 | I | Firestore plant data | mitigate | Only add plants user explicitly confirms; same auth as existing flows |
-</threat_model>
-
 <verification>
-1. Run TypeScript check on all modified files
-2. Verify PlantIdentificationResult type exported correctly
-3. Confirm camera integration compiles without errors
+- [ ] backend/package.json exists with dependencies
+- [ ] backend/index.js has /api/identify endpoint
+- [ ] backend/.env has PLANT_API_KEY
+- [ ] render.yaml configures backend deployment
+
 </verification>
 
 <success_criteria>
-1. User can take photo and see Pl@ntNet identification results
-2. Results display species name with confidence score
-3. User can add identified plant to their collection
-4. App gracefully falls back to ID-based entry if camera unavailable
-5. TypeScript compiles without errors
+Backend can receive image, call Plant.id API, and return results
 </success_criteria>
-
-<output>
-After completion, create `.planning/phases/02-lab3/02-lab3-01-SUMMARY.md`
-</output>

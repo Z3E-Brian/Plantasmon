@@ -3,306 +3,211 @@ phase: 02-lab3
 plan: 03
 type: execute
 wave: 3
-depends_on:
-  - 02-lab3-02
+depends_on: [02-lab3-01, 02-lab3-02]
 files_modified:
-  - src/services/moduleAnalyzer.ts
+  - src/components/SyncStatusIndicator.tsx
   - app/_layout.tsx
-  - src/components/ui/SyncStatusIndicator.tsx
+  - src/services/syncService.ts
 autonomous: true
 requirements:
-  - LAB3-MOD-01
-  - LAB3-MOD-02
-  - LAB3-MOD-03
-user_setup: []
-
-must_haves:
-  truths:
-    - "User can see which features work offline vs online"
-    - "Offline capability displayed per module"
-    - "Sync status visible in app header"
-  artifacts:
-    - path: "src/services/moduleAnalyzer.ts"
-      provides: "Module capability analysis"
-      exports: ["ModuleCapability", "analyzeOfflineCapability", "ModuleReport"]
-    - path: "src/components/ui/SyncStatusIndicator.tsx"
-      provides: "Visual sync status component"
-      exports: ["SyncStatusIndicator"]
-    - path: "app/_layout.tsx"
-      provides: "Sync indicator integrated into app layout"
-      exports: ["Stack"]
-  key_links:
-    - from: "app/_layout.tsx"
-      to: "src/hooks/useOfflineSync.ts"
-      via: "useOfflineSync hook provides status to SyncStatusIndicator"
-      pattern: "useOfflineSync"
-    - from: "SyncStatusIndicator"
-      to: "src/services/moduleAnalyzer.ts"
-      via: "Displays module capability report"
-      pattern: "analyzeOfflineCapability"
+  - Module analysis for offline capability
+  - Sync indicators UI
 ---
 
 <objective>
-Analyze and document offline capability per module, create UI indicators for sync status.
-
-Purpose: User understands which features work offline and current sync state
-Output: Module analysis service, sync status indicator component
+Add sync indicators, network status detection, and module analysis for offline capability.
 </objective>
-
-<execution_context>
-@/home/brian/4_anno/Moviles/Proyecto en clase/plantasmon/.opencode/get-shit-done/workflows/execute-plan.md
-@/home/brian/4_anno/Moviles/Proyecto en clase/plantasmon/.opencode/get-shit-done/templates/summary.md
-</execution_context>
-
-<context>
-@.planning/PROJECT.md
-@.planning/ROADMAP.md (Phase 2 goal)
-@.planning/codebase/STRUCTURE.md
-
-# Dependencies from previous plans
-@src/services/syncQueueService.ts  # From Plan 02
-@src/hooks/useOfflineSync.ts  # From Plan 02
-@src/services/plantStorageService.ts  # From Plan 02
-
-# Existing UI components
-@src/components/ui/  # Reusable components to extend
-</context>
-
-<interfaces>
-<!-- Key types and contracts from previous plans. -->
-
-From Plan 02 (syncQueueService.ts):
-```typescript
-export interface SyncOperation {
-  id: string;
-  type: SyncOperationType;
-  payload: Record<string, any>;
-  timestamp: number;
-  retryCount: number;
-  maxRetries: number;
-}
-```
-
-From Plan 02 (useOfflineSync.ts):
-```typescript
-export interface SyncStatus {
-  isOnline: boolean;
-  pendingOperations: number;
-  isSyncing: boolean;
-  lastSyncTime: number | null;
-  hasFailedSyncs: boolean;
-}
-
-export function useOfflineSync(): SyncStatus
-```
-
-From Plan 02 (plantStorageService.ts):
-```typescript
-export interface CachedPlant {
-  id: string;
-  commonName: string;
-  scientificName: string;
-  genus: string;
-  family: string;
-  imageUri?: string;
-  cachedAt: number;
-}
-```
-</interfaces>
 
 <tasks>
 
-<task type="auto" tdd="true">
-  <name>Task 1: Create module analyzer service</name>
-  <files>src/services/moduleAnalyzer.ts</files>
-  <behavior>
-    - Test 1: analyzeOfflineCapability() returns array of ModuleCapability objects
-    - Test 2: Each module has offlineCapability enum: 'full' | 'partial' | 'none'
-    - Test 3: analyzeNetworkRequirement() returns 'required' | 'optional' | 'none'
-    - Test 4: getModuleStatus() reflects current network state
-  </behavior>
+<task type="auto">
+  <name>Task 1: Create network status hook</name>
+  <files>src/hooks/useNetworkStatus.ts</files>
   <action>
-Create `src/services/moduleAnalyzer.ts`:
+Create hook to detect network status:
 
 ```typescript
-export type OfflineCapability = 'full' | 'partial' | 'none';
-export type NetworkRequirement = 'required' | 'optional' | 'none';
+import { useEffect, useState } from 'react';
+import NetInfo from '@react-native-community/netinfo';
 
-export interface ModuleInfo {
-  id: string;
-  name: string;
-  description: string;
-  offlineCapability: OfflineCapability;
-  networkRequirement: NetworkRequirement;
-  cacheable: boolean;
-  syncRequired: boolean;
-}
+export function useNetworkStatus() {
+  const [isConnected, setIsConnected] = useState(true);
+  const [isInternetReachable, setIsInternetReachable] = useState(true);
 
-export interface ModuleReport {
-  totalModules: number;
-  fullyOffline: number;
-  partialOffline: number;
-  requiresNetwork: number;
-  modules: ModuleInfo[];
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      setIsConnected(state.isConnected ?? false);
+      setIsInternetReachable(state.isInternetReachable ?? false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  return { isConnected, isInternetReachable };
 }
 ```
 
-**Analyze these app modules:**
-
-1. **Home Dashboard** - `partial` offline, `optional` network
-   - Cache: Daily tips, plant of the day
-   - Needs network: User-specific progress data
-
-2. **Plant Identification** - `partial` offline, `required` for API
-   - Cache: Previous identifications, cached plants
-   - Needs network: New identifications via PlantNet
-
-3. **User Profile** - `partial` offline, `optional` network
-   - Cache: Display name, avatar, static achievements
-   - Needs network: Real-time stats, latest activity
-
-4. **Plant Collection** - `full` offline with local cache
-   - Cache: All user's plants from cache
-   - Sync: New plants, favorites, updates queued
-
-5. **Journal** - `partial` offline, `optional` network
-   - Cache: Recent entries
-   - Needs network: Cloud backup
-
-6. **Explore** - `none` offline, `required` network
-   - Always needs network: External plant database
-
-**Functions:**
-```typescript
-export function analyzeOfflineCapability(): ModuleReport
-export function getModuleStatus(moduleId: string, isOnline: boolean): 'ready' | 'limited' | 'unavailable'
-export function getCacheStatus(moduleId: string): { cached: boolean; age?: number }
-```
+Note: May need to install @react-native-community/netinfo if not already present.
   </action>
   <verify>
-    <automated>npx tsc --noEmit src/services/moduleAnalyzer.ts</automated>
+    <automated>ls -la src/hooks/useNetworkStatus.ts</automated>
   </verify>
-  <done>Module analyzer provides capability report for all app features</done>
+  <done>Network status hook created</done>
 </task>
 
 <task type="auto">
-  <name>Task 2: Create SyncStatusIndicator component</name>
-  <files>src/components/ui/SyncStatusIndicator.tsx</files>
+  <name>Task 2: Create sync service</name>
+  <files>src/services/syncService.ts</files>
   <action>
-Create `src/components/ui/SyncStatusIndicator.tsx`:
+Create sync service that processes queue when online:
 
 ```typescript
-import { SyncStatus } from '@/src/hooks/useOfflineSync';
+import { addToSyncQueue, getSyncQueue, clearSyncQueueItem } from './offlineStorage';
+import { useNetworkStatus } from '../hooks/useNetworkStatus';
 
-interface SyncStatusIndicatorProps {
-  status: SyncStatus;
-  compact?: boolean;  // true = icon only, false = full text
-  showModuleStatus?: boolean;
-}
-```
+let isSyncing = false;
 
-**Visual design:**
-- **Online + Synced:** Green dot + "✓ Synced"
-- **Online + Syncing:** Animated spinner + "Syncing..."
-- **Online + Pending:** Yellow dot + "{n} pending"
-- **Offline:** Gray dot + "Offline"
-- **Failed:** Red dot + "Sync failed"
-
-**Compact mode:** Just the colored dot/icon
-**Full mode:** Dot + status text + last sync time
-
-**Module capability display (when showModuleStatus=true):**
-- Small badges next to each feature showing offline capability
-- Or a settings/debug screen showing module status table
-
-**Integration:**
-- Accept SyncStatus from useOfflineSync hook
-- Auto-update when status changes
-- Position: Top-right of screen or in header
-  </action>
-  <verify>
-    <automated>npx tsc --noEmit src/components/ui/SyncStatusIndicator.tsx</automated>
-  </verify>
-  <done>Sync status indicator displays current sync state with appropriate visual</done>
-</task>
-
-<task type="auto">
-  <name>Task 3: Integrate sync indicator into app layout</name>
-  <files>app/_layout.tsx</files>
-  <action>
-Update `app/_layout.tsx` to include sync status:
-
-1. Import useOfflineSync hook
-2. Wrap content with SyncStatusIndicator
-3. Position in header area (safe area aware)
-
-**Layout update:**
-```tsx
-import { useOfflineSync } from '@/src/hooks/useOfflineSync';
-import SyncStatusIndicator from '@/src/components/ui/SyncStatusIndicator';
-
-function RootLayout() {
-  const syncStatus = useOfflineSync();
+export async function processSyncQueue(apiUrl: string) {
+  if (isSyncing) return;
   
-  return (
-    <>
-      <StatusBar ... />
-      <View style={styles.header}>
-        <SyncStatusIndicator status={syncStatus} compact />
+  const { isConnected } = useNetworkStatus();
+  if (!isConnected) return;
+
+  isSyncing = true;
+  const queue = await getSyncQueue();
+
+  for (const item of queue) {
+    try {
+      await fetch(`${apiUrl}${item.endpoint}`, {
+        method: item.method,
+        headers: { 'Content-Type': 'application/json' },
+        body: item.data
+      });
+      
+      await clearSyncQueueItem(item.id);
+      console.log(`Synced: ${item.action}`);
+    } catch (error) {
+      console.error(`Sync failed for ${item.action}:`, error);
+    }
+  }
+
+  isSyncing = false;
+}
+
+// Auto-sync when network becomes available
+export function setupAutoSync(apiUrl: string) {
+  NetInfo.addEventListener(state => {
+    if (state.isConnected) {
+      processSyncQueue(apiUrl);
+    }
+  });
+}
+```
+  </action>
+  <verify>
+    <automated>grep -l "processSyncQueue" src/services/syncService.ts</automated>
+  </verify>
+  <done>Sync service created</done>
+</task>
+
+<task type="auto">
+  <name>Task 3: Create sync status indicator UI</name>
+  <files>src/components/SyncStatusIndicator.tsx</files>
+  <action>
+Create SyncStatusIndicator component:
+
+```tsx
+import { View, Text, StyleSheet } from 'react-native';
+import { useNetworkStatus } from '../hooks/useNetworkStatus';
+import { Ionicons } from '@expo/vector-icons';
+
+export function SyncStatusIndicator() {
+  const { isConnected } = useNetworkStatus();
+
+  if (isConnected) {
+    return (
+      <View style={styles.container}>
+        <Ionicons name="cloud-done" size={20} color="#52b788" />
+        <Text style={styles.text}>Sincronizado</Text>
       </View>
-      <Stack ... />
-    </>
+    );
+  }
+
+  return (
+    <View style={styles.containerOffline}>
+      <Ionicons name="cloud-offline" size={20} color="#fbbf24" />
+      <Text style={styles.textOffline}>Sin conexión</Text>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 8,
+    backgroundColor: '#52b78820',
+    borderRadius: 8,
+  },
+  containerOffline: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 8,
+    backgroundColor: '#fbbf2420',
+    borderRadius: 8,
+  },
+  text: {
+    marginLeft: 8,
+    color: '#52b788',
+    fontSize: 14,
+  },
+  textOffline: {
+    marginLeft: 8,
+    color: '#fbbf24',
+    fontSize: 14,
+  },
+});
 ```
-
-**Also add offline mode banner:**
-- When isOnline=false, show a subtle banner at top
-- "You're offline. Changes will sync when connected."
-- Banner color: gray background with white text
-- Dismissible (user can tap to dismiss)
-
-**Ensure:**
-- Indicator doesn't block content
-- Works with existing auth flow
-- Handles loading state during auth check
   </action>
   <verify>
-    <automated>npx tsc --noEmit app/_layout.tsx</automated>
+    <automated>grep -l "SyncStatusIndicator" src/components/</automated>
   </verify>
-  <done>App layout shows sync status indicator and offline banner</done>
+  <done>Sync indicator UI created</done>
+</task>
+
+<task type="auto">
+  <name>Task 4: Create module analysis document</name>
+  <files>docs/offline-modules.md</files>
+  <action>
+Create documentation of which modules work offline:
+
+| Módulo | Funciona Offline | Justificación |
+|--------|-----------------|---------------|
+| Home Dashboard | Parcial | Muestra cache de datos previos |
+| Perfil | No | Requiere datos del servidor |
+| Colección de Plantas | Sí (lectura) | Datos en SQLite local |
+| Agregar Planta | Cola | Se guarda local, synca después |
+| Identificación | No | Requiere API externa |
+| Cámara | Parcial | Captura local, pero identificación necesita red |
+
+This analysis is required for the lab assignment documentation.
+  </action>
+  <verify>
+    <automated>ls docs/offline-modules.md</automated>
+  </verify>
+  <done>Module analysis created</done>
 </task>
 
 </tasks>
 
-<threat_model>
-## Trust Boundaries
-
-| Boundary | Description |
-|----------|-------------|
-| App → User display | Sync status and capability shown to user |
-
-## STRIDE Threat Register
-
-| Threat ID | Category | Component | Disposition | Mitigation Plan |
-|-----------|----------|-----------|-------------|-----------------|
-| T-LAB3-09 | I | Module status disclosure | accept | Module status is non-sensitive feature metadata |
-| T-LAB3-10 | S | Offline mode bypass | accept | Sync queue ensures data integrity; no security-critical bypass |
-</threat_model>
-
 <verification>
-1. TypeScript check on all modified files
-2. Verify component renders without crashing
-3. Confirm offline banner displays when isOnline=false
+- [ ] Network status detection works
+- [ ] Sync indicator shows correct status
+- [ ] Sync queue processes when online
+- [ ] Module analysis documented
+
 </verification>
 
 <success_criteria>
-1. Sync indicator shows current status visually
-2. Offline banner appears when network unavailable
-3. Module capability report accessible
-4. TypeScript compiles without errors
+App shows sync status and modules work correctly in offline mode
 </success_criteria>
-
-<output>
-After completion, create `.planning/phases/02-lab3/02-lab3-03-SUMMARY.md`
-</output>
