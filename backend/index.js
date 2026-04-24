@@ -30,19 +30,17 @@ app.post('/api/identify', async (req, res) => {
   }
 
   try {
+    const payload = { images };
+    if (typeof latitude === 'number') payload.latitude = latitude;
+    if (typeof longitude === 'number') payload.longitude = longitude;
+
     const response = await fetch(PLANT_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Api-Key': PLANT_API_KEY
       },
-      body: JSON.stringify({
-        images: images,
-        modifiers: ['crops_fast', 'align_full_image'],
-        plant_details: ['common_names', 'url', 'wiki_description', 'care_level', 'care_instructions', 'water_schedule', 'sunlight'],
-        latitude: latitude || 0,
-        longitude: longitude || 0
-      })
+      body: JSON.stringify(payload)
     });
     
     const raw = await response.text();
