@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react"
+import React, { useState, useEffect, useMemo, useCallback } from "react"
 import {
   View,
   Text,
@@ -18,6 +18,62 @@ import {
   CatalogPlant,
   CatalogPlantRarity,
 } from "@/src/services/plantCatalogService"
+
+const RARITY_COLORS: Record<
+  CatalogPlantRarity,
+  { bg: string; text: string; border: string }
+> = {
+  common: {
+    bg: "rgba(64, 145, 108, 0.15)",
+    text: "#40916c",
+    border: "rgba(64, 145, 108, 0.3)",
+  },
+  uncommon: {
+    bg: "rgba(59, 130, 246, 0.15)",
+    text: "#60a5fa",
+    border: "rgba(59, 130, 246, 0.3)",
+  },
+  rare: {
+    bg: "rgba(168, 85, 247, 0.15)",
+    text: "#c084fc",
+    border: "rgba(168, 85, 247, 0.3)",
+  },
+  legendary: {
+    bg: "rgba(245, 158, 11, 0.15)",
+    text: "#fbbf24",
+    border: "rgba(245, 158, 11, 0.3)",
+  },
+}
+
+const RARITY_LABELS: Record<CatalogPlantRarity, string> = {
+  common: "Común",
+  uncommon: "Poco Común",
+  rare: "Rara",
+  legendary: "Legendaria",
+}
+
+function getWaterDropCount(wateringDays: number): number {
+  if (wateringDays <= 5) return 3
+  if (wateringDays <= 10) return 2
+  return 1
+}
+
+function getSunOpacity(light: string): number {
+  const normalized = light.toLowerCase().trim()
+  if (
+    normalized.includes("low") ||
+    normalized.includes("shade") ||
+    normalized.includes("sombra")
+  )
+    return 0.2
+  if (
+    normalized.includes("medium") ||
+    normalized.includes("partial") ||
+    normalized.includes("media")
+  )
+    return 0.6
+  return 1.0
+}
 
 const SKELETON_ROWS = 3
 
@@ -88,6 +144,81 @@ function SkeletonCard() {
     </View>
   )
 }
+
+const PlantCard = React.memo(function PlantCard({
+  plant,
+  onPress,
+}: {
+  plant: CatalogPlant
+  onPress: (p: CatalogPlant) => void
+}) {
+  const { styles } = useThemedStyles("exploreScreen")
+  const rarity = RARITY_COLORS[plant.rarity]
+  const label = RARITY_LABELS[plant.rarity]
+  const waterDrops = getWaterDropCount(plant.wateringDays)
+  const sunOpacity = getSunOpacity(plant.light)
+
+  return (
+    <Pressable
+      style={styles.card}
+      onPress={() => onPress(plant)}
+      android_ripple={{ color: "rgba(64,145,108,0.15)" }}
+    >
+      <View style={styles.cardImageContainer}>
+        <Image
+          source={{ uri: plant.image }}
+          style={styles.cardImage}
+          contentFit="cover"
+        />
+        <View
+          style={[
+            styles.rarityBadge,
+            {
+              backgroundColor: rarity.bg,
+              borderColor: rarity.border,
+            },
+          ]}
+        >
+          <Text
+            style={[styles.rarityText, { color: rarity.text }]}
+            numberOfLines={1}
+          >
+            {label}
+          </Text>
+        </View>
+      </View>
+      <View style={styles.cardInfo}>
+        <Text style={styles.cardName} numberOfLines={1}>
+          {plant.commonName}
+        </Text>
+        <Text style={styles.cardScientific} numberOfLines={1}>
+          {plant.scientificName}
+        </Text>
+        <View style={styles.careRow}>
+          <View style={styles.careIcons}>
+            <View style={styles.waterDrops}>
+              {Array.from({ length: 3 }).map((_, i) => (
+                <Text key={i} style={{ opacity: i < waterDrops ? 1 : 0.2 }}>
+                  💧
+                </Text>
+              ))}
+            </View>
+            <Text style={{ opacity: sunOpacity }}>☀️</Text>
+          </View>
+          <Text
+            style={{
+              fontSize: 9,
+              fontWeight: "600",
+              color: "#95A796",
+            }}
+          >
+            {plant.difficulty}
+          </Text>
+        </View>
+      </View>
+    </Pressable>
+  )
+})
 
 export default function Explore() {
   const { theme, styles } = useThemedStyles("exploreScreen")
@@ -226,31 +357,9 @@ export default function Explore() {
 
   const renderPlantCard = useCallback(
     ({ item }: { item: CatalogPlant }) => {
-      return (
-        <Pressable
-          style={styles.card}
-          onPress={() => handleCardPress(item)}
-          android_ripple={{ color: "rgba(64,145,108,0.15)" }}
-        >
-          <View style={styles.cardImageContainer}>
-            <Image
-              source={{ uri: item.image }}
-              style={styles.cardImage}
-              contentFit="cover"
-            />
-          </View>
-          <View style={styles.cardInfo}>
-            <Text style={styles.cardName} numberOfLines={1}>
-              {item.commonName}
-            </Text>
-            <Text style={styles.cardScientific} numberOfLines={1}>
-              {item.scientificName}
-            </Text>
-          </View>
-        </Pressable>
-      )
+      return <PlantCard plant={item} onPress={handleCardPress} />
     },
-    [handleCardPress, styles]
+    [handleCardPress]
   )
 
   // Error state
