@@ -62,6 +62,7 @@ From CONCERNS.md:
 ## Roadmap Evolution
 
 - Phase 2 added: Lab3 - API + Sincronización
+- Phase 3 added: add calendar and funcionality to missing screens
 
 </decisions>
 

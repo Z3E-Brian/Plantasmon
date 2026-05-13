@@ -10,6 +10,7 @@
 
 - [ ] **Phase 1: Authentication Foundation** - Fix auth integration and connect user data
 - [ ] **Phase 2: Lab3** - API + Sincronización
+- [ ] **Phase 3: Calendar + Missing Screens** - Add calendar and functionality to missing screens
 
 ---
 
@@ -71,6 +72,19 @@
 |-------|----------------|--------|-----------|
 | 1 - Auth Foundation | 0/1 | Not started | - |
 | 2 - Lab3 | 3/3 | Complete | 2026-05-13 |
+| 3 - Calendar + Missing Screens | 0/0 | Not started | - |
+
+---
+
+### Phase 3: Calendar + Missing Screens
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 2
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 3 to break down)
 
 ---
 
