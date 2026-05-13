@@ -39,7 +39,7 @@ created: 2026-05-13
 
 ## Spacing Scale
 
-Declared values from `designSystem.ts` (existing):
+Values from `designSystem.ts` (existing project — inherited, not changed):
 
 | Token | Value | Usage |
 |-------|-------|-------|
@@ -48,6 +48,8 @@ Declared values from `designSystem.ts` (existing):
 | md | 12px | Default element spacing, card internal padding |
 | lg | 18px | Section padding (card horizontal margins) |
 | xl | 24px | Layout gaps, section breaks |
+
+Note: `md: 12px` and `lg: 18px` are the actual values in the project's `designSystem.ts`. The 4px grid is a strict design token convention; 12px (multiple of 4) stays; 18px is an inherited project exception kept for consistency.
 
 Exceptions:
 - **Explore card width**: `(screenWidth - 52) / 2` (inherited from `PlantCollection`)
@@ -59,26 +61,17 @@ Exceptions:
 
 ## Typography
 
-Existing patterns consolidated (all system font, no custom font):
+All system font, no custom font. Constrained to 4 sizes × 2 weights:
 
 | Role | Size | Weight | Line Height | Usage |
 |------|------|--------|-------------|-------|
-| Display | 28px | 900 (bold) | 1.2 | Screen titles ("Explorar", "Journal") |
-| Heading | 18px | 700 (bold) | 1.3 | Section headers, card titles |
-| Subheading | 16px | 600 (semibold) | 1.4 | Plant names in cards, section labels |
-| Body | 14px | 400 (regular) | 1.5 | Descriptions, mission text, stat values |
-| Label | 12px | 600 (semibold) | 1.4 | Badges, filter buttons, stat labels |
-| Caption | 10-11px | 500-700 (medium-bold) | 1.3 | Scientific names (italic), timestamps, footer hints |
-| Scientific | 11px | 400 italic | 1.3 | Scientific names in cards |
+| Display | 28px | 700 | 1.2 | Screen titles ("Explorar", "Journal"), empty state headers |
+| Heading | 22px | 700 | 1.3 | Section headers, card titles, modal headers |
+| Body | 16px | 400 | 1.5 | Plant names in cards, card section titles, descriptions, mission text |
+| Label | 14px | 400 | 1.4 | Badge text, stat values, search input, timestamps, captions, scientific names |
 
-**Explore additions:**
-- Search input text: 14px weight 400
-- Search placeholder: 14px weight 400, color `textTertiary`
-
-**Journal additions:**
-- Card section title: 16px weight 600 (match existing `DailyMissions`, `UserProgress`, `LastIdentified` pattern)
-- Card stat value: 14px weight 700
-- Card stat label: 10px weight 600, color `mutedForeground`
+Weight: `700` = bold (Display, Heading), `400` = regular (Body, Label).
+Color differentiation via `textSecondary` / `textTertiary` replaces separate label/caption sizes.
 
 ---
 
@@ -376,7 +369,11 @@ All labels in Spanish (matching existing app convention):
 
 ### Focus
 - Search TextInput auto-focus is NOT recommended (users may want to browse first)
-- Clear search button: accessible via onPress
+- Clear search (X) button: `accessibilityLabel="Limpiar búsqueda"`
+
+### Visual Anchors
+- **Explore:** Plant card images are the primary visual focal point — cards with plant photos draw the eye first
+- **Journal:** The "Tus Plantas Analizadas" card is the primary visual anchor (most important info, placed first in the card feed)
 
 ---
 
