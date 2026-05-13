@@ -32,9 +32,9 @@
    - Display confidence score and plant details
    - Show care tips (water schedule, sunlight)
 
-3. **Offline Storage** - expo-sqlite integration with:
-   - `plants` table for local plant storage
-   - `sync_queue` table for pending operations
+3. **Offline Storage** - AsyncStorage-based cache and sync queue:
+   - `plantasmon_cache` — cached plant collection for offline reads
+   - `plantasmon_offline_queue` — pending write operations for deferred sync
    - Functions: savePlantLocal, getLocalPlants, addToSyncQueue, getSyncQueue
 
 ## API Configuration

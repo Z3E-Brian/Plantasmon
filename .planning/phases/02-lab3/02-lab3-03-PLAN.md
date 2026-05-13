@@ -6,8 +6,10 @@ wave: 3
 depends_on: [02-lab3-01, 02-lab3-02]
 files_modified:
   - src/components/SyncStatusIndicator.tsx
-  - app/_layout.tsx
   - src/services/syncService.ts
+  - src/services/offlineStorage.ts
+  - src/hooks/useNetworkStatus.ts
+  - docs/offline-modules.md
 autonomous: true
 requirements:
   - Module analysis for offline capability
