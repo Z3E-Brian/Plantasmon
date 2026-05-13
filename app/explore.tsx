@@ -1,34 +1,381 @@
-import { Text, View, StyleSheet } from "react-native"
+import { useState, useEffect, useMemo, useCallback } from "react"
+import {
+  View,
+  Text,
+  TextInput,
+  FlatList,
+  Pressable,
+  RefreshControl,
+  ActivityIndicator,
+} from "react-native"
+import { router } from "expo-router"
+import { Image } from "expo-image"
+import * as Haptics from "expo-haptics"
 import ScreenWrapper from "@/src/components/screenWrapper/ScreenWrapper"
-import { COLORS } from "@/src/constants/theme"
+import { useThemedStyles } from "@/src/styles/themedStyles"
+import {
+  getAllPlants,
+  CatalogPlant,
+  CatalogPlantRarity,
+} from "@/src/services/plantCatalogService"
+
+const SKELETON_ROWS = 3
+
+function SkeletonGrid() {
+  return (
+    <>
+      {Array.from({ length: SKELETON_ROWS }).map((_, rowIndex) => (
+        <View
+          key={`skeleton-row-${rowIndex}`}
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            marginBottom: 12,
+          }}
+        >
+          <View style={{ width: "48%" }}>
+            <SkeletonCard />
+          </View>
+          <View style={{ width: "48%" }}>
+            <SkeletonCard />
+          </View>
+        </View>
+      ))}
+    </>
+  )
+}
+
+function SkeletonCard() {
+  return (
+    <View
+      style={{
+        backgroundColor: "#233026",
+        borderRadius: 16,
+        overflow: "hidden",
+        opacity: 0.5,
+      }}
+    >
+      <View
+        style={{
+          height: 112,
+          backgroundColor: "#233026",
+          borderTopLeftRadius: 16,
+          borderTopRightRadius: 16,
+        }}
+      />
+      <View style={{ padding: 10 }}>
+        <View
+          style={{
+            height: 12,
+            width: "80%",
+            backgroundColor: "#233026",
+            borderRadius: 4,
+            marginTop: 8,
+            marginHorizontal: 10,
+          }}
+        />
+        <View
+          style={{
+            height: 12,
+            width: "50%",
+            backgroundColor: "#233026",
+            borderRadius: 4,
+            marginTop: 6,
+            marginHorizontal: 10,
+          }}
+        />
+      </View>
+    </View>
+  )
+}
 
 export default function Explore() {
+  const { theme, styles } = useThemedStyles("exploreScreen")
+  const [plants, setPlants] = useState<CatalogPlant[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [refreshing, setRefreshing] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [debouncedQuery, setDebouncedQuery] = useState("")
+
+  // Debounce search query (300ms)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(searchQuery)
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [searchQuery])
+
+  // Fetch plants on mount
+  const fetchPlants = useCallback(async (isRefresh = false) => {
+    try {
+      if (isRefresh) {
+        setRefreshing(true)
+      } else {
+        setLoading(true)
+      }
+      setError(null)
+      const data = await getAllPlants()
+      setPlants(data)
+    } catch (err) {
+      console.error("Error fetching plants:", err)
+      setError("No pudimos cargar las plantas")
+    } finally {
+      setLoading(false)
+      setRefreshing(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchPlants()
+  }, [fetchPlants])
+
+  // Filtered plants based on debounced search
+  const filteredPlants = useMemo(() => {
+    if (!debouncedQuery.trim()) return plants
+    const q = debouncedQuery.toLowerCase().trim()
+    return plants.filter(
+      (p) =>
+        p.commonName.toLowerCase().includes(q) ||
+        p.scientificName.toLowerCase().includes(q)
+    )
+  }, [plants, debouncedQuery])
+
+  const handleRefresh = useCallback(() => {
+    setSearchQuery("")
+    setDebouncedQuery("")
+    fetchPlants(true)
+  }, [fetchPlants])
+
+  const handleRetry = useCallback(() => {
+    fetchPlants()
+  }, [fetchPlants])
+
+  const handleCardPress = useCallback(async (plant: CatalogPlant) => {
+    try {
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+    } catch {
+      // Haptics not available on all devices
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    router.push(`/plant/${plant.id}` as any)
+  }, [])
+
+  const renderSearchBar = () => {
+    if (loading && plants.length === 0) return null
+    return (
+      <View style={styles.searchContainer}>
+        <Text style={styles.searchIcon}>🔍</Text>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Buscar plantas..."
+          placeholderTextColor={theme.colors.textTertiary}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          autoFocus={false}
+          autoCorrect={false}
+        />
+        {searchQuery.length > 0 && (
+          <Pressable
+            style={styles.clearButton}
+            onPress={() => setSearchQuery("")}
+            accessibilityLabel="Limpiar búsqueda"
+            android_ripple={{ color: "rgba(64,145,108,0.15)" }}
+          >
+            <Text style={styles.clearButtonText}>✕</Text>
+          </Pressable>
+        )}
+      </View>
+    )
+  }
+
+  const renderEmptyState = () => {
+    if (loading && plants.length === 0) return null
+
+    // No search results
+    if (debouncedQuery.trim() && filteredPlants.length === 0) {
+      return (
+        <View style={styles.empty}>
+          <View style={styles.emptyIcon}>
+            <Text style={{ fontSize: 24 }}>🌿</Text>
+          </View>
+          <Text style={styles.emptyTitle}>
+            No hay resultados para "{debouncedQuery}"
+          </Text>
+          <Text style={styles.emptySubtitle}>Prueba con otro término</Text>
+        </View>
+      )
+    }
+
+    // Catalog is truly empty
+    if (!loading && plants.length === 0) {
+      return (
+        <View style={styles.empty}>
+          <View style={styles.emptyIcon}>
+            <Text style={{ fontSize: 24 }}>🌿</Text>
+          </View>
+          <Text style={styles.emptyTitle}>
+            El catálogo aún no tiene plantas
+          </Text>
+        </View>
+      )
+    }
+
+    return null
+  }
+
+  const renderPlantCard = useCallback(
+    ({ item }: { item: CatalogPlant }) => {
+      return (
+        <Pressable
+          style={styles.card}
+          onPress={() => handleCardPress(item)}
+          android_ripple={{ color: "rgba(64,145,108,0.15)" }}
+        >
+          <View style={styles.cardImageContainer}>
+            <Image
+              source={{ uri: item.image }}
+              style={styles.cardImage}
+              contentFit="cover"
+            />
+          </View>
+          <View style={styles.cardInfo}>
+            <Text style={styles.cardName} numberOfLines={1}>
+              {item.commonName}
+            </Text>
+            <Text style={styles.cardScientific} numberOfLines={1}>
+              {item.scientificName}
+            </Text>
+          </View>
+        </Pressable>
+      )
+    },
+    [handleCardPress, styles]
+  )
+
+  // Error state
+  if (error && !loading && plants.length === 0) {
+    return (
+      <ScreenWrapper>
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 20 }}>
+          <View
+            style={{
+              width: 48,
+              height: 48,
+              borderRadius: 24,
+              backgroundColor: "rgba(239, 68, 68, 0.15)",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: 12,
+            }}
+          >
+            <Text style={{ fontSize: 24 }}>⚠️</Text>
+          </View>
+          <Text
+            style={{
+              fontSize: 14,
+              fontWeight: "700",
+              color: theme.colors.textPrimary,
+              textAlign: "center",
+              marginBottom: 8,
+            }}
+          >
+            {error}
+          </Text>
+          <Text
+            style={{
+              fontSize: 12,
+              color: theme.colors.textSecondary,
+              textAlign: "center",
+              marginBottom: 16,
+            }}
+          >
+            Revisa tu conexión e inténtalo de nuevo
+          </Text>
+          <Pressable
+            style={{
+              backgroundColor: theme.colors.primary,
+              borderRadius: theme.radius.sm,
+              paddingHorizontal: 16,
+              paddingVertical: 10,
+            }}
+            onPress={handleRetry}
+            android_ripple={{ color: "rgba(255,255,255,0.2)" }}
+          >
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: "600",
+                color: theme.colors.primaryForeground,
+              }}
+            >
+              Reintentar
+            </Text>
+          </Pressable>
+        </View>
+      </ScreenWrapper>
+    )
+  }
+
+  // Loading state (initial)
+  if (loading && plants.length === 0) {
+    return (
+      <ScreenWrapper>
+        <View style={styles.container}>
+          <View
+            style={{
+              padding: 20,
+              paddingBottom: 0,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 28,
+                fontWeight: "700",
+                color: theme.colors.textPrimary,
+                marginBottom: 16,
+              }}
+            >
+              🔍 Explorar
+            </Text>
+          </View>
+          <View style={{ paddingHorizontal: 20 }}>
+            <SkeletonGrid />
+          </View>
+        </View>
+      </ScreenWrapper>
+    )
+  }
+
   return (
     <ScreenWrapper>
       <View style={styles.container}>
-        <Text style={styles.title}>🔍 Explorar</Text>
-        <Text style={styles.subtitle}>Próximamente...</Text>
+        <FlatList
+          data={filteredPlants}
+          renderItem={renderPlantCard}
+          keyExtractor={(item) => item.id}
+          numColumns={2}
+          columnWrapperStyle={styles.row}
+          contentContainerStyle={styles.flatList}
+          showsVerticalScrollIndicator={false}
+          ListHeaderComponent={renderSearchBar}
+          ListEmptyComponent={renderEmptyState}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              tintColor={theme.colors.primary}
+            />
+          }
+          ListFooterComponent={
+            loading && plants.length > 0 ? (
+              <View style={{ paddingVertical: 20, alignItems: "center" }}>
+                <ActivityIndicator size="small" color={theme.colors.primary} />
+              </View>
+            ) : null
+          }
+        />
       </View>
     </ScreenWrapper>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: COLORS.foreground,
-    marginBottom: 12,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: COLORS.foreground,
-    opacity: 0.7,
-  },
-})
