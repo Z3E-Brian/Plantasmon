@@ -900,6 +900,337 @@ export const createIdentifyStyles = (theme: AppTheme) =>
     },
   });
 
+// ==================== EXPLORE SCREEN ====================
+export const createExploreScreenStyles = (theme: AppTheme) => {
+  const { width } = Dimensions.get("window")
+  const CARD_WIDTH = (width - 52) / 2
+
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    searchContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: theme.colors.surfaceMuted,
+      borderRadius: theme.radius.md,
+      paddingHorizontal: theme.spacing.md,
+      marginHorizontal: 20,
+      marginBottom: theme.spacing.md,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    searchIcon: {
+      marginRight: theme.spacing.sm,
+    },
+    searchInput: {
+      flex: 1,
+      height: 40,
+      fontSize: 14,
+      color: theme.colors.textPrimary,
+    },
+    clearButton: {
+      width: 28,
+      height: 28,
+      borderRadius: 14,
+      backgroundColor: theme.colors.surface,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    clearButtonText: {
+      fontSize: 12,
+      color: theme.colors.textSecondary,
+    },
+    flatList: {
+      paddingHorizontal: 20,
+      paddingBottom: 70,
+    },
+    row: {
+      justifyContent: "space-between",
+      marginBottom: theme.spacing.md,
+    },
+    card: {
+      width: CARD_WIDTH,
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radius.md,
+      overflow: "hidden",
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    cardImageContainer: {
+      height: 112,
+      position: "relative",
+      backgroundColor: theme.colors.primarySoft,
+    },
+    cardImage: {
+      width: "100%",
+      height: "100%",
+    },
+    rarityBadge: {
+      position: "absolute",
+      top: 6,
+      right: 6,
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+      borderRadius: 4,
+      borderWidth: 1,
+    },
+    rarityText: {
+      fontSize: 9,
+      fontWeight: "700",
+    },
+    healthTag: {
+      position: "absolute",
+      bottom: 6,
+      left: 6,
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+      borderRadius: 4,
+      borderWidth: 1,
+    },
+    healthText: {
+      fontSize: 9,
+      fontWeight: "700",
+      textTransform: "capitalize",
+    },
+    cardInfo: {
+      padding: 10,
+    },
+    cardName: {
+      fontSize: 12,
+      fontWeight: "700",
+      color: theme.colors.textPrimary,
+    },
+    cardScientific: {
+      fontSize: 10,
+      fontStyle: "italic",
+      color: theme.colors.textSecondary,
+      marginTop: 2,
+    },
+    careRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginTop: theme.spacing.sm,
+    },
+    careIcons: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.sm,
+    },
+    waterDrops: {
+      flexDirection: "row",
+      gap: 2,
+    },
+    daysOwned: {
+      fontSize: 9,
+      fontWeight: "600",
+      color: theme.colors.textTertiary,
+    },
+    empty: {
+      alignItems: "center",
+      paddingVertical: 48,
+    },
+    emptyIcon: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      backgroundColor: theme.colors.surfaceMuted,
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: theme.spacing.md,
+    },
+    emptyTitle: {
+      fontSize: 14,
+      fontWeight: "700",
+      color: theme.colors.textPrimary,
+    },
+    emptySubtitle: {
+      fontSize: 12,
+      color: theme.colors.textSecondary,
+      marginTop: 4,
+    },
+    skeletonCard: {
+      width: CARD_WIDTH,
+      backgroundColor: theme.colors.surfaceMuted,
+      borderRadius: theme.radius.md,
+      opacity: 0.5,
+      height: 200,
+    },
+    skeletonImage: {
+      height: 112,
+      backgroundColor: theme.colors.surfaceMuted,
+      borderTopLeftRadius: theme.radius.md,
+      borderTopRightRadius: theme.radius.md,
+    },
+    skeletonText: {
+      height: 12,
+      backgroundColor: theme.colors.surfaceMuted,
+      borderRadius: theme.radius.sm,
+      marginTop: 8,
+      marginHorizontal: 10,
+    },
+  })
+}
+
+// ==================== JOURNAL SCREEN ====================
+export const createJournalScreenStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    scrollContent: {
+      paddingBottom: 70,
+    },
+    screenTitle: {
+      fontSize: 28,
+      fontWeight: "700",
+      color: theme.colors.textPrimary,
+      marginHorizontal: 20,
+      marginBottom: theme.spacing.lg,
+      marginTop: theme.spacing.md,
+    },
+    card: {
+      marginHorizontal: 20,
+      marginBottom: theme.spacing.lg,
+      padding: theme.spacing.lg,
+      borderRadius: theme.radius.md,
+      backgroundColor: theme.colors.surface,
+    },
+    cardHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: theme.spacing.md,
+    },
+    cardTitle: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: theme.colors.textPrimary,
+    },
+    countBadge: {
+      backgroundColor: theme.colors.primarySoft,
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: 12,
+    },
+    countBadgeText: {
+      fontSize: 12,
+      fontWeight: "600",
+      color: theme.colors.primary,
+    },
+    plantRowItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
+    },
+    plantRowImage: {
+      width: 48,
+      height: 48,
+      borderRadius: theme.radius.sm,
+      backgroundColor: theme.colors.primarySoft,
+    },
+    plantRowName: {
+      flex: 1,
+      fontSize: 14,
+      fontWeight: "600",
+      color: theme.colors.textPrimary,
+    },
+    plantRowChevron: {
+      fontSize: 18,
+      color: theme.colors.textSecondary,
+    },
+    footerLink: {
+      fontSize: 14,
+      fontWeight: "600",
+      color: theme.colors.primary,
+      marginTop: theme.spacing.sm,
+    },
+    achievementCard: {
+      marginHorizontal: 20,
+      marginBottom: theme.spacing.lg,
+      padding: theme.spacing.lg,
+      borderRadius: theme.radius.md,
+      backgroundColor: theme.colors.primarySoft,
+      borderWidth: 2,
+      borderColor: theme.colors.primary,
+    },
+    achievementContent: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.lg,
+    },
+    achievementIcon: {
+      width: 48,
+      height: 48,
+      fontSize: 48,
+    },
+    achievementInfo: {
+      flex: 1,
+    },
+    achievementLabel: {
+      fontSize: 12,
+      color: theme.colors.textSecondary,
+      marginBottom: 4,
+    },
+    achievementName: {
+      fontSize: 18,
+      fontWeight: "600",
+      color: theme.colors.textPrimary,
+    },
+    skeletonCard: {
+      marginHorizontal: 20,
+      marginBottom: theme.spacing.lg,
+      height: 120,
+      backgroundColor: theme.colors.surfaceMuted,
+      borderRadius: theme.radius.md,
+    },
+    emptyContainer: {
+      alignItems: "center",
+      paddingVertical: 60,
+    },
+    emptyTitle: {
+      fontSize: 22,
+      fontWeight: "700",
+      color: theme.colors.textPrimary,
+    },
+    emptyBody: {
+      fontSize: 14,
+      color: theme.colors.textSecondary,
+      textAlign: "center",
+      marginTop: theme.spacing.sm,
+    },
+    errorCard: {
+      marginHorizontal: 20,
+      marginBottom: theme.spacing.lg,
+      padding: theme.spacing.lg,
+      borderRadius: theme.radius.md,
+      backgroundColor: theme.colors.surface,
+      borderWidth: 1,
+      borderColor: COLORS.destructive,
+    },
+    errorText: {
+      fontSize: 14,
+      color: COLORS.destructive,
+      marginBottom: theme.spacing.sm,
+    },
+    retryButton: {
+      backgroundColor: theme.colors.primary,
+      borderRadius: theme.radius.sm,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
+      alignSelf: "flex-start",
+    },
+    retryText: {
+      fontSize: 14,
+      fontWeight: "600",
+      color: theme.colors.primaryForeground,
+    },
+  });
+
 // ==================== HOOK CENTRALIZADO ====================
 const stylesByComponent = {
   achievements: {
@@ -958,6 +1289,14 @@ const stylesByComponent = {
     light: createIdentifyStyles(getAppTheme("light")),
     dark: createIdentifyStyles(getAppTheme("dark")),
   },
+  exploreScreen: {
+    light: createExploreScreenStyles(getAppTheme("light")),
+    dark: createExploreScreenStyles(getAppTheme("dark")),
+  },
+  journalScreen: {
+    light: createJournalScreenStyles(getAppTheme("light")),
+    dark: createJournalScreenStyles(getAppTheme("dark")),
+  },
 } as const;
 
 type ComponentName = keyof typeof stylesByComponent;
@@ -990,6 +1329,10 @@ type StylesForComponent<T extends ComponentName> = ReturnType<
     ? typeof createTipCardStyles
     : T extends "identify"
     ? typeof createIdentifyStyles
+    : T extends "exploreScreen"
+    ? typeof createExploreScreenStyles
+    : T extends "journalScreen"
+    ? typeof createJournalScreenStyles
     : never
 >;
 
