@@ -16,30 +16,53 @@ export default function Journal() {
   const { theme, styles } = useThemedStyles("journalScreen")
   const [userPlants, setUserPlants] = useState<UserPlant[]>([])
   const [achievements, setAchievements] = useState<UserAchievement[]>([])
+  const [failedImages, setFailedImages] = useState<Record<string, boolean>>({})
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const handleImageError = useCallback((plantId: string) => {
+    setFailedImages((prev) => ({ ...prev, [plantId]: true }))
+  }, [])
+
   const fetchData = useCallback(async (isRefresh = false) => {
+    // Guard: prevent concurrent refreshes
+    if (isRefresh && refreshing) return
+
     if (isRefresh) setRefreshing(true)
     else setLoading(true)
     setError(null)
 
+    // Individual service calls — only show error if BOTH fail
+    let plants: UserPlant[] = []
+    let achList: UserAchievement[] = []
+    let hasError = false
+
     try {
-      const [plants, achResult] = await Promise.all([
-        getUserPlants(),
-        getUserAchievements(),
-      ])
-      setUserPlants(plants)
-      setAchievements(achResult.achievements)
-    } catch (err) {
-      setError("No pudimos cargar tus datos")
-      console.error("Journal fetch error:", err)
-    } finally {
-      setLoading(false)
-      setRefreshing(false)
+      plants = await getUserPlants()
+    } catch (e) {
+      hasError = true
+      console.error("Plants fetch error:", e)
     }
-  }, [])
+
+    try {
+      const result = await getUserAchievements()
+      achList = result.achievements
+    } catch (e) {
+      hasError = true
+      console.error("Achievements fetch error:", e)
+    }
+
+    setUserPlants(plants)
+    setAchievements(achList)
+
+    if (hasError && plants.length === 0 && achList.length === 0) {
+      setError("No pudimos cargar tus datos")
+    }
+
+    setLoading(false)
+    setRefreshing(false)
+  }, [refreshing])
 
   useEffect(() => { fetchData() }, [fetchData])
 
@@ -148,14 +171,31 @@ export default function Journal() {
           {userPlants.length > 0 ? (
             <>
               <View style={styles.plantRowItem}>
-                {visiblePlants.map((plant) => (
-                  <Image
-                    key={plant.id}
-                    source={{ uri: plant.image }}
-                    style={styles.plantRowImage}
-                    contentFit="cover"
-                  />
-                ))}
+                {visiblePlants.map((plant) =>
+                  failedImages[plant.id] ? (
+                    <View
+                      key={plant.id}
+                      style={[
+                        styles.plantRowImage,
+                        {
+                          alignItems: "center",
+                          justifyContent: "center",
+                          backgroundColor: theme.colors.primarySoft,
+                        },
+                      ]}
+                    >
+                      <Text style={{ fontSize: 20 }}>🌱</Text>
+                    </View>
+                  ) : (
+                    <Image
+                      key={plant.id}
+                      source={{ uri: plant.image }}
+                      style={styles.plantRowImage}
+                      contentFit="cover"
+                      onError={() => handleImageError(plant.id)}
+                    />
+                  )
+                )}
                 {remainingPlants > 0 && (
                   <View
                     style={{
@@ -262,9 +302,24 @@ export default function Journal() {
                   🏆 Logros Recientes
                 </Text>
                 <Text style={styles.achievementLabel}>¡Desbloqueado!</Text>
-                <Text style={styles.achievementName}>
+                <Text
+                  style={styles.achievementName}
+                  numberOfLines={1}
+                >
                   {recentAchievement.name}
                 </Text>
+                {recentAchievement.description && (
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: theme.colors.textSecondary,
+                      marginTop: 4,
+                    }}
+                    numberOfLines={2}
+                  >
+                    {recentAchievement.description}
+                  </Text>
+                )}
               </View>
             </View>
           </Pressable>
