@@ -118,7 +118,7 @@
 
 ---
 
-*Roadmap updated: 2026-05-13*
+*Roadmap updated: 2026-05-14*
 
 ## Execution Status
 
@@ -129,7 +129,10 @@
 | 02-lab3-03 — Sync Indicators & Module Analysis | ✓ Complete | 2026-05-13 |
 | 03-01-PLAN.md — Foundation | ✓ Planned | — |
 | 03-02-PLAN.md — Explore Screen | ✓ Planned | — |
-| 03-03-PLAN.md — Journal Screen | ✓ Planned | — |
+| 03-03-PLAN.md — Journal Screen | ✓ Complete | 2026-05-13 |
+| 04-01-PLAN.md — Home Stats Bar | ✓ Complete | 2026-05-13 |
+| 04-02-PLAN.md — Achievements Backend | ✓ Complete | 2026-05-13 |
+| 04-03-PLAN.md — Achievements UI | ✓ Complete | 2026-05-14 |
 | 04-01-PLAN.md — Home Stats Bar | ✓ Planned | — |
 | 04-02-PLAN.md — Achievements Backend | ✓ Planned | — |
 | 04-03-PLAN.md — Achievements UI | ✓ Planned | — |
