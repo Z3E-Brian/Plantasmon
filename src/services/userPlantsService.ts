@@ -6,7 +6,9 @@ import {
   setDoc,
 } from "firebase/firestore";
 import NetInfo from "@react-native-community/netinfo";
-import { CURRENT_USER_ID } from "./userService";
+// Reemplaza CURRENT_USER_ID por getCurrentUserId() (Phase 1: Authentication Foundation)
+// para que cada operación use el UID del usuario autenticado.
+import { getCurrentUserId } from "./userService";
 import { savePlantLocal, addToSyncQueue } from "@/src/services/offlineStorage";
 
 export interface UserPlant {
@@ -83,12 +85,13 @@ async function getRawUserPlants(userId: string): Promise<{
 
 // ─── Funciones públicas ──────────────────────────────────────────────────────
 
-export async function getUserPlants(userId: string = CURRENT_USER_ID): Promise<UserPlant[]> {
+export async function getUserPlants(userId?: string): Promise<UserPlant[]> {
   try {
-    const { userPlants } = await getRawUserPlants(userId);
+    const resolvedUserId = userId ?? getCurrentUserId();
+    const { userPlants } = await getRawUserPlants(resolvedUserId);
 
     if (!userPlants.length) {
-      console.log("No hay plantas para:", userId);
+      console.log("No hay plantas para:", resolvedUserId);
       return [];
     }
 
@@ -131,10 +134,11 @@ export async function getUserPlants(userId: string = CURRENT_USER_ID): Promise<U
 export async function updateUserPlant(
   plantId: string,
   updates: UserPlantUpdate,
-  userId: string = CURRENT_USER_ID
+  userId?: string
 ): Promise<void> {
   try {
-    const { userPlants, fieldPath, userRef } = await getRawUserPlants(userId);
+    const resolvedUserId = userId ?? getCurrentUserId();
+    const { userPlants, fieldPath, userRef } = await getRawUserPlants(resolvedUserId);
 
     const updated = userPlants.map((p: any) =>
       p.id === plantId ? { ...p, ...updates } : p
@@ -152,10 +156,11 @@ export async function updateUserPlant(
  */
 export async function setCompanionPlant(
   plantId: string,
-  userId: string = CURRENT_USER_ID
+  userId?: string
 ): Promise<void> {
   try {
-    const { userPlants, fieldPath, userRef } = await getRawUserPlants(userId);
+    const resolvedUserId = userId ?? getCurrentUserId();
+    const { userPlants, fieldPath, userRef } = await getRawUserPlants(resolvedUserId);
 
     const updated = userPlants.map((p: any) => ({
       ...p,
@@ -172,10 +177,11 @@ export async function setCompanionPlant(
 export async function togglePlantFavorite(
   plantId: string,
   isFavorite: boolean,
-  userId: string = CURRENT_USER_ID
+  userId?: string
 ): Promise<void> {
   try {
-    const { userPlants, fieldPath, userRef } = await getRawUserPlants(userId);
+    const resolvedUserId = userId ?? getCurrentUserId();
+    const { userPlants, fieldPath, userRef } = await getRawUserPlants(resolvedUserId);
 
     const updated = userPlants.map((p: any) =>
       p.id === plantId ? { ...p, favorite: isFavorite } : p
@@ -204,12 +210,14 @@ export async function addUserPlant(
   const {
     plantId,
     imageUri,
-    userId = CURRENT_USER_ID,
+    userId,
     commonName,
     scientificName,
     waterSchedule,
     sunlight,
   } = input;
+
+  const resolvedUserId = userId ?? getCurrentUserId();
 
   try {
     // Always save plant data locally first
@@ -227,14 +235,14 @@ export async function addUserPlant(
 
     if (netInfo.isConnected) {
       // Online: save to Firebase directly
-      const userRef = doc(db, "users", userId);
+      const userRef = doc(db, "users", resolvedUserId);
       const userSnap = await getDoc(userRef);
 
       if (!userSnap.exists()) {
         await setDoc(userRef, { userPlants: [] });
       }
 
-      const { userPlants, fieldPath } = await getRawUserPlants(userId);
+      const { userPlants, fieldPath } = await getRawUserPlants(resolvedUserId);
 
       const alreadyExists = userPlants.some((p: any) => p.id === plantId);
       if (alreadyExists) {
@@ -291,7 +299,7 @@ export async function addUserPlant(
         data: JSON.stringify({
           plantId,
           imageUri,
-          userId,
+          userId: resolvedUserId,
           commonName,
           scientificName,
           waterSchedule,
@@ -311,9 +319,10 @@ export async function addUserPlant(
 /**
  * Cuenta cuántas plantas fueron identificadas hoy (fecha local).
  */
-export async function getPhotosTodayCount(userId: string = CURRENT_USER_ID): Promise<number> {
+export async function getPhotosTodayCount(userId?: string): Promise<number> {
   try {
-    const { userPlants } = await getRawUserPlants(userId);
+    const resolvedUserId = userId ?? getCurrentUserId();
+    const { userPlants } = await getRawUserPlants(resolvedUserId);
     const today = new Date();
     const todayStr = toDateStr(today);
 
@@ -331,10 +340,11 @@ export async function getPhotosTodayCount(userId: string = CURRENT_USER_ID): Pro
  * Obtiene la planta identificada más reciente (nombre + fecha + id + imagen).
  */
 export async function getLastIdentification(
-  userId: string = CURRENT_USER_ID
+  userId?: string
 ): Promise<{ plantId: string; plantName: string; image: string; date: Date } | null> {
   try {
-    const { userPlants } = await getRawUserPlants(userId);
+    const resolvedUserId = userId ?? getCurrentUserId();
+    const { userPlants } = await getRawUserPlants(resolvedUserId);
     if (!userPlants.length) return null;
 
     // Ordenar por firstIdentifiedAt descendente

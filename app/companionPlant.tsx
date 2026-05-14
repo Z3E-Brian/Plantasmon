@@ -13,7 +13,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { doc, getDoc } from "firebase/firestore"
 import { db } from "@/src/config/firebase"
 import { COLORS } from "@/src/constants/theme"
-import { CURRENT_USER_ID } from "@/src/services/userService"
+import { getCurrentUserId } from "@/src/services/userService"
 
 interface CompanionData {
   id: string
@@ -84,7 +84,7 @@ export default function CompanionPlantScreen() {
   const loadCompanion = useCallback(async () => {
     setLoading(true)
     try {
-      const userSnap = await getDoc(doc(db, "users", CURRENT_USER_ID))
+      const userSnap = await getDoc(doc(db, "users", getCurrentUserId()))
       if (!userSnap.exists()) return
       const userData  = userSnap.data()
       const rawPlants: any[] = userData?.subcollections?.userPlants ?? userData?.userPlants ?? []

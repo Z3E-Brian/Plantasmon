@@ -25,7 +25,7 @@ import {
   PLANT_PERSONALITIES,
 } from "@/src/schemas/editProfileSchema";
 import { updateUserPlant, setCompanionPlant } from "@/src/services/userPlantsService";
-import { CURRENT_USER_ID, getUserProfile, updateUserBio } from "@/src/services/userService";
+import { getCurrentUserId, getUserProfile, updateUserBio } from "@/src/services/userService";
 
 interface PlantInfo {
   id: string; commonName: string; scientificName: string; difficulty: string;
@@ -69,7 +69,7 @@ export default function EditProfileScreen() {
       try {
         const [user, userSnap] = await Promise.all([
           getUserProfile(),
-          getDoc(doc(db, "users", CURRENT_USER_ID)),
+          getDoc(doc(db, "users", getCurrentUserId())),
         ]);
         if (!user) return;
 
@@ -134,8 +134,8 @@ export default function EditProfileScreen() {
   const onSubmit = async (data: EditProfileFormData) => {
     setSaving(true);
     try {
-      await updateUserBio(CURRENT_USER_ID, { bio: data.bio, location: data.location });
-      await updateDoc(doc(db, "users", CURRENT_USER_ID), { displayName: data.name });
+      await updateUserBio(undefined, { bio: data.bio, location: data.location });
+      await updateDoc(doc(db, "users", getCurrentUserId()), { displayName: data.name });
       if (companion) {
         const finalLocation = data.plantLocation === "otro" ? customLocation : data.plantLocation ?? "";
         await updateUserPlant(companion.id, {

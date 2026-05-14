@@ -5,7 +5,6 @@ import { useThemedStyles } from "@/src/styles/themedStyles"
 import {
   getAccountAge,
   getUserProfile,
-  CURRENT_USER_ID,
 } from "@/src/services/userService"
 import {
   getPhotosTodayCount,
@@ -68,7 +67,7 @@ export function StatsBar() {
 
         // Fetch profile (account age + streak) — single call
         try {
-          const profile = await getUserProfile(CURRENT_USER_ID)
+          const profile = await getUserProfile()
           if (profile && !cancelled) {
             accountAge = getAccountAge(profile.joinDate)
             streakDays = profile.streak
@@ -79,14 +78,14 @@ export function StatsBar() {
 
         // Photos today
         try {
-          photosToday = await getPhotosTodayCount(CURRENT_USER_ID)
+          photosToday = await getPhotosTodayCount()
         } catch {
           // fallback
         }
 
         // Last identification
         try {
-          lastIdentification = await getLastIdentification(CURRENT_USER_ID)
+          lastIdentification = await getLastIdentification()
         } catch {
           // fallback
         }

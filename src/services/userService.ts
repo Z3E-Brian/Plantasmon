@@ -1,12 +1,22 @@
-import { db } from "@/src/config/firebase";
+// auth importada para obtener el UID real del usuario autenticado
+// en lugar del CURRENT_USER_ID = "u_001" hardcodeado (Phase 1: Authentication Foundation)
+import { auth, db } from "@/src/config/firebase";
 import {
   Timestamp,
   doc,
   getDoc,
   updateDoc,
+  setDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 
-export const CURRENT_USER_ID = "u_001";
+// Reemplaza CURRENT_USER_ID = "u_001". Obtiene el UID del usuario autenticado
+// desde Firebase Auth, asi cada usuario ve sus propios datos (HOME-01, PROF-01).
+export function getCurrentUserId(): string {
+  const uid = auth.currentUser?.uid;
+  if (!uid) throw new Error("Usuario no autenticado");
+  return uid;
+}
 
 export interface UserProfile {
   // ProfileHero
@@ -43,9 +53,10 @@ function safeParseDate(value: unknown): Date {
   return isNaN(d.getTime()) ? new Date() : d;
 }
 
-export async function getUserProfile(userId: string = CURRENT_USER_ID): Promise<UserProfile | null> {
+export async function getUserProfile(userId?: string): Promise<UserProfile | null> {
   try {
-    const ref = doc(db, "users", userId);
+    const resolvedUserId = userId ?? getCurrentUserId();
+    const ref = doc(db, "users", resolvedUserId);
     const snapshot = await getDoc(ref);
 
     if (!snapshot.exists()) {
@@ -107,11 +118,12 @@ export async function getUserProfile(userId: string = CURRENT_USER_ID): Promise<
 }
 
 export async function updateUserSettings(
-  userId: string = CURRENT_USER_ID,
+  userId?: string,
   settings: Partial<{ themeId: string; titleId: string; frameId: string; notificationsEnabled: boolean }>
 ): Promise<void> {
   try {
-    const ref = doc(db, "users", userId);
+    const resolvedUserId = userId ?? getCurrentUserId();
+    const ref = doc(db, "users", resolvedUserId);
     await updateDoc(ref, {
       "settings.themeId": settings.themeId,
       "settings.titleId": settings.titleId,
@@ -124,11 +136,12 @@ export async function updateUserSettings(
 }
 
 export async function updateUserBio(
-  userId: string = CURRENT_USER_ID,
+  userId?: string,
   data: Partial<{ bio: string; location: string }>
 ): Promise<void> {
   try {
-    const ref = doc(db, "users", userId);
+    const resolvedUserId = userId ?? getCurrentUserId();
+    const ref = doc(db, "users", resolvedUserId);
     const updateData: Record<string, any> = {};
 
     // ✅ Escribir en "aboutme", que es el campo real en Firebase
@@ -163,10 +176,11 @@ export function getAccountAge(joinDate: Date): number {
  * - Si no hay lastWateredDate: establece streak a 1
  */
 export async function logWateringActivity(
-  userId: string = CURRENT_USER_ID
+  userId?: string
 ): Promise<void> {
   try {
-    const ref = doc(db, "users", userId);
+    const resolvedUserId = userId ?? getCurrentUserId();
+    const ref = doc(db, "users", resolvedUserId);
     const snapshot = await getDoc(ref);
 
     if (!snapshot.exists()) {
@@ -214,4 +228,49 @@ export async function logWateringActivity(
 
 function toDateStr(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+// Crea el documento del usuario en Firestore tras el registro (AUTH-01).
+// Se llama desde registerScreen.tsx con el uid devuelto por Firebase Auth.
+// Los campos coinciden con lo que esperan HomeScreen, ProfileScreen, etc.
+export async function createUserDocument(uid: string, email: string): Promise<void> {
+  try {
+    const ref = doc(db, "users", uid);
+    const snapshot = await getDoc(ref);
+    if (snapshot.exists()) {
+      console.log("El documento del usuario ya existe:", uid);
+      return;
+    }
+    const displayName = email.split("@")[0] || "";
+    await setDoc(ref, {
+      displayName,
+      email,
+      username: "",
+      aboutme: "Amante de las plantas",
+      location: "Sin ubicacion",
+      avatarUrl: "",
+      rarestFind: "Por descubrir",
+      careScore: 0,
+      createdAt: serverTimestamp(),
+      stats: {
+        level: 1,
+        xp: 0,
+        xpToNextLevel: 1000,
+        plantsIdentified: 0,
+        streakDays: 0,
+        lastWateredDate: null,
+      },
+      settings: {
+        themeId: "theme_forest",
+        titleId: "",
+        frameId: "",
+      },
+      userPlants: [],
+      userAchievements: [],
+    });
+    console.log("Documento de usuario creado:", uid);
+  } catch (error) {
+    console.error("Error creando documento de usuario:", error);
+    throw error;
+  }
 }

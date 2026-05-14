@@ -6,7 +6,9 @@ import {
   getDocs,
   setDoc,
 } from "firebase/firestore";
-import { CURRENT_USER_ID } from "./userService";
+// Reemplaza CURRENT_USER_ID por getCurrentUserId() (Phase 1: Authentication Foundation)
+// para que cada usuario vea sus propios logros (PROF-03).
+import { getCurrentUserId } from "./userService";
 
 export interface UserAchievement {
   id: string;
@@ -291,14 +293,15 @@ function mapEmoji(category: string, name: string): string {
   return "sprout";
 }
 
-export async function getUserAchievements(userId: string = CURRENT_USER_ID): Promise<{
+export async function getUserAchievements(userId?: string): Promise<{
   achievements: UserAchievement[];
   earned: number;
   total: number;
 }> {
   try {
+    const resolvedUserId = userId ?? getCurrentUserId();
     // 1. Leer el documento del usuario para obtener el array userAchievements
-    const userRef = doc(db, "users", userId);
+    const userRef = doc(db, "users", resolvedUserId);
     const userSnap = await getDoc(userRef);
 
     if (!userSnap.exists()) {
