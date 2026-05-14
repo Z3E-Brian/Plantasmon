@@ -11,7 +11,7 @@
 - [ ] **Phase 1: Authentication Foundation** - Fix auth integration and connect user data
 - [ ] **Phase 2: Lab3** - API + Sincronización
 - [ ] **Phase 3: Calendar + Missing Screens** - Add calendar and functionality to missing screens
-- [ ] **Phase 4: 4 plants cards, home and general rewards** - 4 plants cards, home and general rewards
+- [x] **Phase 4: 4 plants cards, home and general rewards** - 4 plants cards, home and general rewards (completed 2026-05-14)
 
 ---
 
@@ -74,7 +74,7 @@
 | 1 - Auth Foundation | 0/1 | Not started | - |
 | 2 - Lab3 | 3/3 | Complete | 2026-05-13 |
 | 3 - Calendar + Missing Screens | 3/3 | Complete | 2026-05-13 |
-| 4 - 4 plants cards, home and general rewards | 3/3 | Planned | 2026-05-13 |
+| 4 - 4 plants cards, home and general rewards | 3/3 | Complete   | 2026-05-14 |
 
 ---
 
@@ -111,10 +111,10 @@
 
 **Depends on:** Phase 3
 
-**Plans:** 3 plans
-- [ ] 04-01-PLAN.md — Home Stats Bar + PlantOfTheDay deferral
-- [ ] 04-02-PLAN.md — Achievements Backend (Firestore + unlock logic)
-- [ ] 04-03-PLAN.md — Achievements UI (Profile display + locked/unlocked states)
+**Plans:** 3/3 plans complete
+- [x] 04-01-PLAN.md — Home Stats Bar + PlantOfTheDay deferral
+- [x] 04-02-PLAN.md — Achievements Backend (Firestore + unlock logic)
+- [x] 04-03-PLAN.md — Achievements UI (Profile display + locked/unlocked states)
 
 ---
 
