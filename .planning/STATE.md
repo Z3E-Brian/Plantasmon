@@ -36,9 +36,9 @@ Progress: [███████░░░] 73%
 
 **Velocity:**
 
-- Total plans completed: 3
-- Average duration: ~15 min
-- Total execution time: ~45 min
+- Total plans completed: 4
+- Average duration: ~12 min
+- Total execution time: ~47 min
 
 **By Phase:**
 
@@ -46,6 +46,7 @@ Progress: [███████░░░] 73%
 |-------|-------|-------|----------|
 | 1 - Auth Foundation | 0 | 0 min | - |
 | 2 - Lab3 | 3 | ~45 min | ~15 min |
+| 4 - Plants Cards & Rewards | 1 | ~2 min | ~2 min |
 
 *Updated after each plan completion*
 
@@ -65,6 +66,12 @@ From execution (Phase 2 - Lab3):
 - AsyncStorage for offline cache and sync queue (not SQLite — Firestore offline persistence incompatible with Firebase JS SDK in Expo)
 - NetInfo for connectivity detection with three-state banner: amber (offline), blue (syncing), red (error)
 - No photo queuing offline — identification requires API call
+
+From execution (Phase 4 - Plan 01 - Home Stats Bar):
+
+- StatsBar uses per-stat try/catch so one failing data source doesn't crash the entire bar
+- Account age and streak fetched from single getUserProfile call to minimize Firestore reads
+- PlantOfTheDay stubbed to return null per D-02 (deferred until catalog has 100+ plants)
 
 ### Pending Todos
 
