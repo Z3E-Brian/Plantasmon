@@ -37,7 +37,10 @@
 6. Home dashboard shows personalized data for the logged-in user
 7. Profile shows achievements and activity for the logged-in user
 
-**Plans:** TBD
+**Plans:** 3 plans
+- [ ] 01-01-PLAN.md — Dynamic User ID Migration (remove hardcoded u_001, add createUserDocument)
+- [ ] 01-02-PLAN.md — Google OAuth Fix (wire credential exchange, cleanup useAuth.ts)
+- [ ] 01-03-PLAN.md — Register Screen (create register route + form + auto-login)
 
 ---
 
@@ -73,7 +76,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1 - Auth Foundation | 0/1 | Not started | - |
+| 1 - Auth Foundation | 0/3 | Planned | - |
 | 2 - Lab3 | 5/5 | Complete   | 2026-05-14 |
 | 3 - Calendar + Missing Screens | 3/3 | Complete | 2026-05-13 |
 | 4 - 4 plants cards, home and general rewards | 3/3 | Complete   | 2026-05-14 |
