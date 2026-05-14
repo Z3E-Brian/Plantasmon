@@ -9,7 +9,7 @@
 ## Phases
 
 - [ ] **Phase 1: Authentication Foundation** - Fix auth integration and connect user data
-- [ ] **Phase 2: Lab3** - API + Sincronización
+- [x] **Phase 2: Lab3** - API + Sincronización (completed 2026-05-14)
 - [ ] **Phase 3: Calendar + Missing Screens** - Add calendar and functionality to missing screens
 - [x] **Phase 4: 4 plants cards, home and general rewards** - 4 plants cards, home and general rewards (completed 2026-05-14)
 
@@ -60,10 +60,10 @@
 4. User sees feedback about sync status
 5. API deployed to cloud (Render)
 
-**Plans:** 3 plans
-- [ ] 02-lab3-01-PLAN.md — Plant identification API (Pl@ntNet)
-- [ ] 02-lab3-02-PLAN.md — Offline support and sync queue
-- [ ] 02-lab3-03-PLAN.md — Module analysis and sync indicators
+**Plans:** 5/5 plans complete
+- [x] 02-lab3-01-PLAN.md — Plant identification API (Pl@ntNet)
+- [x] 02-lab3-02-PLAN.md — Offline support and sync queue
+- [x] 02-lab3-03-PLAN.md — Module analysis and sync indicators
 
 ---
 
@@ -72,7 +72,7 @@
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1 - Auth Foundation | 0/1 | Not started | - |
-| 2 - Lab3 | 3/3 | Complete | 2026-05-13 |
+| 2 - Lab3 | 5/5 | Complete   | 2026-05-14 |
 | 3 - Calendar + Missing Screens | 3/3 | Complete | 2026-05-13 |
 | 4 - 4 plants cards, home and general rewards | 3/3 | Complete   | 2026-05-14 |
 
