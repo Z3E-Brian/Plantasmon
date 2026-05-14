@@ -14,12 +14,14 @@ import {
 } from "react-native"
 import { useRouter, useLocalSearchParams } from "expo-router"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
+import { useNetworkStatus } from "@/src/hooks/useNetworkStatus"
 
 export default function Identify() {
   const insets = useSafeAreaInsets()
   const { theme, styles: s } = useThemedStyles("identify")
   const router = useRouter()
   const { photoUri } = useLocalSearchParams()
+  const { isConnected } = useNetworkStatus()
 
   const [loading, setLoading] = useState(true)
   const [result, setResult] = useState<PlantIdentificationResult | null>(null)
@@ -36,6 +38,13 @@ export default function Identify() {
 
   const runIdentification = async () => {
     if (!photoUri) {
+      setLoading(false)
+      return
+    }
+    
+    // Check network status
+    if (!isConnected) {
+      setError('Sin conexión. No se puede identificar la planta sin internet.')
       setLoading(false)
       return
     }
