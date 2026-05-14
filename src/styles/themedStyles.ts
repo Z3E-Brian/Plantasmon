@@ -17,6 +17,24 @@ export const createAchievementsStyles = (theme: AppTheme) =>
       fontWeight: "700",
       color: theme.colors.textTertiary,
     },
+    categoryDivider: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginVertical: theme.spacing.sm,
+    },
+    categoryDividerLine: {
+      flex: 1,
+      height: 1,
+      backgroundColor: theme.colors.border,
+    },
+    categoryDividerText: {
+      fontSize: 10,
+      fontWeight: "700",
+      color: theme.colors.textTertiary,
+      marginHorizontal: 8,
+      letterSpacing: 1,
+      textTransform: "uppercase",
+    },
     grid: {
       flexDirection: "row",
       flexWrap: "wrap",
@@ -28,6 +46,7 @@ export const createAchievementsStyles = (theme: AppTheme) =>
       padding: theme.spacing.md,
       borderRadius: theme.radius.md,
       borderWidth: 3,
+      position: "relative",
     },
     badgeEarned: {
       backgroundColor: theme.colors.primarySoft,
@@ -37,7 +56,7 @@ export const createAchievementsStyles = (theme: AppTheme) =>
       backgroundColor: theme.colors.surfaceMuted,
       borderColor: theme.colors.border,
       color: theme.colors.textTertiary,
-      opacity: 0.5,
+      opacity: 0.4,
     },
     badgeIcon: {
       width: 36,
@@ -54,6 +73,35 @@ export const createAchievementsStyles = (theme: AppTheme) =>
       lineHeight: 12,
       letterSpacing: 0.3,
       color: theme.colors.textPrimary,
+    },
+    earnedBadge: {
+      position: "absolute",
+      top: 4,
+      right: 4,
+      width: 18,
+      height: 18,
+      borderRadius: 9,
+      backgroundColor: theme.colors.primary,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    earnedBadgeText: {
+      fontSize: 10,
+      fontWeight: "700",
+      color: theme.colors.primaryForeground,
+    },
+    progressBarContainer: {
+      width: "100%",
+      height: 3,
+      backgroundColor: theme.colors.surfaceMuted,
+      borderRadius: 2,
+      marginTop: 4,
+      overflow: "hidden",
+    },
+    progressBarFill: {
+      height: "100%",
+      backgroundColor: theme.colors.primary,
+      borderRadius: 2,
     },
   });
 

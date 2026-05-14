@@ -12,6 +12,7 @@ export interface UserAchievement {
   id: string;
   name: string;
   description: string;
+  category: string;
   earned: boolean;
   emoji: string;
   progress?: number;
@@ -318,6 +319,7 @@ export async function getUserAchievements(userId: string = CURRENT_USER_ID): Pro
         id: achDoc.id,
         name: global.name,
         description: global.description,
+        category: global.category,
         earned: userAch?.unlocked ?? false,
         emoji: mapEmoji(global.category, global.name),
         progress: userAch?.progress,
