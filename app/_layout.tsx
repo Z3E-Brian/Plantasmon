@@ -64,6 +64,7 @@ export default function RootLayout() {
         <Stack.Screen name="journal" />
         <Stack.Screen name="profile" />
         <Stack.Screen name="login" />
+        <Stack.Screen name="register" />
         <Stack.Screen name="editProfile" />
         <Stack.Screen name="companionPlant" options={{ headerShown: false }} />
       </Stack>

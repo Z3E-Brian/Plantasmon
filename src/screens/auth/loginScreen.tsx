@@ -399,7 +399,7 @@ export default function LoginScreen() {
             {/* Register link */}
             <View style={styles.registerRow}>
               <Text style={styles.registerText}>¿No tienes cuenta?</Text>
-              <Pressable onPress={() => { /* router.push("/auth/register") */ }}>
+              <Pressable onPress={() => router.push("/register")}>
                 <Text style={styles.registerLink}>Crear cuenta</Text>
               </Pressable>
             </View>
