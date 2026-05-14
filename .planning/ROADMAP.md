@@ -64,6 +64,8 @@
 - [x] 02-lab3-01-PLAN.md — Plant identification API (Pl@ntNet)
 - [x] 02-lab3-02-PLAN.md — Offline support and sync queue
 - [x] 02-lab3-03-PLAN.md — Module analysis and sync indicators
+- [x] 02-lab3-04-PLAN.md — Offline storage wiring and auto-sync
+- [x] 02-lab3-05-PLAN.md — Offline fallback in identify screen
 
 ---
 
@@ -130,6 +132,10 @@
 | 03-01-PLAN.md — Foundation | ✓ Planned | — |
 | 03-02-PLAN.md — Explore Screen | ✓ Planned | — |
 | 03-03-PLAN.md — Journal Screen | ✓ Complete | 2026-05-13 |
+| 02-lab3-04-PLAN.md — Offline wiring | ✓ Complete | 2026-05-14 |
+| 02-lab3-05-PLAN.md — Offline identify fallback | ✓ Complete | 2026-05-14 |
+| 02-lab3-04-PLAN.md — Offline wiring | ✓ Complete | 2026-05-14 |
+| 02-lab3-05-PLAN.md — Offline identify fallback | ✓ Complete | 2026-05-14 |
 | 04-01-PLAN.md — Home Stats Bar | ✓ Complete | 2026-05-13 |
 | 04-02-PLAN.md — Achievements Backend | ✓ Complete | 2026-05-13 |
 | 04-03-PLAN.md — Achievements UI | ✓ Complete | 2026-05-14 |
