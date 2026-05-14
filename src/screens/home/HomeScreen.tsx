@@ -5,8 +5,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { DailyMissions } from "@/src/components/home/DailyMissions"
 import { HomeHeader } from "@/src/components/home/HomeHeader"
 import { LastIdentified } from "@/src/components/home/LastIdentified"
-import { PlantOfTheDay } from "@/src/components/home/PlantOfTheDay"
 import { RecentAchievement } from "@/src/components/home/RecentAchievement"
+import { StatsBar } from "@/src/components/home/StatsBar"
 import { TipCard } from "@/src/components/home/TipCard"
 import { UserProgress } from "@/src/components/home/UserProgress"
 import ScreenWrapper from "@/src/components/screenWrapper/ScreenWrapper"
@@ -25,13 +25,6 @@ export default function HomeScreen() {
     console.log("Navigate to plant detail:", plantId)
   }
 
-  const handleLearnMore = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-    // Stack navigation: profundizar a detalle de planta del día
-    // router.push("/plant-of-day")
-    console.log("Navigate to plant of the day detail")
-  }
-
   return (
     <ScreenWrapper>
       <ScrollView
@@ -45,8 +38,11 @@ export default function HomeScreen() {
         {/* Header con saludo y stats */}
         <HomeHeader />
 
-        {/* Planta del día - Hero Section */}
-        <PlantOfTheDay onLearnMore={handleLearnMore} />
+        {/* Barra de estadísticas rápidas (Fase 4) */}
+        <StatsBar />
+
+        {/* Planta del día oculto (D-02) — reemplazar cuando haya catálogo suficiente */}
+        {/* <PlantOfTheDay onLearnMore={handleLearnMore} /> */}
 
         {/* Última planta identificada */}
         <LastIdentified onPress={handlePlantPress} />
