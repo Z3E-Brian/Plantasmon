@@ -4,6 +4,7 @@ import { Stack, usePathname, useRouter, useSegments } from "expo-router"
 import { User } from "firebase/auth"
 import { useEffect, useState } from "react"
 import { ActivityIndicator, View } from "react-native"
+import { SafeAreaProvider } from "react-native-safe-area-context"
 import Toast from "react-native-toast-message"
 
 export default function RootLayout() {
@@ -41,6 +42,7 @@ export default function RootLayout() {
   }
 
   return (
+    <SafeAreaProvider>
     <View style={{ flex: 1 }}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
@@ -56,5 +58,6 @@ export default function RootLayout() {
       {showNav && <BottomNav />}
       <Toast />
     </View>
+    </SafeAreaProvider>
   )
 }

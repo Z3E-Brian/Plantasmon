@@ -152,7 +152,8 @@ const PlantCard = React.memo(function PlantCard({
   plant: CatalogPlant
   onPress: (p: CatalogPlant) => void
 }) {
-  const { styles } = useThemedStyles("exploreScreen")
+  const { theme, styles } = useThemedStyles("exploreScreen")
+  const [imageFailed, setImageFailed] = useState(false)
   const rarity = RARITY_COLORS[plant.rarity]
   const label = RARITY_LABELS[plant.rarity]
   const waterDrops = getWaterDropCount(plant.wateringDays)
@@ -165,11 +166,27 @@ const PlantCard = React.memo(function PlantCard({
       android_ripple={{ color: "rgba(64,145,108,0.15)" }}
     >
       <View style={styles.cardImageContainer}>
-        <Image
-          source={{ uri: plant.image }}
-          style={styles.cardImage}
-          contentFit="cover"
-        />
+        {imageFailed ? (
+          <View
+            style={[
+              styles.cardImage,
+              {
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: theme.colors.primarySoft,
+              },
+            ]}
+          >
+            <Text style={{ fontSize: 32 }}>🌱</Text>
+          </View>
+        ) : (
+          <Image
+            source={{ uri: plant.image }}
+            style={styles.cardImage}
+            contentFit="cover"
+            onError={() => setImageFailed(true)}
+          />
+        )}
         <View
           style={[
             styles.rarityBadge,
