@@ -1,5 +1,7 @@
 import { BottomNav } from "@/src/components/profile/BottomNav"
+import { SyncStatusIndicator } from "@/src/components/SyncStatusIndicator"
 import { onAuthChange } from "@/src/services/authService"
+import { setupAutoSync } from "@/src/services/syncService"
 import { Stack, usePathname, useRouter, useSegments } from "expo-router"
 import { User } from "firebase/auth"
 import { useEffect, useState } from "react"
@@ -33,6 +35,14 @@ export default function RootLayout() {
     }
   }, [user, loading, segments])
 
+  useEffect(() => {
+    if (!user) return
+    const unsubscribe = setupAutoSync(
+      process.env.EXPO_PUBLIC_API_URL || "https://plantasmon.onrender.com"
+    )
+    return unsubscribe
+  }, [user])
+
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -55,6 +65,11 @@ export default function RootLayout() {
         <Stack.Screen name="editProfile" />
         <Stack.Screen name="companionPlant" options={{ headerShown: false }} />
       </Stack>
+      {showNav && (
+        <View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
+          <SyncStatusIndicator />
+        </View>
+      )}
       {showNav && <BottomNav />}
       <Toast />
     </View>
