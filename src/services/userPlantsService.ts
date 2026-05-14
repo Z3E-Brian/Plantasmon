@@ -5,7 +5,9 @@ import {
   updateDoc,
   setDoc,
 } from "firebase/firestore";
+import NetInfo from "@react-native-community/netinfo";
 import { CURRENT_USER_ID } from "./userService";
+import { savePlantLocal, addToSyncQueue } from "@/src/services/offlineStorage";
 
 export interface UserPlant {
   id: string;
@@ -190,47 +192,114 @@ export interface AddPlantFromIdInput {
   plantId: string;
   imageUri: string;
   userId?: string;
+  commonName?: string;
+  scientificName?: string;
+  waterSchedule?: string;
+  sunlight?: string;
 }
 
 export async function addUserPlant(
   input: AddPlantFromIdInput
 ): Promise<void> {
-  const { plantId, imageUri, userId = CURRENT_USER_ID } = input;
+  const {
+    plantId,
+    imageUri,
+    userId = CURRENT_USER_ID,
+    commonName,
+    scientificName,
+    waterSchedule,
+    sunlight,
+  } = input;
 
   try {
-    const userRef = doc(db, "users", userId);
-    const userSnap = await getDoc(userRef);
-
-    if (!userSnap.exists()) {
-      await setDoc(userRef, { userPlants: [] });
-    }
-
-    const userData = userSnap.data();
-    const existingPlants: any[] = userData?.userPlants ?? [];
-    
-    const alreadyExists = existingPlants.some((p: any) => p.id === plantId);
-    if (alreadyExists) {
-      console.log("Planta ya en colección:", plantId);
-      return;
-    }
-
-    const plantRef = doc(db, "plants", plantId);
-    const plantSnap = await getDoc(plantRef);
-    
-    const newPlant = {
+    // Always save plant data locally first
+    const plantData = {
       id: plantId,
-      image: imageUri,
-      firstIdentifiedAt: new Date().toISOString(),
-      lastWatered: null,
-      favorite: false,
-      isCompanion: false,
+      imageUri,
+      commonName: commonName || scientificName || plantId,
+      scientificName: scientificName || commonName || plantId,
+      addedAt: new Date().toISOString(),
     };
+    await savePlantLocal(plantData);
 
-    await updateDoc(userRef, {
-      userPlants: [...existingPlants, newPlant],
-    });
+    // Check network status
+    const netInfo = await NetInfo.fetch();
 
-    console.log("Planta agregada:", plantId);
+    if (netInfo.isConnected) {
+      // Online: save to Firebase directly
+      const userRef = doc(db, "users", userId);
+      const userSnap = await getDoc(userRef);
+
+      if (!userSnap.exists()) {
+        await setDoc(userRef, { userPlants: [] });
+      }
+
+      const { userPlants, fieldPath } = await getRawUserPlants(userId);
+
+      const alreadyExists = userPlants.some((p: any) => p.id === plantId);
+      if (alreadyExists) {
+        return;
+      }
+
+      const normalizedCommonName = commonName?.trim() || scientificName?.trim() || plantId;
+      const normalizedScientificName = scientificName?.trim() || normalizedCommonName;
+
+      const matchDays = waterSchedule?.match(/\d+/);
+      const wateringDays = matchDays ? Number(matchDays[0]) : 7;
+
+      const sunlightText = (sunlight || "").toLowerCase();
+      const light = sunlightText.includes("shade") || sunlightText.includes("low")
+        ? "low"
+        : sunlightText.includes("full") ||
+          sunlightText.includes("direct") ||
+          sunlightText.includes("bright")
+        ? "full"
+        : "partial";
+
+      const plantRef = doc(db, "plants", plantId);
+      const plantSnap = await getDoc(plantRef);
+      if (!plantSnap.exists()) {
+        await setDoc(plantRef, {
+          commonName: normalizedCommonName,
+          scientificName: normalizedScientificName,
+          wateringDays,
+          light,
+        });
+      }
+
+      const newPlant = {
+        id: plantId,
+        image: imageUri,
+        firstIdentifiedAt: new Date().toISOString(),
+        lastWatered: null,
+        favorite: false,
+        isCompanion: false,
+      };
+
+      const updatedPlants = [...userPlants, newPlant];
+
+      await updateDoc(userRef, {
+        [fieldPath]: updatedPlants,
+      });
+    } else {
+      // Offline: add to sync queue
+      await addToSyncQueue({
+        action: `add_plant_${plantId}`,
+        plantId,
+        endpoint: "/api/user-plants",
+        method: "POST",
+        data: JSON.stringify({
+          plantId,
+          imageUri,
+          userId,
+          commonName,
+          scientificName,
+          waterSchedule,
+          sunlight,
+        }),
+      });
+      console.log("Planta guardada localmente, se sincronizará cuando haya conexión");
+    }
   } catch (error) {
     console.error("Error agregando planta:", error);
     throw error;
