@@ -183,7 +183,11 @@ export default function UserProfile() {
               <View style={styles.tabContent}>
                 {activeTab === "collection" && <PlantCollection plants={plants} />}
                 {activeTab === "activity"   && <ActivityFeed />}
-                {activeTab === "badges"     && <Achievements achievements={achievements} />}
+                {activeTab === "badges"     && (
+                  <View style={{ paddingHorizontal: 20, paddingTop: 12 }}>
+                    <Achievements achievements={achievements} />
+                  </View>
+                )}
               </View>
             </View>
           </View>
