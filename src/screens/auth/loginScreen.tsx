@@ -1,4 +1,7 @@
 import * as Google from "expo-auth-session/providers/google"
+// GoogleAuthProvider + signInWithCredential: convierten el id_token de Google
+// en una credencial de Firebase Auth (AUTH-03). Antes lanzaba "no implementado".
+import { GoogleAuthProvider, signInWithCredential } from "firebase/auth"
 import { useRouter } from "expo-router"
 import { useEffect, useMemo, useState } from "react"
 import {
@@ -18,6 +21,7 @@ import ScreenWrapper from "@/src/components/screenWrapper/ScreenWrapper"
 import { Button } from "@/src/components/ui/button"
 import { useAppTheme } from "@/src/constants/designSystem"
 import { login, resetPassword } from "../../services/authService"
+import { auth } from "@/src/config/firebase"
 
 export default function LoginScreen() {
   const theme = useAppTheme()
@@ -51,12 +55,15 @@ export default function LoginScreen() {
     }
   }, [response])
 
+  // Convierte el id_token de Google en una credencial de Firebase Auth.
+  // expo-auth-session ya obtuvo el token, solo falta el exchange (AUTH-03).
+  // Antes: throw new Error("loginWithGoogle no está implementado.")
   const handleGoogleToken = async (idToken: string) => {
     setGoogleLoading(true)
     setError(null)
     try {
-      // TODO: Implement loginWithGoogle or handle Google login here
-      throw new Error("loginWithGoogle no está implementado.")
+      const credential = GoogleAuthProvider.credential(idToken)
+      await signInWithCredential(auth, credential)
       // el observer del _layout redirige automáticamente
     } catch (err: any) {
       setError(err.message ?? "Error al iniciar sesión con Google.")

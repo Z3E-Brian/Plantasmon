@@ -1,29 +1,5 @@
-import * as Google from "expo-auth-session/providers/google";
-import { useEffect } from "react";
-
-export function useAuth(){
-
-	const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-    androidClientId: '675783066748-t4sb8dm8rotuu5g0q07c9tahk4kdl0jj.apps.googleusercontent.com',
-//    isidCliente:''
-  });
-  
-  useEffect(()=>{
-	  if(response){
-		  if(response.type === 'success'){
-			  console.log(response.authentication)
-		  }else{
-			  console.log("Error al autenticar con google")
-		  }
-	  }
-  },[response])
-
-	const authGoogle = () =>{
-		
-		promptAsync().catch((e)=>{
-			console.error("Error al iniciar la sesión : ", e)
-		})	
-	}
-	
-	return {authGoogle}
-}
+// Google auth consolidado en loginScreen.tsx (AUTH-03).
+// Este hook duplicaba la misma logica de expo-auth-session/providers/google
+// que ya esta implementada inline en loginScreen. Se deja como placeholder
+// por si en el futuro se necesita un hook de autenticacion generico.
+export {}
