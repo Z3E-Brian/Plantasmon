@@ -1231,6 +1231,48 @@ export const createJournalScreenStyles = (theme: AppTheme) =>
     },
   });
 
+// ==================== STATS BAR ====================
+export const createStatsBarStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: "row",
+      paddingHorizontal: 20,
+      paddingBottom: theme.spacing.lg,
+      gap: theme.spacing.sm,
+    },
+    statItem: {
+      flex: 1,
+      alignItems: "center",
+      backgroundColor: theme.colors.surfaceMuted,
+      borderRadius: theme.radius.md,
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.sm,
+    },
+    statIcon: {
+      fontSize: 18,
+      marginBottom: 2,
+    },
+    statValue: {
+      fontSize: 16,
+      fontWeight: "800",
+      color: theme.colors.textPrimary,
+    },
+    statLabel: {
+      fontSize: 9,
+      fontWeight: "600",
+      color: theme.colors.textTertiary,
+      textAlign: "center",
+      marginTop: 2,
+    },
+    skeleton: {
+      flex: 1,
+      height: 68,
+      backgroundColor: theme.colors.surfaceMuted,
+      borderRadius: theme.radius.md,
+      opacity: 0.5,
+    },
+  });
+
 // ==================== HOOK CENTRALIZADO ====================
 const stylesByComponent = {
   achievements: {
@@ -1260,6 +1302,10 @@ const stylesByComponent = {
   homeHeader: {
     light: createHomeHeaderStyles(getAppTheme("light")),
     dark: createHomeHeaderStyles(getAppTheme("dark")),
+  },
+  statsBar: {
+    light: createStatsBarStyles(getAppTheme("light")),
+    dark: createStatsBarStyles(getAppTheme("dark")),
   },
   plantOfTheDay: {
     light: createPlantOfTheDayStyles(getAppTheme("light")),
@@ -1315,6 +1361,8 @@ type StylesForComponent<T extends ComponentName> = ReturnType<
     ? typeof createHomeScreenStyles
     : T extends "homeHeader"
     ? typeof createHomeHeaderStyles
+    : T extends "statsBar"
+    ? typeof createStatsBarStyles
     : T extends "plantOfTheDay"
     ? typeof createPlantOfTheDayStyles
     : T extends "lastIdentified"
