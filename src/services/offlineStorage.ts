@@ -59,3 +59,8 @@ export async function getSyncQueueCount(): Promise<number> {
 export async function clearSyncQueue(): Promise<void> {
   await AsyncStorage.removeItem(QUEUE_KEY);
 }
+
+export async function hasLocalPlant(plantId: string): Promise<boolean> {
+  const plants = await getLocalPlants();
+  return plants.some((p: PlantData) => p.id === plantId);
+}
