@@ -72,19 +72,34 @@
 |-------|----------------|--------|-----------|
 | 1 - Auth Foundation | 0/1 | Not started | - |
 | 2 - Lab3 | 3/3 | Complete | 2026-05-13 |
-| 3 - Calendar + Missing Screens | 0/0 | Not started | - |
+| 3 - Calendar + Missing Screens | 0/3 | Planned | - |
 
 ---
 
 ### Phase 3: Calendar + Missing Screens
 
-**Goal:** [To be planned]
-**Requirements**: TBD
-**Depends on:** Phase 2
-**Plans:** 0 plans
+**Goal:** Explore and Journal screens show real content instead of "Próximamente..." stubs. Explore is a full plant catalog from Firestore with search. Journal is a card-based dashboard with analyzed plants, missions, progress, and achievements. (Calendar deferred to future phase.)
 
-Plans:
-- [ ] TBD (run /gsd-plan-phase 3 to break down)
+**Requirements:**
+- EXPL-01: User can browse plants in explore
+- JOUR-01: User can keep plant care journal
+
+**Depends on:** Phase 2
+
+**Success Criteria** (what must be TRUE):
+1. Explore screen shows search bar + 2-column card grid of all plants from Firestore `plants` collection
+2. Search filters plant cards by name (client-side, case-insensitive)
+3. Tapping a plant card navigates to `/plant/{id}`
+4. Journal screen shows card-based dashboard with user's analyzed plants
+5. Journal screen reuses DailyMissions + UserProgress components for missions and progress sections
+6. Journal shows recent achievements (conditional)
+7. Pull-to-refresh works on both screens
+8. Loading, error, and empty states render correctly on both screens
+
+**Plans:** 3 plans
+- [x] 03-01-PLAN.md — Foundation: catalog service, plant detail stub, themed styles
+- [x] 03-02-PLAN.md — Explore screen: search bar + 2-column card grid
+- [x] 03-03-PLAN.md — Journal screen: card-based dashboard with reused components
 
 ---
 
@@ -97,3 +112,6 @@ Plans:
 | 02-lab3-01 — Backend API | ✓ Complete | 2026-04-24 |
 | 02-lab3-02 — Frontend Integration | ✓ Complete | 2026-04-24 |
 | 02-lab3-03 — Sync Indicators & Module Analysis | ✓ Complete | 2026-05-13 |
+| 03-01-PLAN.md — Foundation | ✓ Planned | — |
+| 03-02-PLAN.md — Explore Screen | ✓ Planned | — |
+| 03-03-PLAN.md — Journal Screen | ✓ Planned | — |
