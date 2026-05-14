@@ -1,5 +1,6 @@
 import { db } from "@/src/config/firebase";
 import {
+  Timestamp,
   doc,
   getDoc,
   updateDoc,
@@ -34,6 +35,14 @@ export interface UserProfile {
   frameId: string;
 }
 
+function safeParseDate(value: unknown): Date {
+  if (!value) return new Date();
+  if (value instanceof Timestamp) return value.toDate();
+  if (value instanceof Date) return value;
+  const d = new Date(value as any);
+  return isNaN(d.getTime()) ? new Date() : d;
+}
+
 export async function getUserProfile(userId: string = CURRENT_USER_ID): Promise<UserProfile | null> {
   try {
     const ref = doc(db, "users", userId);
@@ -54,7 +63,7 @@ export async function getUserProfile(userId: string = CURRENT_USER_ID): Promise<
       xpToNextLevel: data.stats?.xpToNextLevel ?? 1000,
       plantsOwned: data.stats?.plantsIdentified ?? 0,
       plantsDiscovered: data.stats?.plantsIdentified ?? 0,
-      joinDate: new Date(data.createdAt),
+      joinDate: safeParseDate(data.createdAt),
       avatarUrl: data.avatarUrl ?? "",
 
       // ✅ Firebase usa "aboutme", no "bio"

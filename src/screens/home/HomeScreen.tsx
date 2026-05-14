@@ -18,11 +18,9 @@ export default function HomeScreen() {
   const router = useRouter()
   const { styles, theme } = useThemedStyles("homeScreen")
 
-  const handlePlantPress = (plantId: number) => {
+  const handlePlantPress = (plantId: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-    // Stack navigation: profundizar al detalle de la planta
-    // router.push(`/plant/${plantId}`)
-    console.log("Navigate to plant detail:", plantId)
+    router.push(`/plant/${plantId}` as any)
   }
 
   return (

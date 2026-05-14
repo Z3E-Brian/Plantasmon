@@ -266,11 +266,28 @@ export const INITIAL_ACHIEVEMENTS: AchievementDefinition[] = [
 ];
 
 function mapEmoji(category: string, name: string): string {
-  if (name.toLowerCase().includes("primera") || name.toLowerCase().includes("first")) return "sprout";
-  if (category === "identification" && name.toLowerCase().includes("maestro")) return "crown";
-  if (category === "identification") return "magnify";
-  if (category === "care") return "water";
-  if (category === "collection") return "globe";
+  const lower = name.toLowerCase();
+  if (lower.includes("primera") || lower.includes("first")) return "sprout";
+  if (lower.includes("rara") || lower.includes("rare")) return "star";
+  if (lower.includes("maestro") || lower.includes("master")) return "crown";
+  if (category === "collection") {
+    if (lower.includes("especies") || lower.includes("species")) return "globe";
+    return "magnify";
+  }
+  if (category === "streak") {
+    if (lower.includes("racha") && (lower.includes("7") || lower.includes("14") || lower.includes("30"))) return "fire";
+    return "water";
+  }
+  if (category === "usage") {
+    if (lower.includes("foto") || lower.includes("photo") || lower.includes("cámara") || lower.includes("camera")) return "camera";
+    return "calendar";
+  }
+  if (category === "special") {
+    if (lower.includes("mision") || lower.includes("mission") || lower.includes("trophy")) return "trophy";
+    if (lower.includes("pint") || lower.includes("personaliza") || lower.includes("customize")) return "paint";
+    if (lower.includes("dato") || lower.includes("fact") || lower.includes("book")) return "book";
+    return "star";
+  }
   return "sprout";
 }
 

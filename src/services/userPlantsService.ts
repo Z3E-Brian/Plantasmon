@@ -328,11 +328,11 @@ export async function getPhotosTodayCount(userId: string = CURRENT_USER_ID): Pro
 }
 
 /**
- * Obtiene la planta identificada más reciente (nombre + fecha).
+ * Obtiene la planta identificada más reciente (nombre + fecha + id + imagen).
  */
 export async function getLastIdentification(
   userId: string = CURRENT_USER_ID
-): Promise<{ plantName: string; date: Date } | null> {
+): Promise<{ plantId: string; plantName: string; image: string; date: Date } | null> {
   try {
     const { userPlants } = await getRawUserPlants(userId);
     if (!userPlants.length) return null;
@@ -353,8 +353,11 @@ export async function getLastIdentification(
     if (!plantSnap.exists()) return null;
 
     const plantData = plantSnap.data();
+    const imageUri = mostRecent.image ?? `https://picsum.photos/seed/${mostRecent.id}/400/300`;
     return {
+      plantId: mostRecent.id,
       plantName: plantData.commonName ?? "Planta desconocida",
+      image: imageUri,
       date: new Date(mostRecent.firstIdentifiedAt),
     };
   } catch (error) {
