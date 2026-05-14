@@ -236,3 +236,64 @@ export async function addUserPlant(
     throw error;
   }
 }
+
+// ─── Helpers de StatsBar ─────────────────────────────────────────────────────
+
+/**
+ * Cuenta cuántas plantas fueron identificadas hoy (fecha local).
+ */
+export async function getPhotosTodayCount(userId: string = CURRENT_USER_ID): Promise<number> {
+  try {
+    const { userPlants } = await getRawUserPlants(userId);
+    const today = new Date();
+    const todayStr = toDateStr(today);
+
+    return userPlants.filter((p: any) => {
+      if (!p.firstIdentifiedAt) return false;
+      return toDateStr(new Date(p.firstIdentifiedAt)) === todayStr;
+    }).length;
+  } catch (error) {
+    console.error("Error obteniendo fotos de hoy:", error);
+    return 0;
+  }
+}
+
+/**
+ * Obtiene la planta identificada más reciente (nombre + fecha).
+ */
+export async function getLastIdentification(
+  userId: string = CURRENT_USER_ID
+): Promise<{ plantName: string; date: Date } | null> {
+  try {
+    const { userPlants } = await getRawUserPlants(userId);
+    if (!userPlants.length) return null;
+
+    // Ordenar por firstIdentifiedAt descendente
+    const sorted = [...userPlants].sort((a: any, b: any) => {
+      const dateA = new Date(a.firstIdentifiedAt ?? 0).getTime();
+      const dateB = new Date(b.firstIdentifiedAt ?? 0).getTime();
+      return dateB - dateA;
+    });
+
+    const mostRecent = sorted[0];
+    if (!mostRecent.firstIdentifiedAt) return null;
+
+    const plantRef = doc(db, "plants", mostRecent.id);
+    const plantSnap = await getDoc(plantRef);
+
+    if (!plantSnap.exists()) return null;
+
+    const plantData = plantSnap.data();
+    return {
+      plantName: plantData.commonName ?? "Planta desconocida",
+      date: new Date(mostRecent.firstIdentifiedAt),
+    };
+  } catch (error) {
+    console.error("Error obteniendo última identificación:", error);
+    throw error;
+  }
+}
+
+function toDateStr(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
