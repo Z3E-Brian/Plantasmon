@@ -55,21 +55,42 @@ export async function getUserProfile(userId: string = CURRENT_USER_ID): Promise<
 
     const data = snapshot.data();
 
+    // Computar valores reales desde userPlants en vez de stats mockeados
+    const userPlants: any[] =
+      data.subcollections?.userPlants ?? data.userPlants ?? [];
+    const realPlantCount = userPlants.length;
+
+    // Computar racha real desde lastWateredDate
+    const lastWateredStr: string | null = data.stats?.lastWateredDate ?? null;
+    let realStreak = 0;
+    if (lastWateredStr) {
+      const lastWatered = safeParseDate(lastWateredStr);
+      const today = new Date();
+      const diffDays = Math.floor(
+        (today.getTime() - lastWatered.getTime()) / (1000 * 60 * 60 * 24)
+      );
+      if (diffDays === 0) {
+        realStreak = data.stats?.streakDays ?? 1;
+      } else if (diffDays === 1) {
+        realStreak = data.stats?.streakDays ?? 1;
+      }
+    }
+
     return {
       name: data.displayName ?? data.username ?? "Usuario",
       handle: `#${data.username ?? "PlantUser"}`,
       level: data.stats?.level ?? 1,
       xp: data.stats?.xp ?? 0,
       xpToNextLevel: data.stats?.xpToNextLevel ?? 1000,
-      plantsOwned: data.stats?.plantsIdentified ?? 0,
-      plantsDiscovered: data.stats?.plantsIdentified ?? 0,
+      plantsOwned: realPlantCount,
+      plantsDiscovered: realPlantCount,
       joinDate: safeParseDate(data.createdAt),
       avatarUrl: data.avatarUrl ?? "",
 
       // ✅ Firebase usa "aboutme", no "bio"
       bio: data.aboutme ?? "Amante de las plantas 🌿",
       location: data.location ?? "Sin ubicación",
-      streak: data.stats?.streakDays ?? 0,
+      streak: realStreak,
       careScore: data.careScore ?? 90,
       rarestFind: data.rarestFind ?? "Por descubrir",
       achievements: 0,
