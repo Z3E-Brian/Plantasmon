@@ -11,6 +11,7 @@
 - [ ] **Phase 1: Authentication Foundation** - Fix auth integration and connect user data
 - [ ] **Phase 2: Lab3** - API + Sincronización
 - [ ] **Phase 3: Calendar + Missing Screens** - Add calendar and functionality to missing screens
+- [ ] **Phase 4: 4 plants cards, home and general rewards** - 4 plants cards, home and general rewards
 
 ---
 
@@ -72,7 +73,8 @@
 |-------|----------------|--------|-----------|
 | 1 - Auth Foundation | 0/1 | Not started | - |
 | 2 - Lab3 | 3/3 | Complete | 2026-05-13 |
-| 3 - Calendar + Missing Screens | 0/3 | Planned | - |
+| 3 - Calendar + Missing Screens | 3/3 | Complete | 2026-05-13 |
+| 4 - 4 plants cards, home and general rewards | 3/3 | Planned | 2026-05-13 |
 
 ---
 
@@ -101,6 +103,19 @@
 - [x] 03-02-PLAN.md — Explore screen: search bar + 2-column card grid
 - [x] 03-03-PLAN.md — Journal screen: card-based dashboard with reused components
 
+### Phase 4: 4 plants cards, home and general rewards
+
+**Goal:** Home dashboard shows real-time stats bar (account age, photos today, watering streak, last identification). Achievement system with 25 achievements seeded in Firestore, client-side unlock logic, and Profile screen display with locked/unlocked visual states.
+
+**Requirements:** None mapped (phase_req_ids: null — custom features per CONTEXT.md)
+
+**Depends on:** Phase 3
+
+**Plans:** 3 plans
+- [ ] 04-01-PLAN.md — Home Stats Bar + PlantOfTheDay deferral
+- [ ] 04-02-PLAN.md — Achievements Backend (Firestore + unlock logic)
+- [ ] 04-03-PLAN.md — Achievements UI (Profile display + locked/unlocked states)
+
 ---
 
 *Roadmap updated: 2026-05-13*
@@ -115,3 +130,6 @@
 | 03-01-PLAN.md — Foundation | ✓ Planned | — |
 | 03-02-PLAN.md — Explore Screen | ✓ Planned | — |
 | 03-03-PLAN.md — Journal Screen | ✓ Planned | — |
+| 04-01-PLAN.md — Home Stats Bar | ✓ Planned | — |
+| 04-02-PLAN.md — Achievements Backend | ✓ Planned | — |
+| 04-03-PLAN.md — Achievements UI | ✓ Planned | — |
