@@ -28,7 +28,7 @@ export async function getAllPlants(): Promise<CatalogPlant[]> {
         id: doc.id,
         commonName: data.commonName ?? "",
         scientificName: data.scientificName ?? "",
-        image: data.image ?? "",
+        image: data.image ?? `https://picsum.photos/seed/${doc.id}/400/300`,
         wateringDays: data.wateringDays ?? 7,
         light: data.light ?? "",
         difficulty: data.difficulty ?? "fácil",
