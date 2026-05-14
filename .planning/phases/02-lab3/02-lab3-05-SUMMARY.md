@@ -77,6 +77,16 @@ None - no external service configuration required.
 - User sees appropriate message when trying to identify plants offline
 - Ready for further offline support features if needed
 
+## Self-Check: PASSED
+
+- [x] SUMMARY.md exists
+- [x] identify.tsx modified with offline fallback
+- [x] Import: `useNetworkStatus` present
+- [x] Network check: `isConnected` verified before `identifyPlant()`
+- [x] Error message: "Sin conexión. No se puede identificar la planta sin internet."
+- [x] Commits: `3a0be74` (feat) + `506272c` (docs/metadata)
+- [x] TypeScript: no errors in `app/identify.tsx`
+
 ---
 
 *Phase: 02-lab3*
