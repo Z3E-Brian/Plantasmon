@@ -76,10 +76,13 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1 - Auth Foundation | 0/3 | Planned | - |
+| 1 - Auth Foundation | 3/3 | Complete | 2026-05-23 |
 | 2 - Lab3 | 5/5 | Complete   | 2026-05-14 |
 | 3 - Calendar + Missing Screens | 3/3 | Complete | 2026-05-13 |
 | 4 - 4 plants cards, home and general rewards | 3/3 | Complete   | 2026-05-14 |
+| 5 - Binnacle, Test & QA | 3/3 | Complete | 2026-05-14 |
+| 6 - Verification of hardcode | 0/0 | Planned | - |
+| 7 - Missions & Rewards | 0/5 | Planning | - |
 
 ---
 
@@ -146,13 +149,31 @@ Plans:
 
 ### Phase 7: missions and rewards
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** Users have daily/weekly missions with XP rewards, obtainable cosmetic items with rarity tiers displayed on profile, and new streak/account-age achievements.
+
+**Requirements**:
+- MISS-01: Daily mission system (5 missions/day, rotated from pool of 25)
+- MISS-02: Weekly mission system (2 missions/week, rotated from pool of 10)
+- MISS-03: Multi-stage progress tracking on missions (e.g., "0/3 plants identified")
+- MISS-04: Event-based completion detection after identify/water/share/scan actions
+- MISS-05: Tap-to-claim reward flow with XP grant + animation
+- MISS-06: Grace period for unclaimed missions (visible as expired until midnight next day)
+- OBT-01: ~30 obtainable cosmetic items with rarity tiers in Firestore
+- OBT-02: Profile vitrina showcase for obtained items
+- ACH-02: Streak achievements based on longestStreak (historical max)
+- ACH-03: Account age achievements (100 days, 1 year)
+- ACH-04: Weekly active achievement (complete all missions in one week)
+- ACH-05: Architecture supports rewardItemId on achievements for future item grants
+
 **Depends on:** Phase 6
-**Plans:** 0 plans
+**Plans:** 5 plans
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 7 to break down)
+- [ ] 07-01-PLAN.md — Mission Service + Firestore seed
+- [ ] 07-02-PLAN.md — Mission UI + HomeScreen Integration + Rotation
+- [ ] 07-03-PLAN.md — Claim Flow + Grace Period + Completion Detection
+- [ ] 07-04-PLAN.md — Obtenibles System + Profile Vitrina
+- [ ] 07-05-PLAN.md — New Achievements (Streak, Account Age, Weekly)
 
 ---
 
@@ -162,19 +183,22 @@ Plans:
 
 | Plan | Status | Completed |
 |------|--------|-----------|
+| 01-01-PLAN.md — Dynamic User ID Migration | ✓ Complete | 2026-05-23 |
+| 01-02-PLAN.md — Google OAuth Fix | ✓ Complete | 2026-05-23 |
+| 01-03-PLAN.md — Register Screen | ✓ Complete | 2026-05-23 |
 | 02-lab3-01 — Backend API | ✓ Complete | 2026-04-24 |
 | 02-lab3-02 — Frontend Integration | ✓ Complete | 2026-04-24 |
 | 02-lab3-03 — Sync Indicators & Module Analysis | ✓ Complete | 2026-05-13 |
+| 02-lab3-04-PLAN.md — Offline wiring | ✓ Complete | 2026-05-14 |
+| 02-lab3-05-PLAN.md — Offline identify fallback | ✓ Complete | 2026-05-14 |
 | 03-01-PLAN.md — Foundation | ✓ Planned | — |
 | 03-02-PLAN.md — Explore Screen | ✓ Planned | — |
 | 03-03-PLAN.md — Journal Screen | ✓ Complete | 2026-05-13 |
-| 02-lab3-04-PLAN.md — Offline wiring | ✓ Complete | 2026-05-14 |
-| 02-lab3-05-PLAN.md — Offline identify fallback | ✓ Complete | 2026-05-14 |
-| 02-lab3-04-PLAN.md — Offline wiring | ✓ Complete | 2026-05-14 |
-| 02-lab3-05-PLAN.md — Offline identify fallback | ✓ Complete | 2026-05-14 |
 | 04-01-PLAN.md — Home Stats Bar | ✓ Complete | 2026-05-13 |
 | 04-02-PLAN.md — Achievements Backend | ✓ Complete | 2026-05-13 |
 | 04-03-PLAN.md — Achievements UI | ✓ Complete | 2026-05-14 |
-| 04-01-PLAN.md — Home Stats Bar | ✓ Planned | — |
-| 04-02-PLAN.md — Achievements Backend | ✓ Planned | — |
-| 04-03-PLAN.md — Achievements UI | ✓ Planned | — |
+| 07-01-PLAN.md — Mission Service + Firestore seed | ◆ Planned | — |
+| 07-02-PLAN.md — Mission UI + HomeScreen + Rotation | ◆ Planned | — |
+| 07-03-PLAN.md — Claim Flow + Grace Period + Events | ◆ Planned | — |
+| 07-04-PLAN.md — Obtenibles + Profile Vitrina | ◆ Planned | — |
+| 07-05-PLAN.md — New Achievements | ◆ Planned | — |
