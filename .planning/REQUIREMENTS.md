@@ -88,6 +88,9 @@
 
 | REQ-ID | Phase | Status |
 |--------|-------|--------|
+| MISS-04 | Phase 7: Missions & Rewards | Completed |
+| MISS-05 | Phase 7: Missions & Rewards | Completed |
+| MISS-06 | Phase 7: Missions & Rewards | Completed |
 | AUTH-01 | Phase 1: Authentication Foundation | Pending |
 | AUTH-02 | Phase 1: Authentication Foundation | Pending |
 | AUTH-03 | Phase 1: Authentication Foundation | Pending |
@@ -126,3 +129,4 @@
 
 *Last updated: 2025-04-22 after requirements definition*
 *Research: .planning/research/*
+
