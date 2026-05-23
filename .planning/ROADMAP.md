@@ -82,7 +82,7 @@
 | 4 - 4 plants cards, home and general rewards | 3/3 | Complete   | 2026-05-14 |
 | 5 - Binnacle, Test & QA | 3/3 | Complete | 2026-05-14 |
 | 6 - Verification of hardcode | 0/0 | Planned | - |
-| 7 - Missions & Rewards | 0/5 | Planning | - |
+| 7 - Missions & Rewards | 1/5 | Executing | - |
 
 ---
 
@@ -197,7 +197,7 @@ Plans:
 | 04-01-PLAN.md — Home Stats Bar | ✓ Complete | 2026-05-13 |
 | 04-02-PLAN.md — Achievements Backend | ✓ Complete | 2026-05-13 |
 | 04-03-PLAN.md — Achievements UI | ✓ Complete | 2026-05-14 |
-| 07-01-PLAN.md — Mission Service + Firestore seed | ◆ Planned | — |
+| 07-01-PLAN.md — Mission Service + Firestore seed | ✓ Complete | 2026-05-23 |
 | 07-02-PLAN.md — Mission UI + HomeScreen + Rotation | ◆ Planned | — |
 | 07-03-PLAN.md — Claim Flow + Grace Period + Events | ◆ Planned | — |
 | 07-04-PLAN.md — Obtenibles + Profile Vitrina | ◆ Planned | — |

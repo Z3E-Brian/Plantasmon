@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Phase 07 planned, ready to execute
-stopped_at: Phase 07 planned
-last_updated: "2026-05-23T19:57:00.000Z"
-last_activity: 2026-05-23 -- Phase 07 planned (5 plans, 2 waves)
+status: executing
+stopped_at: "Plan 07-01 complete — mission service layer"
+last_updated: "2026-05-23T20:17:00.000Z"
+last_activity: 2026-05-23 -- Plan 07-01 complete (mission service + seed + user doc extension)
 progress:
   total_phases: 7
   completed_phases: 5
   total_plans: 22
-  completed_plans: 17
-  percent: 77
+  completed_plans: 18
+  percent: 82
 ---
 
 # PlantasMon - Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-22)
 
 **Core value:** Plant care companion app that helps users identify plants, track their plant collection, and get care tips
-**Current focus:** Phase 05 — binnacle-test-and-qa-clase-asincronica-pdf
+**Current focus:** Phase 07 — missions-and-rewards
 
 ## Current Position
 
-Phase: 07 (missions-and-rewards) — 📋 PLANNED
-Plan: 0 of 5
-Status: Planning complete — ready to execute
-Last activity: 2026-05-23 -- Phase 07 planned (5 plans, 2 waves)
+Phase: 07 (missions-and-rewards) — EXECUTING
+Plan: 2 of 5
+Status: Plan 07-01 complete. Ready for Plan 07-02 (Mission UI + HomeScreen)
+Last activity: 2026-05-23 -- Plan 07-01 complete
 
-Progress: [██████████] 100%
+Progress: [████████░░] 82%
 
 ## Performance Metrics
 
@@ -82,6 +82,14 @@ From execution (Phase 4 - Plan 01 - Home Stats Bar):
 - [Phase ?]: Spanish error messages consistent with app locale
 - [Phase ?]: Adapted addToSyncQueue call to match single-object function signature instead of positional arguments from plan
 
+From execution (Phase 07 - Plan 01 - Mission Service):
+
+- Deterministic seeded selection (Fisher-Yates shuffle) for daily/weekly mission rotation — same user sees same missions all day
+- missionProgress accumulates over time; previous assignments remain for grace period visibility
+- longestStreak tracks historical max (never decreases), separate from streakDays (can reset)
+- Spanish error messages and descriptions consistent with app locale
+- Seed data follows established pattern from userAchievementsService.ts (check empty → batch setDoc)
+
 ### Pending Todos
 
 None yet.
@@ -108,9 +116,9 @@ From CONCERNS.md:
 
 ## Session Continuity
 
-Last session: 2026-05-23T19:51:41.608Z
-Stopped at: Phase 07 context gathered
-Resume file: .planning/phases/07-missions-and-rewards/07-CONTEXT.md
+Last session: 2026-05-23T20:17:00.000Z
+Stopped at: Plan 07-01 complete — mission service layer
+Resume file: .planning/phases/07-missions-and-rewards/07-01-SUMMARY.md
 
 ---
 
