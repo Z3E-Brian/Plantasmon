@@ -169,7 +169,7 @@ Plans:
 **Plans:** 5 plans
 
 Plans:
-- [ ] 07-01-PLAN.md — Mission Service + Firestore seed
+- [x] 07-01-PLAN.md — Mission Service + Firestore seed
 - [ ] 07-02-PLAN.md — Mission UI + HomeScreen Integration + Rotation
 - [ ] 07-03-PLAN.md — Claim Flow + Grace Period + Completion Detection
 - [ ] 07-04-PLAN.md — Obtenibles System + Profile Vitrina
