@@ -1,0 +1,395 @@
+export type MissionCategory = "identify" | "water" | "scan" | "share" | "streak" | "explore";
+
+export interface MissionDefinition {
+  id: string;
+  title: string;
+  description: string;
+  type: "daily" | "weekly";
+  category: MissionCategory;
+  icon: string;
+  requirement: { type: string; count: number };
+  xpReward: number;
+}
+
+export const DAILY_MISSIONS: MissionDefinition[] = [
+  // ── IDENTIFY (5) ─────────────────────────────────────────────
+  {
+    id: "daily_id_01",
+    title: "Identifica 1 planta",
+    description: "Usa la cámara para identificar una planta",
+    type: "daily",
+    category: "identify",
+    icon: "📷",
+    requirement: { type: "identifications", count: 1 },
+    xpReward: 50,
+  },
+  {
+    id: "daily_id_02",
+    title: "Identifica 3 plantas",
+    description: "Identifica 3 plantas diferentes con la cámara",
+    type: "daily",
+    category: "identify",
+    icon: "📷",
+    requirement: { type: "identifications", count: 3 },
+    xpReward: 100,
+  },
+  {
+    id: "daily_id_03",
+    title: "Identifica 2 plantas diferentes",
+    description: "Identifica 2 especies distintas hoy",
+    type: "daily",
+    category: "identify",
+    icon: "🌿",
+    requirement: { type: "identifications", count: 2 },
+    xpReward: 75,
+  },
+  {
+    id: "daily_id_04",
+    title: "Identifica una planta con flor",
+    description: "Busca y identifica una planta que tenga flores",
+    type: "daily",
+    category: "identify",
+    icon: "🌸",
+    requirement: { type: "identifications", count: 1 },
+    xpReward: 60,
+  },
+  {
+    id: "daily_id_05",
+    title: "Identifica 5 plantas",
+    description: "Identifica 5 plantas en un día",
+    type: "daily",
+    category: "identify",
+    icon: "📷",
+    requirement: { type: "identifications", count: 5 },
+    xpReward: 150,
+  },
+
+  // ── WATER (5) ────────────────────────────────────────────────
+  {
+    id: "daily_water_01",
+    title: "Riega 1 planta",
+    description: "Registra el riego de una planta",
+    type: "daily",
+    category: "water",
+    icon: "💧",
+    requirement: { type: "waterings", count: 1 },
+    xpReward: 50,
+  },
+  {
+    id: "daily_water_02",
+    title: "Riega 3 plantas",
+    description: "Riega 3 plantas de tu colección",
+    type: "daily",
+    category: "water",
+    icon: "💧",
+    requirement: { type: "waterings", count: 3 },
+    xpReward: 100,
+  },
+  {
+    id: "daily_water_03",
+    title: "Riega 2 plantas",
+    description: "No olvides regar al menos 2 plantas",
+    type: "daily",
+    category: "water",
+    icon: "💧",
+    requirement: { type: "waterings", count: 2 },
+    xpReward: 75,
+  },
+  {
+    id: "daily_water_04",
+    title: "Riega 5 plantas",
+    description: "Dale agua a 5 plantas de tu jardín",
+    type: "daily",
+    category: "water",
+    icon: "💧",
+    requirement: { type: "waterings", count: 5 },
+    xpReward: 130,
+  },
+  {
+    id: "daily_water_05",
+    title: "Riega una planta suculenta",
+    description: "Las suculentas también necesitan amor",
+    type: "daily",
+    category: "water",
+    icon: "🌵",
+    requirement: { type: "waterings", count: 1 },
+    xpReward: 60,
+  },
+
+  // ── SCAN (4) ─────────────────────────────────────────────────
+  {
+    id: "daily_scan_01",
+    title: "Toma 1 foto",
+    description: "Toma una foto de cualquier planta",
+    type: "daily",
+    category: "scan",
+    icon: "📸",
+    requirement: { type: "scans", count: 1 },
+    xpReward: 40,
+  },
+  {
+    id: "daily_scan_02",
+    title: "Toma 3 fotos",
+    description: "Toma 3 fotos de plantas diferentes",
+    type: "daily",
+    category: "scan",
+    icon: "📸",
+    requirement: { type: "scans", count: 3 },
+    xpReward: 80,
+  },
+  {
+    id: "daily_scan_03",
+    title: "Toma 5 fotos",
+    description: "Captura 5 fotos de tus plantas",
+    type: "daily",
+    category: "scan",
+    icon: "📸",
+    requirement: { type: "scans", count: 5 },
+    xpReward: 120,
+  },
+  {
+    id: "daily_scan_04",
+    title: "Toma una foto de cerca",
+    description: "Fotografía los detalles de una hoja o flor",
+    type: "daily",
+    category: "scan",
+    icon: "🔍",
+    requirement: { type: "scans", count: 1 },
+    xpReward: 50,
+  },
+
+  // ── STREAK (4) ───────────────────────────────────────────────
+  {
+    id: "daily_streak_01",
+    title: "Mantén tu racha",
+    description: "No dejes que tu racha de riegos se rompa",
+    type: "daily",
+    category: "streak",
+    icon: "🔥",
+    requirement: { type: "streak_maintain", count: 1 },
+    xpReward: 60,
+  },
+  {
+    id: "daily_streak_02",
+    title: "Riega 2 días seguidos",
+    description: "Mantén una racha de 2 días de riego",
+    type: "daily",
+    category: "streak",
+    icon: "🔥",
+    requirement: { type: "streak_maintain", count: 2 },
+    xpReward: 80,
+  },
+  {
+    id: "daily_streak_03",
+    title: "No pierdas tu racha",
+    description: "Registra riego para mantener tu racha activa",
+    type: "daily",
+    category: "streak",
+    icon: "🔥",
+    requirement: { type: "streak_maintain", count: 1 },
+    xpReward: 50,
+  },
+  {
+    id: "daily_streak_04",
+    title: "Inicia una racha nueva",
+    description: "Comienza una nueva racha de riegos",
+    type: "daily",
+    category: "streak",
+    icon: "💪",
+    requirement: { type: "streak_maintain", count: 1 },
+    xpReward: 40,
+  },
+
+  // ── EXPLORE (4) ──────────────────────────────────────────────
+  {
+    id: "daily_explore_01",
+    title: "Explora 1 planta nueva",
+    description: "Descubre una planta que no hayas visto antes",
+    type: "daily",
+    category: "explore",
+    icon: "🌿",
+    requirement: { type: "explore", count: 1 },
+    xpReward: 50,
+  },
+  {
+    id: "daily_explore_02",
+    title: "Explora 2 plantas diferentes",
+    description: "Busca 2 especies distintas en tu entorno",
+    type: "daily",
+    category: "explore",
+    icon: "🌿",
+    requirement: { type: "explore", count: 2 },
+    xpReward: 80,
+  },
+  {
+    id: "daily_explore_03",
+    title: "Descubre una especie nueva",
+    description: "Encuentra una especie que no esté en tu colección",
+    type: "daily",
+    category: "explore",
+    icon: "🔬",
+    requirement: { type: "explore", count: 1 },
+    xpReward: 70,
+  },
+  {
+    id: "daily_explore_04",
+    title: "Explora el jardín",
+    description: "Sal y explora plantas en tu jardín o parque",
+    type: "daily",
+    category: "explore",
+    icon: "🌳",
+    requirement: { type: "explore", count: 1 },
+    xpReward: 40,
+  },
+
+  // ── SHARE (3) ────────────────────────────────────────────────
+  {
+    id: "daily_share_01",
+    title: "Comparte tu progreso",
+    description: "Comparte tu avance con la comunidad",
+    type: "daily",
+    category: "share",
+    icon: "📤",
+    requirement: { type: "shares", count: 1 },
+    xpReward: 50,
+  },
+  {
+    id: "daily_share_02",
+    title: "Comparte una planta",
+    description: "Comparte una planta interesante que hayas identificado",
+    type: "daily",
+    category: "share",
+    icon: "📤",
+    requirement: { type: "shares", count: 1 },
+    xpReward: 60,
+  },
+  {
+    id: "daily_share_03",
+    title: "Comparte un logro",
+    description: "Comparte un logro o misión completada",
+    type: "daily",
+    category: "share",
+    icon: "🏆",
+    requirement: { type: "shares", count: 1 },
+    xpReward: 80,
+  },
+];
+
+export const WEEKLY_MISSIONS: MissionDefinition[] = [
+  // ── IDENTIFY (2) ─────────────────────────────────────────────
+  {
+    id: "weekly_id_01",
+    title: "Identifica 10 plantas",
+    description: "Identifica 10 plantas durante la semana",
+    type: "weekly",
+    category: "identify",
+    icon: "📷",
+    requirement: { type: "identifications", count: 10 },
+    xpReward: 200,
+  },
+  {
+    id: "weekly_id_02",
+    title: "Identifica 15 plantas diferentes",
+    description: "Identifica 15 especies distintas en 7 días",
+    type: "weekly",
+    category: "identify",
+    icon: "📷",
+    requirement: { type: "identifications", count: 15 },
+    xpReward: 300,
+  },
+
+  // ── WATER (2) ────────────────────────────────────────────────
+  {
+    id: "weekly_water_01",
+    title: "Riega 15 plantas",
+    description: "Acumula 15 riegos en la semana",
+    type: "weekly",
+    category: "water",
+    icon: "💧",
+    requirement: { type: "waterings", count: 15 },
+    xpReward: 200,
+  },
+  {
+    id: "weekly_water_02",
+    title: "Riega 20 plantas",
+    description: "Riega 20 plantas durante la semana",
+    type: "weekly",
+    category: "water",
+    icon: "💧",
+    requirement: { type: "waterings", count: 20 },
+    xpReward: 250,
+  },
+
+  // ── SCAN (2) ─────────────────────────────────────────────────
+  {
+    id: "weekly_scan_01",
+    title: "Toma 20 fotos",
+    description: "Captura 20 fotos de plantas esta semana",
+    type: "weekly",
+    category: "scan",
+    icon: "📸",
+    requirement: { type: "scans", count: 20 },
+    xpReward: 200,
+  },
+  {
+    id: "weekly_scan_02",
+    title: "Toma 30 fotos",
+    description: "Toma 30 fotos de diferentes ángulos y plantas",
+    type: "weekly",
+    category: "scan",
+    icon: "📸",
+    requirement: { type: "scans", count: 30 },
+    xpReward: 300,
+  },
+
+  // ── STREAK (1) ───────────────────────────────────────────────
+  {
+    id: "weekly_streak_01",
+    title: "Mantén racha 7 días seguidos",
+    description: "No pierdas tu racha de riegos durante toda la semana",
+    type: "weekly",
+    category: "streak",
+    icon: "🔥",
+    requirement: { type: "streak_maintain", count: 7 },
+    xpReward: 500,
+  },
+
+  // ── EXPLORE (2) ──────────────────────────────────────────────
+  {
+    id: "weekly_explore_01",
+    title: "Descubre 5 especies nuevas",
+    description: "Encuentra y añade 5 especies que no tenías",
+    type: "weekly",
+    category: "explore",
+    icon: "🔬",
+    requirement: { type: "explore", count: 5 },
+    xpReward: 300,
+  },
+  {
+    id: "weekly_explore_02",
+    title: "Explora 8 especies diferentes",
+    description: "Diversifica tu colección con 8 especies nuevas",
+    type: "weekly",
+    category: "explore",
+    icon: "🌿",
+    requirement: { type: "explore", count: 8 },
+    xpReward: 400,
+  },
+
+  // ── SHARE (1) ────────────────────────────────────────────────
+  {
+    id: "weekly_share_01",
+    title: "Comparte 3 veces",
+    description: "Comparte tus descubrimientos 3 veces en la semana",
+    type: "weekly",
+    category: "share",
+    icon: "📤",
+    requirement: { type: "shares", count: 3 },
+    xpReward: 200,
+  },
+];
+
+export const ALL_MISSIONS: MissionDefinition[] = [
+  ...DAILY_MISSIONS,
+  ...WEEKLY_MISSIONS,
+];
