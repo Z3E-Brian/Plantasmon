@@ -12,8 +12,12 @@ import {
 
 // Reemplaza CURRENT_USER_ID = "u_001". Obtiene el UID del usuario autenticado
 // desde Firebase Auth, asi cada usuario ve sus propios datos (HOME-01, PROF-01).
-export function getCurrentUserId(): string {
-  const uid = auth.currentUser?.uid;
+export function getCurrentUserId(): string | null {
+  return auth.currentUser?.uid ?? null;
+}
+
+export function requireUserId(userId?: string): string {
+  const uid = userId ?? getCurrentUserId();
   if (!uid) throw new Error("Usuario no autenticado");
   return uid;
 }
@@ -34,6 +38,7 @@ export interface UserProfile {
   bio: string;
   location: string;
   streak: number;
+  longestStreak: number;
   careScore: number;
   rarestFind: string;
   achievements: number;
@@ -54,8 +59,9 @@ function safeParseDate(value: unknown): Date {
 }
 
 export async function getUserProfile(userId?: string): Promise<UserProfile | null> {
+  const resolvedUserId = userId ?? getCurrentUserId();
+  if (!resolvedUserId) return null;
   try {
-    const resolvedUserId = userId ?? getCurrentUserId();
     const ref = doc(db, "users", resolvedUserId);
     const snapshot = await getDoc(ref);
 
@@ -102,6 +108,7 @@ export async function getUserProfile(userId?: string): Promise<UserProfile | nul
       bio: data.aboutme ?? "Amante de las plantas 🌿",
       location: data.location ?? "Sin ubicación",
       streak: realStreak,
+      longestStreak: data.stats?.longestStreak ?? 0,
       careScore: data.careScore ?? 90,
       rarestFind: data.rarestFind ?? "Por descubrir",
       achievements: 0,
@@ -122,7 +129,7 @@ export async function updateUserSettings(
   settings: Partial<{ themeId: string; titleId: string; frameId: string; notificationsEnabled: boolean }>
 ): Promise<void> {
   try {
-    const resolvedUserId = userId ?? getCurrentUserId();
+    const resolvedUserId = requireUserId(userId);
     const ref = doc(db, "users", resolvedUserId);
     await updateDoc(ref, {
       "settings.themeId": settings.themeId,
@@ -140,7 +147,7 @@ export async function updateUserBio(
   data: Partial<{ bio: string; location: string }>
 ): Promise<void> {
   try {
-    const resolvedUserId = userId ?? getCurrentUserId();
+    const resolvedUserId = requireUserId(userId);
     const ref = doc(db, "users", resolvedUserId);
     const updateData: Record<string, any> = {};
 
@@ -179,7 +186,7 @@ export async function logWateringActivity(
   userId?: string
 ): Promise<void> {
   try {
-    const resolvedUserId = userId ?? getCurrentUserId();
+    const resolvedUserId = requireUserId(userId);
     const ref = doc(db, "users", resolvedUserId);
     const snapshot = await getDoc(ref);
 
@@ -199,6 +206,7 @@ export async function logWateringActivity(
       await updateDoc(ref, {
         "stats.lastWateredDate": today.toISOString(),
         "stats.streakDays": 1,
+        "stats.longestStreak": 1,
       });
       return;
     }
@@ -216,9 +224,15 @@ export async function logWateringActivity(
     const currentStreak: number = data.stats?.streakDays ?? 0;
     const newStreak = lastWateredStr === yesterdayStr ? currentStreak + 1 : 1;
 
+    // Track longest streak (historical max) per D-18
+    const currentLongestStreak: number = data.stats?.longestStreak ?? 0;
+    const updatedLongestStreak =
+      newStreak > currentLongestStreak ? newStreak : currentLongestStreak;
+
     await updateDoc(ref, {
       "stats.lastWateredDate": today.toISOString(),
       "stats.streakDays": newStreak,
+      "stats.longestStreak": updatedLongestStreak,
     });
   } catch (error) {
     console.error("Error registrando actividad de riego:", error);
@@ -233,7 +247,7 @@ function toDateStr(d: Date): string {
 // Crea el documento del usuario en Firestore tras el registro (AUTH-01).
 // Se llama desde registerScreen.tsx con el uid devuelto por Firebase Auth.
 // Los campos coinciden con lo que esperan HomeScreen, ProfileScreen, etc.
-export async function createUserDocument(uid: string, email: string): Promise<void> {
+export async function createUserDocument(uid: string, email: string, displayName?: string): Promise<void> {
   try {
     const ref = doc(db, "users", uid);
     const snapshot = await getDoc(ref);
@@ -241,9 +255,9 @@ export async function createUserDocument(uid: string, email: string): Promise<vo
       console.log("El documento del usuario ya existe:", uid);
       return;
     }
-    const displayName = email.split("@")[0] || "";
+    const name = displayName || email.split("@")[0] || "";
     await setDoc(ref, {
-      displayName,
+      displayName: name,
       email,
       username: "",
       aboutme: "Amante de las plantas",
@@ -259,7 +273,16 @@ export async function createUserDocument(uid: string, email: string): Promise<vo
         plantsIdentified: 0,
         streakDays: 0,
         lastWateredDate: null,
+        longestStreak: 0,
       },
+      missions: {
+        assignedDailyIds: [],
+        assignedWeeklyIds: [],
+        missionProgress: [],
+        lastDailyRefresh: null,
+        lastWeeklyRefresh: null,
+      },
+      obtainedItems: [],
       settings: {
         themeId: "theme_forest",
         titleId: "",
