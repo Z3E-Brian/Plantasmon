@@ -82,7 +82,7 @@
 | 4 - 4 plants cards, home and general rewards | 3/3 | Complete   | 2026-05-14 |
 | 5 - Binnacle, Test & QA | 3/3 | Complete | 2026-05-14 |
 | 6 - Verification of hardcode | 0/0 | Planned | - |
-| 7 - Missions & Rewards | 1/5 | Executing | - |
+| 7 - Missions & Rewards | 3/5 | In Progress|  |
 
 ---
 
@@ -166,13 +166,13 @@ Plans:
 - ACH-05: Architecture supports rewardItemId on achievements for future item grants
 
 **Depends on:** Phase 6
-**Plans:** 5 plans
+**Plans:** 3/5 plans executed
 
 Plans:
 - [x] 07-01-PLAN.md — Mission Service + Firestore seed
 - [ ] 07-02-PLAN.md — Mission UI + HomeScreen Integration + Rotation
 - [ ] 07-03-PLAN.md — Claim Flow + Grace Period + Completion Detection
-- [ ] 07-04-PLAN.md — Obtenibles System + Profile Vitrina
+- [x] 07-04-PLAN.md — Obtenibles System + Profile Vitrina
 - [x] 07-05-PLAN.md — New Achievements (Streak, Account Age, Weekly)
 
 ---

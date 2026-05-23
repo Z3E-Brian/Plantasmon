@@ -4,14 +4,14 @@ milestone: v1.0
 milestone_name: milestone
 status: executing
 stopped_at: Plan 07-05 complete — new achievement definitions + rewardItemId
-last_updated: "2026-05-23T20:11:52.098Z"
+last_updated: "2026-05-23T20:22:13.580Z"
 last_activity: 2026-05-23
 progress:
   total_phases: 7
   completed_phases: 5
   total_plans: 22
-  completed_plans: 19
-  percent: 86
+  completed_plans: 20
+  percent: 91
 ---
 
 # PlantasMon - Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-04-22)
 ## Current Position
 
 Phase: 07 (missions-and-rewards) — EXECUTING
-Plan: 3 of 5
-Status: Plan 07-05 complete. Ready for Plan 07-02 (Mission UI + HomeScreen)
-Last activity: 2026-05-23 -- Plan 07-05 complete (new achievements + rewardItemId)
+Plan: 4 of 5
+Status: Ready to execute
+Last activity: 2026-05-23
 
-Progress: [█████████░] 86%
+Progress: [█████████░] 91%
 
 ## Performance Metrics
 
@@ -56,6 +56,7 @@ Progress: [█████████░] 86%
 | Phase 02-lab3 P05 | 3min | - tasks | - files |
 | Phase 02-lab3 P04 | 12 min | 3 tasks | 3 files |
 | Phase 07-missions-and-rewards P05 | 8min | 1 tasks | 1 files |
+| Phase 07-missions-and-rewards P04 | 12min | 3 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -92,6 +93,9 @@ From execution (Phase 07 - Plan 01 - Mission Service):
 - Seed data follows established pattern from userAchievementsService.ts (check empty → batch setDoc)
 - [Phase ?]: rewardItemId is optional metadata-only field on achievement definition; actual grant flow deferred to future phase (D-21)
 - [Phase ?]: New longest_streak achievements coexist alongside existing streak_* achievements for backward compatibility; former uses longestStreak (historical max), latter tracks currentStreak
+- [Phase 07-missions-and-rewards]: 30 items split across 4 rarity tiers: 15 común / 8 raro / 4 épico / 3 legendario (53/27/13/10%)
+- [Phase 07-missions-and-rewards]: Vitrina data loaded via separate useEffect in UserProfile (not via useProfile hook)
+- [Phase 07-missions-and-rewards]: ProfileVitrina uses inline RARITY_COLORS (gray/blue/purple/gold) matching Achievements.tsx pattern
 
 ### Pending Todos
 
@@ -119,9 +123,9 @@ From CONCERNS.md:
 
 ## Session Continuity
 
-Last session: 2026-05-23T21:13:00.000Z
+Last session: 2026-05-23T20:22:03.112Z
 Stopped at: Plan 07-05 complete — new achievement definitions + rewardItemId
-Resume file: .planning/phases/07-missions-and-rewards/07-05-SUMMARY.md
+Resume file: None
 
 ---
 
