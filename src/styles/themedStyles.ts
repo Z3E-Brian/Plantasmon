@@ -1461,6 +1461,10 @@ const stylesByComponent = {
     light: createDailyMissionsStyles(getAppTheme("light")),
     dark: createDailyMissionsStyles(getAppTheme("dark")),
   },
+  weeklyMissions: {
+    light: createDailyMissionsStyles(getAppTheme("light")),
+    dark: createDailyMissionsStyles(getAppTheme("dark")),
+  },
   recentAchievement: {
     light: createRecentAchievementStyles(getAppTheme("light")),
     dark: createRecentAchievementStyles(getAppTheme("dark")),
@@ -1512,6 +1516,8 @@ type StylesForComponent<T extends ComponentName> = ReturnType<
     : T extends "userProgress"
     ? typeof createUserProgressStyles
     : T extends "dailyMissions"
+    ? typeof createDailyMissionsStyles
+    : T extends "weeklyMissions"
     ? typeof createDailyMissionsStyles
     : T extends "recentAchievement"
     ? typeof createRecentAchievementStyles
