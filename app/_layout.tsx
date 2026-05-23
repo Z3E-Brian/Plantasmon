@@ -2,8 +2,9 @@ import { BottomNav } from "@/src/components/profile/BottomNav"
 import { SyncStatusIndicator } from "@/src/components/SyncStatusIndicator"
 import { onAuthChange } from "@/src/services/authService"
 import { seedAchievements } from "@/src/services/userAchievementsService"
+import { seedObtenibles } from "@/src/services/obteniblesService"
 import { setupAutoSync } from "@/src/services/syncService"
-import { Stack, usePathname, useRouter, useSegments } from "expo-router"
+import { Stack, usePathname, useRouter } from "expo-router"
 import { User } from "firebase/auth"
 import { useEffect, useState } from "react"
 import { ActivityIndicator, View } from "react-native"
@@ -12,29 +13,31 @@ import Toast from "react-native-toast-message"
 
 export default function RootLayout() {
   const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [initialized, setInitialized] = useState(false)
   const router = useRouter()
-  const segments = useSegments()
   const pathname = usePathname()
-  const showNav = user && pathname !== "/login" && pathname !== "/camera"
+  const showNav = user && pathname !== "/login" && pathname !== "/register" && pathname !== "/camera"
 
   useEffect(() => {
     const unsubscribe = onAuthChange((firebaseUser) => {
+      console.log("[Auth] onAuthChange ->", firebaseUser?.uid ?? "null")
       setUser(firebaseUser)
-      setLoading(false)
+      setInitialized(true)
     })
     return unsubscribe
   }, [])
 
   useEffect(() => {
-    if (loading) return
-    const inLoginScreen = segments[0] === "login"
-    if (!user && !inLoginScreen) {
+    if (!initialized) return
+    console.log("[Auth] Redirect effect: user=", user?.uid ?? "null", "path=", pathname)
+    if (!user && pathname !== "/login" && pathname !== "/register") {
+      console.log("[Auth] -> redirect to /login")
       router.replace("/login")
-    } else if (user && inLoginScreen) {
+    } else if (user && pathname === "/login") {
+      console.log("[Auth] -> redirect to /")
       router.replace("/")
     }
-  }, [user, loading, segments])
+  }, [user, initialized, pathname])
 
   useEffect(() => {
     if (!user) return
@@ -42,10 +45,11 @@ export default function RootLayout() {
       process.env.EXPO_PUBLIC_API_URL || "https://plantasmon.onrender.com"
     )
     seedAchievements()
+    seedObtenibles()
     return unsubscribe
   }, [user])
 
-  if (loading) {
+  if (!initialized) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" />

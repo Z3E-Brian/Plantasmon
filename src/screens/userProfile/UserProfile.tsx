@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   ActivityIndicator,
   Alert,
@@ -14,17 +14,21 @@ import { signOut } from "firebase/auth"
 import { auth } from "@/src/config/firebase"
 
 import { Achievements } from "@/src/components/profile/Achievements"
-import { ActivityFeed } from "@/src/components/profile/ActivityFeed"
+import { ActivityFeed, ActivityData } from "@/src/components/profile/ActivityFeed"
+import { ProfileVitrina, type ObtenibleDisplay } from "@/src/components/profile/ProfileVitrina"
+import { getObteniblesWithStatus } from "@/src/services/obteniblesService"
+import { getCurrentUserId } from "@/src/services/userService"
 import { PlantCollection } from "@/src/components/profile/PlantCollection"
 import { ProfileAbout } from "@/src/components/profile/ProfileAbout"
 import { ProfileHero } from "@/src/components/profile/ProfileHero"
 import ScreenWrapper from "@/src/components/screenWrapper/ScreenWrapper"
+import { ACTIVITIES } from "@/src/constants/data"
 import { BG_THEMES, COLORS } from "@/src/constants/theme"
 import { useProfile } from "@/src/hooks/useProfile"
 import styles from "@/src/screens/userProfile/UserProfile.styles"
 import { useRouter } from "expo-router"
 
-type TabKey = "collection" | "activity" | "badges"
+type TabKey = "collection" | "activity" | "badges" | "vitrina"
 
 export default function UserProfile() {
   const router      = useRouter()
@@ -35,11 +39,24 @@ export default function UserProfile() {
   const [titleIndex,       setTitleIndex      ] = useState(0)
   const [showSettings,     setShowSettings    ] = useState(false)
   const [activeSettingsTab, setActiveSettingsTab] = useState<"banner" | "background" | "title">("banner")
-  const [activeTab,        setActiveTab       ] = useState<TabKey>("collection")
+  const [activeTab, setActiveTab] = useState<TabKey>("collection")
   const [signingOut,       setSigningOut      ] = useState(false)
+  const [vitrinaItems, setVitrinaItems] = useState<ObtenibleDisplay[]>([])
+  const [vitrinaTotal, setVitrinaTotal] = useState(0)
+  const [vitrinaObtained, setVitrinaObtained] = useState(0)
 
   const { user, plants, achievements, loading } = useProfile()
   const currentBg = BG_THEMES[bgTheme]
+
+  useEffect(() => {
+    const uid = getCurrentUserId()
+    if (!uid) return
+    getObteniblesWithStatus(uid).then((items) => {
+      setVitrinaItems(items)
+      setVitrinaTotal(items.length)
+      setVitrinaObtained(items.filter((i) => i.obtained).length)
+    })
+  }, [])
 
   const handleSignOut = () => {
     Alert.alert(
@@ -166,7 +183,7 @@ export default function UserProfile() {
 
             <View style={styles.tabsContainer}>
               <View style={styles.tabsList}>
-                {(["collection", "activity", "badges"] as TabKey[]).map((tab) => (
+                {(["collection", "activity", "badges", "vitrina"] as TabKey[]).map((tab) => (
                   <Pressable
                     key={tab}
                     onPress={() => setActiveTab(tab)}
@@ -182,10 +199,19 @@ export default function UserProfile() {
 
               <View style={styles.tabContent}>
                 {activeTab === "collection" && <PlantCollection plants={plants} />}
-                {activeTab === "activity"   && <ActivityFeed />}
+                {activeTab === "activity"   && <ActivityFeed activities={ACTIVITIES as ActivityData[]} />}
                 {activeTab === "badges"     && (
                   <View style={{ paddingHorizontal: 20, paddingTop: 12 }}>
                     <Achievements achievements={achievements} />
+                  </View>
+                )}
+                {activeTab === "vitrina" && (
+                  <View style={{ paddingHorizontal: 20, paddingTop: 12 }}>
+                    <ProfileVitrina
+                      items={vitrinaItems}
+                      obtainedCount={vitrinaObtained}
+                      totalCount={vitrinaTotal}
+                    />
                   </View>
                 )}
               </View>
@@ -247,6 +273,7 @@ const TAB_EMOJI: Record<TabKey, string> = {
   collection: "🌿",
   activity:   "🕒",
   badges:     "⭐",
+  vitrina:    "🏆",
 }
 
 function TabIcon({ type, active }: { type: TabKey; active: boolean }) {
