@@ -173,7 +173,7 @@ Plans:
 - [ ] 07-02-PLAN.md — Mission UI + HomeScreen Integration + Rotation
 - [ ] 07-03-PLAN.md — Claim Flow + Grace Period + Completion Detection
 - [ ] 07-04-PLAN.md — Obtenibles System + Profile Vitrina
-- [ ] 07-05-PLAN.md — New Achievements (Streak, Account Age, Weekly)
+- [x] 07-05-PLAN.md — New Achievements (Streak, Account Age, Weekly)
 
 ---
 

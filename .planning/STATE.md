@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "Plan 07-01 complete — mission service layer"
-last_updated: "2026-05-23T20:17:00.000Z"
-last_activity: 2026-05-23 -- Plan 07-01 complete (mission service + seed + user doc extension)
+stopped_at: Plan 07-05 complete — new achievement definitions + rewardItemId
+last_updated: "2026-05-23T20:11:52.098Z"
+last_activity: 2026-05-23
 progress:
   total_phases: 7
   completed_phases: 5
   total_plans: 22
-  completed_plans: 18
-  percent: 82
+  completed_plans: 19
+  percent: 86
 ---
 
 # PlantasMon - Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-04-22)
 ## Current Position
 
 Phase: 07 (missions-and-rewards) — EXECUTING
-Plan: 2 of 5
-Status: Plan 07-01 complete. Ready for Plan 07-02 (Mission UI + HomeScreen)
-Last activity: 2026-05-23 -- Plan 07-01 complete
+Plan: 3 of 5
+Status: Plan 07-05 complete. Ready for Plan 07-02 (Mission UI + HomeScreen)
+Last activity: 2026-05-23 -- Plan 07-05 complete (new achievements + rewardItemId)
 
-Progress: [████████░░] 82%
+Progress: [█████████░] 86%
 
 ## Performance Metrics
 
@@ -55,6 +55,7 @@ Progress: [████████░░] 82%
 *Updated after each plan completion*
 | Phase 02-lab3 P05 | 3min | - tasks | - files |
 | Phase 02-lab3 P04 | 12 min | 3 tasks | 3 files |
+| Phase 07-missions-and-rewards P05 | 8min | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -89,6 +90,8 @@ From execution (Phase 07 - Plan 01 - Mission Service):
 - longestStreak tracks historical max (never decreases), separate from streakDays (can reset)
 - Spanish error messages and descriptions consistent with app locale
 - Seed data follows established pattern from userAchievementsService.ts (check empty → batch setDoc)
+- [Phase ?]: rewardItemId is optional metadata-only field on achievement definition; actual grant flow deferred to future phase (D-21)
+- [Phase ?]: New longest_streak achievements coexist alongside existing streak_* achievements for backward compatibility; former uses longestStreak (historical max), latter tracks currentStreak
 
 ### Pending Todos
 
@@ -116,9 +119,9 @@ From CONCERNS.md:
 
 ## Session Continuity
 
-Last session: 2026-05-23T20:17:00.000Z
-Stopped at: Plan 07-01 complete — mission service layer
-Resume file: .planning/phases/07-missions-and-rewards/07-01-SUMMARY.md
+Last session: 2026-05-23T21:13:00.000Z
+Stopped at: Plan 07-05 complete — new achievement definitions + rewardItemId
+Resume file: .planning/phases/07-missions-and-rewards/07-05-SUMMARY.md
 
 ---
 
