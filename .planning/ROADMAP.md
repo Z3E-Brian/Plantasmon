@@ -121,6 +121,39 @@
 - [x] 04-02-PLAN.md — Achievements Backend (Firestore + unlock logic)
 - [x] 04-03-PLAN.md — Achievements UI (Profile display + locked/unlocked states)
 
+### Phase 5: binnacle, test and QA @Clase_Asincronica.pdf
+
+**Goal:** Documentar avance de Lab 4 (bitácora + funcionalidad propia), investigar QA/testing para Expo/RN, implementar 2 pruebas básicas, y preparar PDF final con capturas y link al repo.
+**Requirements**:
+- QA-01, QA-02, DOC-01
+**Depends on:** Phase 4
+**Plans:** 3 plans
+
+Plans:
+- [ ] 05-01-PLAN.md — Configurar Jest/RTL + unit test validación planta
+- [ ] 05-02-PLAN.md — Component test LoginScreen error
+- [ ] 05-03-PLAN.md — Bitácora + investigación QA + borrador PDF
+
+### Phase 6: verification of hardcode vs actually functional for every user
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 5
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 6 to break down)
+
+### Phase 7: missions and rewards
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 6
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 7 to break down)
+
 ---
 
 *Roadmap updated: 2026-05-14*

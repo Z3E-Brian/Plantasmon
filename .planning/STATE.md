@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Roadmap creation
-last_updated: "2026-05-14T17:05:18.723Z"
-last_activity: 2026-05-14 -- Phase 01 planning complete
+stopped_at: Phase 07 added
+last_updated: "2026-05-23T13:30:00.000Z"
+last_activity: 2026-05-23 -- Phase 07 added
 progress:
-  total_phases: 4
-  completed_phases: 3
-  total_plans: 14
-  completed_plans: 11
-  percent: 79
+  total_phases: 7
+  completed_phases: 5
+  total_plans: 17
+  completed_plans: 17
+  percent: 94
 ---
 
 # PlantasMon - Project State
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-22)
 
 **Core value:** Plant care companion app that helps users identify plants, track their plant collection, and get care tips
-**Current focus:** Phase 4: 4 plants cards, home and general rewards
+**Current focus:** Phase 05 — binnacle-test-and-qa-clase-asincronica-pdf
 
 ## Current Position
 
-Phase: 4 of 4 (Phase 4: 4 plants cards, home and general rewards)
-Plan: 3 of 3 (Complete)
-Status: Ready to execute
-Last activity: 2026-05-14 -- Phase 01 planning complete
+Phase: 06 (verification of hardcode vs actually functional for every user) — 📋 PLANNED
+Plan: 0 of 0
+Status: Phase 06 added, not planned yet
+Last activity: 2026-05-23 -- Phase 06 added
 
 Progress: [██████████] 100%
 
@@ -48,6 +48,7 @@ Progress: [██████████] 100%
 | 2 - Lab3 | 3 | ~45 min | ~15 min |
 | 3 - Calendar + Missing Screens | 3 | ~30 min | ~10 min |
 | 4 - 4 plants cards, home and general rewards | 3 | ~15 min | ~5 min |
+| 5 - Binnacle, Test & QA | 3 | ~5 min | ~2 min |
 
 *Updated after each plan completion*
 | Phase 02-lab3 P05 | 3min | - tasks | - files |
@@ -97,6 +98,9 @@ From CONCERNS.md:
 - Phase 2 added: Lab3 - API + Sincronización
 - Phase 3 added: add calendar and funcionality to missing screens
 - Phase 4 added: 4 plants cards, home and general rewards
+- Phase 5 added: binnacle, test and QA @Clase_Asincronica.pdf
+- Phase 6 added: verification of hardcode vs actually functional for every user
+- Phase 7 added: missions and rewards
 
 </decisions>
 
