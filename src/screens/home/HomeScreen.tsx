@@ -1,8 +1,10 @@
 import * as Haptics from "expo-haptics"
 import { useRouter } from "expo-router"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
+import { useEffect, useState, useCallback } from "react"
 
-import { DailyMissions } from "@/src/components/home/DailyMissions"
+import { DailyMissions, type MissionDisplay } from "@/src/components/home/DailyMissions"
+import { WeeklyMissions } from "@/src/components/home/WeeklyMissions"
 import { HomeHeader } from "@/src/components/home/HomeHeader"
 import { LastIdentified } from "@/src/components/home/LastIdentified"
 import { RecentAchievement } from "@/src/components/home/RecentAchievement"
@@ -12,11 +14,118 @@ import { UserProgress } from "@/src/components/home/UserProgress"
 import ScreenWrapper from "@/src/components/screenWrapper/ScreenWrapper"
 import { useThemedStyles } from "@/src/styles/themedStyles"
 import { ScrollView } from "react-native"
+import { getCurrentUserId, getUserProfile } from "@/src/services/userService"
+import {
+  getUserMissions,
+  assignDailyMissions,
+  assignWeeklyMissions,
+  getMissionDefinitions,
+  claimMissionReward,
+  getExpiredMissions,
+  type AssignedMission,
+} from "@/src/services/missionService"
+import type { MissionDefinition } from "@/src/constants/missionsData"
+import { RECENT_ACHIEVEMENT } from "@/src/constants/data"
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets()
   const router = useRouter()
   const { styles, theme } = useThemedStyles("homeScreen")
+  const [userName, setUserName] = useState<string | undefined>()
+  const [userPlants, setUserPlants] = useState<number>(0)
+  const [userStreak, setUserStreak] = useState<number>(0)
+  const [userXp, setUserXp] = useState<number>(0)
+
+  const [dailyMissions, setDailyMissions] = useState<MissionDisplay[]>([])
+  const [weeklyMissions, setWeeklyMissions] = useState<MissionDisplay[]>([])
+  const [expiredMissions, setExpiredMissions] = useState<MissionDisplay[]>([])
+
+  const toDisplay = (
+    assigned: AssignedMission[],
+    defs: MissionDefinition[]
+  ): MissionDisplay[] => {
+    return assigned.map((a) => {
+      const def = defs.find((d) => d.id === a.id)
+      return {
+        id: a.id,
+        title: def?.title ?? a.id,
+        icon: def?.icon ?? "📋",
+        xpReward: def?.xpReward ?? 0,
+        progress: a.progress,
+        target: a.target,
+        completed: a.completed,
+        claimed: a.claimed,
+        claimedAt: a.claimedAt,
+      }
+    })
+  }
+
+  const loadMissions = useCallback(async () => {
+    const uid = getCurrentUserId()
+    if (!uid) return
+    try {
+      const result = await getUserMissions(uid)
+      const allDefs = await getMissionDefinitions()
+
+      // Refresh assignments if needed
+      if (result.needsRefresh.daily) {
+        await assignDailyMissions(uid)
+        const refreshed = await getUserMissions(uid)
+        setDailyMissions(toDisplay(refreshed.daily, allDefs))
+      } else {
+        setDailyMissions(toDisplay(result.daily, allDefs))
+      }
+
+      if (result.needsRefresh.weekly) {
+        await assignWeeklyMissions(uid)
+        const refreshed = await getUserMissions(uid)
+        setWeeklyMissions(toDisplay(refreshed.weekly, allDefs))
+      } else {
+        setWeeklyMissions(toDisplay(result.weekly, allDefs))
+      }
+
+      // Grace period: load yesterday's unclaimed
+      const expired = await getExpiredMissions(uid)
+      setExpiredMissions(
+        toDisplay(expired, allDefs).map((m) => ({ ...m, expired: true }))
+      )
+    } catch (error) {
+      console.error("Error loading missions:", error)
+    }
+  }, [])
+
+  const handleClaim = async (missionId: string) => {
+    const uid = getCurrentUserId()
+    if (!uid) return
+    try {
+      await claimMissionReward(uid, missionId)
+      // Reload missions to reflect claimed state
+      await loadMissions()
+      // Reload user profile to update XP display
+      const profile = await getUserProfile(uid)
+      if (profile) {
+        setUserXp(profile.xp)
+        setUserStreak(profile.streak)
+        setUserPlants(profile.plantsOwned)
+      }
+    } catch (error) {
+      console.error("Error claiming reward:", error)
+    }
+  }
+
+  useEffect(() => {
+    const uid = getCurrentUserId()
+    if (!uid) return
+    loadMissions()
+    getUserProfile(uid).then((profile) => {
+      if (profile) {
+        setUserName(profile.name)
+        setUserPlants(profile.plantsOwned)
+        setUserStreak(profile.streak)
+        setUserXp(profile.xp)
+      }
+    })
+  }, [loadMissions])
 
   const handlePlantPress = (plantId: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
@@ -34,7 +143,7 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Header con saludo y stats */}
-        <HomeHeader />
+        <HomeHeader name={userName} plantsOwned={userPlants} streak={userStreak} />
 
         {/* Barra de estadísticas rápidas (Fase 4) */}
         <StatsBar />
@@ -46,13 +155,20 @@ export default function HomeScreen() {
         <LastIdentified onPress={handlePlantPress} />
 
         {/* Progreso del usuario */}
-        <UserProgress />
+        <UserProgress xp={userXp} />
 
         {/* Misiones diarias */}
-        <DailyMissions />
+        <DailyMissions
+          missions={dailyMissions}
+          expiredMissions={expiredMissions}
+          onClaim={handleClaim}
+        />
+
+        {/* Misiones semanales */}
+        <WeeklyMissions missions={weeklyMissions} onClaim={handleClaim} />
 
         {/* Logro reciente (condicional) */}
-        <RecentAchievement />
+        <RecentAchievement achievement={RECENT_ACHIEVEMENT} />
 
         {/* Tip del día */}
         <TipCard />
