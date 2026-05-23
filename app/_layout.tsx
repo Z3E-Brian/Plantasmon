@@ -3,6 +3,7 @@ import { SyncStatusIndicator } from "@/src/components/SyncStatusIndicator"
 import { onAuthChange } from "@/src/services/authService"
 import { seedAchievements } from "@/src/services/userAchievementsService"
 import { seedObtenibles } from "@/src/services/obteniblesService"
+import { seedMissions } from "@/src/services/missionService"
 import { setupAutoSync } from "@/src/services/syncService"
 import { Stack, usePathname, useRouter } from "expo-router"
 import { User } from "firebase/auth"
@@ -46,6 +47,7 @@ export default function RootLayout() {
     )
     seedAchievements()
     seedObtenibles()
+    seedMissions()
     return unsubscribe
   }, [user])
 
