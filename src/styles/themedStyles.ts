@@ -1321,6 +1321,96 @@ export const createStatsBarStyles = (theme: AppTheme) =>
     },
   });
 
+// ==================== PROFILE VITRINA ====================
+export const createProfileVitrinaStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    container: {},
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginBottom: theme.spacing.md,
+    },
+    headerTitle: {
+      fontSize: 16,
+      fontWeight: "700",
+      color: theme.colors.textPrimary,
+    },
+    headerCount: {
+      fontSize: 12,
+      fontWeight: "700",
+      color: theme.colors.textTertiary,
+    },
+    grid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 10,
+    },
+    itemCard: {
+      width: "31%",
+      aspectRatio: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      padding: theme.spacing.sm,
+      borderRadius: theme.radius.md,
+      borderWidth: 2,
+      position: "relative",
+    },
+    itemCardObtained: {
+      backgroundColor: theme.colors.primarySoft,
+      borderColor: theme.colors.primary + "30",
+    },
+    itemCardLocked: {
+      backgroundColor: theme.colors.surfaceMuted,
+      borderColor: theme.colors.border,
+      opacity: 0.4,
+    },
+    itemIcon: {
+      fontSize: 28,
+      marginBottom: 2,
+    },
+    itemName: {
+      fontSize: 9,
+      fontWeight: "700",
+      textAlign: "center",
+      lineHeight: 11,
+      color: theme.colors.textPrimary,
+    },
+    lockOverlay: {
+      position: "absolute",
+      top: 4,
+      right: 4,
+      width: 16,
+      height: 16,
+      borderRadius: 8,
+      backgroundColor: "rgba(0,0,0,0.3)",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    lockText: {
+      fontSize: 9,
+      color: "#FFF",
+      fontWeight: "700",
+    },
+    rarityDot: {
+      position: "absolute",
+      bottom: 4,
+      right: 4,
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+    },
+    emptyContainer: {
+      alignItems: "center",
+      paddingVertical: 32,
+    },
+    emptyText: {
+      fontSize: 14,
+      color: theme.colors.textTertiary,
+      fontWeight: "600",
+    },
+  });
+
 // ==================== HOOK CENTRALIZADO ====================
 const stylesByComponent = {
   achievements: {
@@ -1391,6 +1481,10 @@ const stylesByComponent = {
     light: createJournalScreenStyles(getAppTheme("light")),
     dark: createJournalScreenStyles(getAppTheme("dark")),
   },
+  profileVitrina: {
+    light: createProfileVitrinaStyles(getAppTheme("light")),
+    dark: createProfileVitrinaStyles(getAppTheme("dark")),
+  },
 } as const;
 
 type ComponentName = keyof typeof stylesByComponent;
@@ -1429,6 +1523,8 @@ type StylesForComponent<T extends ComponentName> = ReturnType<
     ? typeof createExploreScreenStyles
     : T extends "journalScreen"
     ? typeof createJournalScreenStyles
+    : T extends "profileVitrina"
+    ? typeof createProfileVitrinaStyles
     : never
 >;
 
