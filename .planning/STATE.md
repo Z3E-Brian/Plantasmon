@@ -124,8 +124,8 @@ From CONCERNS.md:
 ## Session Continuity
 
 Last session: 2026-05-23T20:22:03.112Z
-Stopped at: Plan 07-05 complete — new achievement definitions + rewardItemId
-Resume file: None
+Stopped at: Plan 07-04 complete — obtenibles system + profile vitrina
+Resume file: .planning/phases/07-missions-and-rewards/07-04-SUMMARY.md
 
 ---
 
