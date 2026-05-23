@@ -7,15 +7,18 @@ import { Image } from "expo-image"
 import * as Haptics from "expo-haptics"
 import ScreenWrapper from "@/src/components/screenWrapper/ScreenWrapper"
 import { useThemedStyles } from "@/src/styles/themedStyles"
+import { getCurrentUserId, getUserProfile } from "@/src/services/userService"
 import { getUserPlants, UserPlant } from "@/src/services/userPlantsService"
 import { getUserAchievements, UserAchievement } from "@/src/services/userAchievementsService"
 import { DailyMissions } from "@/src/components/home/DailyMissions"
 import { UserProgress } from "@/src/components/home/UserProgress"
+import { RECENT_ACHIEVEMENT } from "@/src/constants/data"
 
 export default function Journal() {
   const { theme, styles } = useThemedStyles("journalScreen")
   const [userPlants, setUserPlants] = useState<UserPlant[]>([])
   const [achievements, setAchievements] = useState<UserAchievement[]>([])
+  const [userXp, setUserXp] = useState<number>(0)
   const [failedImages, setFailedImages] = useState<Record<string, boolean>>({})
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
@@ -37,6 +40,7 @@ export default function Journal() {
     let plants: UserPlant[] = []
     let achList: UserAchievement[] = []
     let hasError = false
+    let xp = 0
 
     try {
       plants = await getUserPlants()
@@ -53,8 +57,19 @@ export default function Journal() {
       console.error("Achievements fetch error:", e)
     }
 
+    try {
+      const uid = getCurrentUserId()
+      if (uid) {
+        const profile = await getUserProfile(uid)
+        if (profile) xp = profile.xp
+      }
+    } catch (e) {
+      console.error("Profile fetch error:", e)
+    }
+
     setUserPlants(plants)
     setAchievements(achList)
+    setUserXp(xp)
 
     if (hasError && plants.length === 0 && achList.length === 0) {
       setError("No pudimos cargar tus datos")
@@ -249,7 +264,7 @@ export default function Journal() {
           <View style={styles.cardHeader}>
             <Text style={styles.cardTitle}>🎯 Objetivos de Hoy</Text>
           </View>
-          <DailyMissions />
+          <DailyMissions missions={[]} expiredMissions={[]} onClaim={async () => {}} />
         </View>
 
         {/* ═══════ Card 3: Tu Progreso ═══════ */}
@@ -257,7 +272,7 @@ export default function Journal() {
           <View style={styles.cardHeader}>
             <Text style={styles.cardTitle}>📊 Tu Progreso</Text>
           </View>
-          <UserProgress />
+          <UserProgress xp={userXp} />
           <View
             style={{
               flexDirection: "row",
