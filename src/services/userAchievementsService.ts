@@ -8,7 +8,7 @@ import {
 } from "firebase/firestore";
 // Reemplaza CURRENT_USER_ID por getCurrentUserId() (Phase 1: Authentication Foundation)
 // para que cada usuario vea sus propios logros (PROF-03).
-import { getCurrentUserId } from "./userService";
+import { getAccountAge, getCurrentUserId } from "./userService";
 
 export interface UserAchievement {
   id: string;
@@ -30,6 +30,7 @@ export interface AchievementDefinition {
   icon: string;
   requirement: { type: string; count: number };
   isSecret: boolean;
+  rewardItemId?: string; // NEW: optional item granted on unlock (D-21)
 }
 
 export const INITIAL_ACHIEVEMENTS: AchievementDefinition[] = [
@@ -265,6 +266,75 @@ export const INITIAL_ACHIEVEMENTS: AchievementDefinition[] = [
     requirement: { type: "fun_facts", count: 5 },
     isSecret: true,
   },
+
+  // ── Streak (longestStreak / historical max) ────────────────
+  {
+    id: "longest_streak_3",
+    name: "3 Días de Racha Máxima",
+    description: "Alcanza una racha histórica de 3 días",
+    category: "streak",
+    icon: "fire",
+    requirement: { type: "longest_streak", count: 3 },
+    isSecret: false,
+  },
+  {
+    id: "longest_streak_7",
+    name: "7 Días de Racha Máxima",
+    description: "Alcanza una racha histórica de 7 días",
+    category: "streak",
+    icon: "fire",
+    requirement: { type: "longest_streak", count: 7 },
+    isSecret: false,
+  },
+  {
+    id: "longest_streak_14",
+    name: "14 Días de Racha Máxima",
+    description: "Alcanza una racha histórica de 14 días",
+    category: "streak",
+    icon: "star",
+    requirement: { type: "longest_streak", count: 14 },
+    isSecret: false,
+  },
+  {
+    id: "longest_streak_30",
+    name: "30 Días de Racha Máxima",
+    description: "Alcanza una racha histórica de 30 días",
+    category: "streak",
+    icon: "crown",
+    requirement: { type: "longest_streak", count: 30 },
+    isSecret: false,
+  },
+
+  // ── Account Age (D-19) ──────────────────────────────────────
+  {
+    id: "account_100_days",
+    name: "100 Días Activo",
+    description: "Celebra 100 días desde tu registro",
+    category: "usage",
+    icon: "calendar",
+    requirement: { type: "account_age_days", count: 100 },
+    isSecret: false,
+  },
+  {
+    id: "account_1_year",
+    name: "1 Año Activo",
+    description: "Celebra 1 año desde tu registro",
+    category: "usage",
+    icon: "calendar",
+    requirement: { type: "account_age_days", count: 365 },
+    isSecret: false,
+  },
+
+  // ── Weekly Active (D-20) ────────────────────────────────────
+  {
+    id: "weekly_all_complete",
+    name: "Semana Completa",
+    description: "Completa todas las misiones semanales",
+    category: "special",
+    icon: "trophy",
+    requirement: { type: "weekly_missions", count: 1 },
+    isSecret: false,
+  },
 ];
 
 function mapEmoji(category: string, name: string): string {
@@ -272,6 +342,11 @@ function mapEmoji(category: string, name: string): string {
   if (lower.includes("primera") || lower.includes("first")) return "sprout";
   if (lower.includes("rara") || lower.includes("rare")) return "star";
   if (lower.includes("maestro") || lower.includes("master")) return "crown";
+  if (lower.includes("racha máxima")) {
+    if (lower.includes("30")) return "crown";
+    return "fire";
+  }
+  if (lower.includes("semana completa")) return "trophy";
   if (category === "collection") {
     if (lower.includes("especies") || lower.includes("species")) return "globe";
     return "magnify";
@@ -298,8 +373,9 @@ export async function getUserAchievements(userId?: string): Promise<{
   earned: number;
   total: number;
 }> {
+  const resolvedUserId = userId ?? getCurrentUserId();
+  if (!resolvedUserId) return { achievements: [], earned: 0, total: 0 };
   try {
-    const resolvedUserId = userId ?? getCurrentUserId();
     // 1. Leer el documento del usuario para obtener el array userAchievements
     const userRef = doc(db, "users", resolvedUserId);
     const userSnap = await getDoc(userRef);
@@ -331,11 +407,82 @@ export async function getUserAchievements(userId?: string): Promise<{
     );
 
     // 3. Combinar datos globales + progreso del usuario
-    const achievements: UserAchievement[] = achSnap.docs.map((achDoc) => {
+    const achievements: UserAchievement[] = [];
+
+    for (const achDoc of achSnap.docs) {
       const global = achDoc.data();
       const userAch = userAchMap.get(achDoc.id);
 
-      return {
+      // Handle longest_streak achievements (D-18) — computed from stats.longestStreak
+      if (global.requirement?.type === "longest_streak" && !userAch) {
+        const longestStreak = userData.stats?.longestStreak ?? 0;
+        const target = global.requirement.count;
+        const earned = longestStreak >= target;
+        achievements.push({
+          id: achDoc.id,
+          name: global.name,
+          description: global.description,
+          category: global.category,
+          earned,
+          emoji: mapEmoji(global.category, global.name),
+          progress: Math.min(longestStreak, target),
+          target,
+          xpReward: global.xpReward ?? 0,
+        });
+        continue;
+      }
+
+      // Handle account_age_days achievements (D-19) — computed from createdAt
+      if (global.requirement?.type === "account_age_days" && !userAch) {
+        const createdAt = userData.createdAt;
+        const ageDays = createdAt
+          ? getAccountAge(createdAt.toDate?.() ?? new Date(createdAt))
+          : 0;
+        const target = global.requirement.count;
+        const earned = ageDays >= target;
+        achievements.push({
+          id: achDoc.id,
+          name: global.name,
+          description: global.description,
+          category: global.category,
+          earned,
+          emoji: mapEmoji(global.category, global.name),
+          progress: Math.min(ageDays, target),
+          target,
+          xpReward: global.xpReward ?? 0,
+        });
+        continue;
+      }
+
+      // Handle weekly_missions achievements (D-20) — computed from missions data
+      if (global.requirement?.type === "weekly_missions" && !userAch) {
+        const missions = userData.missions;
+        const weeklyProgress = missions?.missionProgress ?? [];
+        const weeklyIds = missions?.assignedWeeklyIds ?? [];
+        const weeklyCompleted =
+          weeklyIds.length > 0 &&
+          weeklyIds.every((id: string) =>
+            weeklyProgress.find(
+              (p: any) => p.id === id && p.completed && p.claimed
+            )
+          );
+        const earned = weeklyCompleted;
+        achievements.push({
+          id: achDoc.id,
+          name: global.name,
+          description: global.description,
+          category: global.category,
+          earned,
+          emoji: mapEmoji(global.category, global.name),
+          progress: earned ? 1 : 0,
+          target: 1,
+          xpReward: global.xpReward ?? 0,
+        });
+        continue;
+      }
+
+      // Default: use existing mapping for standard achievements
+      achievements.push({
         id: achDoc.id,
         name: global.name,
         description: global.description,
@@ -344,9 +491,9 @@ export async function getUserAchievements(userId?: string): Promise<{
         emoji: mapEmoji(global.category, global.name),
         progress: userAch?.progress,
         target: userAch?.target ?? global.target,
-        xpReward: global.xpReward,
-      };
-    });
+        xpReward: global.xpReward ?? 0,
+      });
+    }
 
     const earned = achievements.filter((a) => a.earned).length;
 
