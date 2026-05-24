@@ -166,12 +166,12 @@ Plans:
 - ACH-05: Architecture supports rewardItemId on achievements for future item grants
 
 **Depends on:** Phase 6
-**Plans:** 5/5 plans executed
+**Plans:** 4/5 plans executed
 
 Plans:
 - [x] 07-01-PLAN.md — Mission Service + Firestore seed
 - [x] 07-02-PLAN.md — Mission UI + HomeScreen Integration + Rotation
-- [x] 07-03-PLAN.md — Claim Flow + Grace Period + Completion Detection
+- [ ] 07-03-PLAN.md — Claim Flow + Grace Period + Completion Detection
 - [x] 07-04-PLAN.md — Obtenibles System + Profile Vitrina
 - [x] 07-05-PLAN.md — New Achievements (Streak, Account Age, Weekly)
 
@@ -199,6 +199,6 @@ Plans:
 | 04-03-PLAN.md — Achievements UI | ✓ Complete | 2026-05-14 |
 | 07-01-PLAN.md — Mission Service + Firestore seed | ✓ Complete | 2026-05-23 |
 | 07-02-PLAN.md — Mission UI + HomeScreen + Rotation | ✓ Complete | 2026-05-23 |
-| 07-03-PLAN.md — Claim Flow + Grace Period + Events | ✓ Complete | 2026-05-23 |
-| 07-04-PLAN.md — Obtenibles + Profile Vitrina | ✓ Complete | 2026-05-23 |
-| 07-05-PLAN.md — New Achievements | ✓ Complete | 2026-05-23 |
+| 07-03-PLAN.md — Claim Flow + Grace Period + Events | ◆ Planned | — |
+| 07-04-PLAN.md — Obtenibles + Profile Vitrina | ◆ Planned | — |
+| 07-05-PLAN.md — New Achievements | ◆ Planned | — |
