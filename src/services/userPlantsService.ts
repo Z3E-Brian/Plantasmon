@@ -8,8 +8,9 @@ import {
 import NetInfo from "@react-native-community/netinfo";
 // Reemplaza CURRENT_USER_ID por getCurrentUserId() (Phase 1: Authentication Foundation)
 // para que cada operación use el UID del usuario autenticado.
-import { getCurrentUserId } from "./userService";
+import { getCurrentUserId, requireUserId } from "./userService";
 import { savePlantLocal, addToSyncQueue } from "@/src/services/offlineStorage";
+import { reportMissionProgress } from "@/src/hooks/useMissionProgress";
 
 export interface UserPlant {
   id: string;
@@ -86,8 +87,9 @@ async function getRawUserPlants(userId: string): Promise<{
 // ─── Funciones públicas ──────────────────────────────────────────────────────
 
 export async function getUserPlants(userId?: string): Promise<UserPlant[]> {
+  const resolvedUserId = userId ?? getCurrentUserId();
+  if (!resolvedUserId) return [];
   try {
-    const resolvedUserId = userId ?? getCurrentUserId();
     const { userPlants } = await getRawUserPlants(resolvedUserId);
 
     if (!userPlants.length) {
@@ -137,7 +139,7 @@ export async function updateUserPlant(
   userId?: string
 ): Promise<void> {
   try {
-    const resolvedUserId = userId ?? getCurrentUserId();
+    const resolvedUserId = requireUserId(userId);
     const { userPlants, fieldPath, userRef } = await getRawUserPlants(resolvedUserId);
 
     const updated = userPlants.map((p: any) =>
@@ -159,7 +161,7 @@ export async function setCompanionPlant(
   userId?: string
 ): Promise<void> {
   try {
-    const resolvedUserId = userId ?? getCurrentUserId();
+    const resolvedUserId = requireUserId(userId);
     const { userPlants, fieldPath, userRef } = await getRawUserPlants(resolvedUserId);
 
     const updated = userPlants.map((p: any) => ({
@@ -180,7 +182,7 @@ export async function togglePlantFavorite(
   userId?: string
 ): Promise<void> {
   try {
-    const resolvedUserId = userId ?? getCurrentUserId();
+    const resolvedUserId = requireUserId(userId);
     const { userPlants, fieldPath, userRef } = await getRawUserPlants(resolvedUserId);
 
     const updated = userPlants.map((p: any) =>
@@ -217,7 +219,7 @@ export async function addUserPlant(
     sunlight,
   } = input;
 
-  const resolvedUserId = userId ?? getCurrentUserId();
+  const resolvedUserId = requireUserId(userId);
 
   try {
     // Always save plant data locally first
@@ -289,6 +291,11 @@ export async function addUserPlant(
       await updateDoc(userRef, {
         [fieldPath]: updatedPlants,
       });
+
+      // Fire-and-forget: report identify mission progress (D-08)
+      reportMissionProgress("identify", resolvedUserId).catch((err) =>
+        console.error("Error reporting identify mission progress:", err)
+      );
     } else {
       // Offline: add to sync queue
       await addToSyncQueue({
@@ -320,8 +327,9 @@ export async function addUserPlant(
  * Cuenta cuántas plantas fueron identificadas hoy (fecha local).
  */
 export async function getPhotosTodayCount(userId?: string): Promise<number> {
+  const resolvedUserId = userId ?? getCurrentUserId();
+  if (!resolvedUserId) return 0;
   try {
-    const resolvedUserId = userId ?? getCurrentUserId();
     const { userPlants } = await getRawUserPlants(resolvedUserId);
     const today = new Date();
     const todayStr = toDateStr(today);
@@ -342,8 +350,9 @@ export async function getPhotosTodayCount(userId?: string): Promise<number> {
 export async function getLastIdentification(
   userId?: string
 ): Promise<{ plantId: string; plantName: string; image: string; date: Date } | null> {
+  const resolvedUserId = userId ?? getCurrentUserId();
+  if (!resolvedUserId) return null;
   try {
-    const resolvedUserId = userId ?? getCurrentUserId();
     const { userPlants } = await getRawUserPlants(resolvedUserId);
     if (!userPlants.length) return null;
 

@@ -89,14 +89,17 @@ describe("useMissionProgress — standalone helper", () => {
       });
 
       // Mock getMissionDefinitions returning a matching def with type "identifications"
-      mockedGetDocs.mockResolvedValueOnce({
+      // Need TWO calls: one for getUserMissions (internal), one for reportMissionProgress
+      const missionDefs = {
         empty: false,
         docs: [{
           data: () => ({ id: "daily_id_01", requirement: { type: "identifications", count: 1 } }),
         }],
         forEach: jest.fn(),
         size: 1,
-      });
+      };
+      mockedGetDocs.mockResolvedValueOnce(missionDefs);
+      mockedGetDocs.mockResolvedValueOnce(missionDefs);
 
       const reportProgress = (useMissionProgressModule as any).reportMissionProgress;
       if (typeof reportProgress !== "function") return; // skip if not implemented yet

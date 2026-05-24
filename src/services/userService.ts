@@ -162,6 +162,24 @@ export async function updateUserBio(
   }
 }
 
+/**
+ * Fire-and-forget: report 'water' mission progress event.
+ * Uses late import to avoid circular dependency with useMissionProgress.
+ * This import is resolved at call time, not module evaluation time, via
+ * inline require() so Metro/CJS bundlers handle the circular dep correctly.
+ */
+function reportWaterMissionProgress(userId: string): void {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { reportMissionProgress } = require("@/src/hooks/useMissionProgress");
+    reportMissionProgress("water", userId).catch((err: unknown) =>
+      console.error("Error in reportMissionProgress(water):", err)
+    );
+  } catch (error) {
+    console.error("Error reporting water mission progress:", error);
+  }
+}
+
 // ─── Helpers de StatsBar ─────────────────────────────────────────────────────
 
 /**
@@ -208,6 +226,10 @@ export async function logWateringActivity(
         "stats.streakDays": 1,
         "stats.longestStreak": 1,
       });
+
+      // Fire-and-forget: report water mission progress (D-08)
+      reportWaterMissionProgress(resolvedUserId);
+
       return;
     }
 
@@ -234,6 +256,9 @@ export async function logWateringActivity(
       "stats.streakDays": newStreak,
       "stats.longestStreak": updatedLongestStreak,
     });
+
+    // Fire-and-forget: report water mission progress (D-08)
+    reportWaterMissionProgress(resolvedUserId);
   } catch (error) {
     console.error("Error registrando actividad de riego:", error);
     throw error;
