@@ -14,6 +14,8 @@ import {
   type MissionDefinition,
 } from "@/src/constants/missionsData";
 
+export type { MissionDefinition } from "@/src/constants/missionsData";
+
 // ─── Types ──────────────────────────────────────────────────────
 
 export type MissionType = "daily" | "weekly";
