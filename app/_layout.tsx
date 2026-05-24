@@ -2,8 +2,8 @@ import { BottomNav } from "@/src/components/profile/BottomNav"
 import { SyncStatusIndicator } from "@/src/components/SyncStatusIndicator"
 import { onAuthChange } from "@/src/services/authService"
 import { seedAchievements } from "@/src/services/userAchievementsService"
-import { seedObtenibles } from "@/src/services/obteniblesService"
 import { seedMissions } from "@/src/services/missionService"
+import { seedObtenibles } from "@/src/services/obteniblesService"
 import { setupAutoSync } from "@/src/services/syncService"
 import { Stack, usePathname, useRouter } from "expo-router"
 import { User } from "firebase/auth"
@@ -46,8 +46,8 @@ export default function RootLayout() {
       process.env.EXPO_PUBLIC_API_URL || "https://plantasmon.onrender.com"
     )
     seedAchievements()
-    seedObtenibles()
     seedMissions()
+    seedObtenibles()
     return unsubscribe
   }, [user])
 
