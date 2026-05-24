@@ -27,10 +27,12 @@ interface UnlockedAchievementEntry {
  * en el documento del usuario.
  *
  * @param userId - ID del usuario en Firestore
+ * @param onUnlock - Callback opcional que se invoca por cada logro recién desbloqueado
  * @returns Promise<string[]> - IDs de los logros recién desbloqueados
  */
 export async function checkAndUnlockAchievements(
-  userId: string
+  userId: string,
+  onUnlock?: (achievement: AchievementDefinition) => void
 ): Promise<string[]> {
   try {
     // ── 1. Leer datos del usuario ──────────────────────────────
@@ -160,6 +162,10 @@ export async function checkAndUnlockAchievements(
           `🏆 Logro desbloqueado: ${achievement.name} (${achievement.id})`
         );
         newlyUnlocked.push(achievement.id);
+        // Notificar al componente consumidor para mostrar celebración
+        if (onUnlock) {
+          onUnlock(achievement);
+        }
       }
     }
 
