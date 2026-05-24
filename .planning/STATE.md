@@ -130,6 +130,7 @@ From CONCERNS.md:
 - Phase 6 added: verification of hardcode vs actually functional for every user
 - Phase 7 added: missions and rewards
 - Phase 8 added: informative pop boxes
+- Phase 9 added: activity in profile and calendar in app
 
 </decisions>
 

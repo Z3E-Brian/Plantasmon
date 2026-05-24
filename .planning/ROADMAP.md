@@ -83,6 +83,8 @@
 | 5 - Binnacle, Test & QA | 3/3 | Complete | 2026-05-14 |
 | 6 - Verification of hardcode | 0/0 | Planned | - |
 | 7 - Missions & Rewards | 6/7 | In Progress|  |
+| 8 - Informative Pop Boxes | 3/3 | Complete | 2026-05-25 |
+| 9 - Activity & Calendar | 0/3 | Planned | - |
 
 ---
 
@@ -186,6 +188,19 @@ Plans:
 - [ ] 08-01-PLAN.md — Popup dismissal service + hooks
 - [ ] 08-02-PLAN.md — InfoBottomSheet + CelebrationSheet components
 - [ ] 08-03-PLAN.md — Screen integration (first-use, celebration, info icons)
+
+### Phase 9: activity in profile and calendar in app
+
+**Goal:** Replace hardcoded mock activity feed in profile with real Firestore data, and add a calendar screen showing plant care events (waterings, identifications, missions). Also add an inline calendar/timeline view on Home.
+
+**Requirements:** TBD (planned via D-01 through D-12 from CONTEXT.md)
+**Depends on:** Phase 8
+**Plans:** 3 plans
+
+Plans:
+- [ ] 09-01-PLAN.md — Activity Service + Hook (Firestore subcollection + useActivityFeed)
+- [ ] 09-02-PLAN.md — Calendar Screen (react-native-calendars + route + event markers)
+- [ ] 09-03-PLAN.md — Profile Wire + Home Timeline + Logging (wire real data + log calls)
 
 ---
 
