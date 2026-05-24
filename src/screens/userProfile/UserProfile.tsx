@@ -6,6 +6,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   useColorScheme,
   View,
 } from "react-native"
@@ -16,6 +17,8 @@ import { auth } from "@/src/config/firebase"
 import { Achievements } from "@/src/components/profile/Achievements"
 import { ActivityFeed, ActivityData } from "@/src/components/profile/ActivityFeed"
 import { ProfileVitrina, type ObtenibleDisplay } from "@/src/components/profile/ProfileVitrina"
+import { CelebrationSheet } from "@/src/components/ui/CelebrationSheet"
+import { InfoBottomSheet } from "@/src/components/ui/InfoBottomSheet"
 import { getObteniblesWithStatus } from "@/src/services/obteniblesService"
 import { getCurrentUserId } from "@/src/services/userService"
 import { PlantCollection } from "@/src/components/profile/PlantCollection"
@@ -28,7 +31,7 @@ import { useProfile } from "@/src/hooks/useProfile"
 import styles from "@/src/screens/userProfile/UserProfile.styles"
 import { useRouter } from "expo-router"
 
-type TabKey = "collection" | "activity" | "badges" | "vitrina"
+type TabKey = "collection" | "activity" | "vitrina"
 
 export default function UserProfile() {
   const router      = useRouter()
@@ -44,6 +47,8 @@ export default function UserProfile() {
   const [vitrinaItems, setVitrinaItems] = useState<ObtenibleDisplay[]>([])
   const [vitrinaTotal, setVitrinaTotal] = useState(0)
   const [vitrinaObtained, setVitrinaObtained] = useState(0)
+  const [vitrinaCelebration, setVitrinaCelebration] = useState<{ title: string; message: string; icon: string } | null>(null)
+  const [showEditInfo, setShowEditInfo] = useState(false)
 
   const { user, plants, achievements, loading } = useProfile()
   const currentBg = BG_THEMES[bgTheme]
@@ -54,7 +59,17 @@ export default function UserProfile() {
     getObteniblesWithStatus(uid).then((items) => {
       setVitrinaItems(items)
       setVitrinaTotal(items.length)
-      setVitrinaObtained(items.filter((i) => i.obtained).length)
+      const obtained = items.filter((i) => i.obtained)
+      setVitrinaObtained(obtained.length)
+      // Show celebration for the first obtained vitrina item
+      if (obtained.length > 0) {
+        const item = obtained[0]
+        setVitrinaCelebration({
+          title: "🎉 ¡Nuevo objeto!",
+          message: `Has obtenido "${item.definition?.name || item.definition?.id}" en tu vitrina.`,
+          icon: item.definition?.icon || "🏆",
+        })
+      }
     })
   }, [])
 
@@ -171,6 +186,14 @@ export default function UserProfile() {
               </Pressable>
             </View>
 
+            <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 20, marginBottom: 8 }}>
+              <Text style={{ fontSize: 16, fontWeight: "600", color: COLORS.foreground, flex: 1 }}>
+                👤 Acerca de
+              </Text>
+              <TouchableOpacity onPress={() => setShowEditInfo(true)}>
+                <Text style={{ fontSize: 14, marginLeft: 8, color: COLORS.foreground }}>ℹ️</Text>
+              </TouchableOpacity>
+            </View>
             <ProfileAbout
               bio={user.bio}
               location={user.location}
@@ -181,9 +204,14 @@ export default function UserProfile() {
               totalAchievements={user.totalAchievements}
             />
 
+            {/* Achievement count at top */}
+            <View style={{ paddingHorizontal: 20, marginBottom: 16 }}>
+              <Achievements achievements={achievements} />
+            </View>
+
             <View style={styles.tabsContainer}>
               <View style={styles.tabsList}>
-                {(["collection", "activity", "badges", "vitrina"] as TabKey[]).map((tab) => (
+                {(["collection", "activity", "vitrina"] as TabKey[]).map((tab) => (
                   <Pressable
                     key={tab}
                     onPress={() => setActiveTab(tab)}
@@ -200,11 +228,6 @@ export default function UserProfile() {
               <View style={styles.tabContent}>
                 {activeTab === "collection" && <PlantCollection plants={plants} />}
                 {activeTab === "activity"   && <ActivityFeed activities={ACTIVITIES as ActivityData[]} />}
-                {activeTab === "badges"     && (
-                  <View style={{ paddingHorizontal: 20, paddingTop: 12 }}>
-                    <Achievements achievements={achievements} />
-                  </View>
-                )}
                 {activeTab === "vitrina" && (
                   <View style={{ paddingHorizontal: 20, paddingTop: 12 }}>
                     <ProfileVitrina
@@ -219,6 +242,24 @@ export default function UserProfile() {
           </View>
         </ScrollView>
       </View>
+
+      {vitrinaCelebration && (
+        <CelebrationSheet
+          visible={!!vitrinaCelebration}
+          title={vitrinaCelebration.title}
+          message={vitrinaCelebration.message}
+          icon={vitrinaCelebration.icon}
+          onDismiss={() => setVitrinaCelebration(null)}
+        />
+      )}
+
+      <InfoBottomSheet
+        visible={showEditInfo}
+        title="👤 Editar perfil"
+        message="Esto se edita presionando el botón Editar perfil en la parte superior de la pantalla."
+        icon="✏️"
+        onDismiss={() => setShowEditInfo(false)}
+      />
     </ScreenWrapper>
   )
 }
@@ -272,7 +313,6 @@ const localStyles = StyleSheet.create({
 const TAB_EMOJI: Record<TabKey, string> = {
   collection: "🌿",
   activity:   "🕒",
-  badges:     "⭐",
   vitrina:    "🏆",
 }
 
