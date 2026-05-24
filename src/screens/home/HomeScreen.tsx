@@ -1,7 +1,8 @@
 import * as Haptics from "expo-haptics"
-import { useFocusEffect, useRouter } from "expo-router"
+import { useRouter, useFocusEffect } from "expo-router"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useEffect, useState, useCallback } from "react"
+import { Alert, ScrollView } from "react-native"
 
 import { DailyMissions, type MissionDisplay } from "@/src/components/home/DailyMissions"
 import { WeeklyMissions } from "@/src/components/home/WeeklyMissions"
@@ -13,7 +14,7 @@ import { TipCard } from "@/src/components/home/TipCard"
 import { UserProgress } from "@/src/components/home/UserProgress"
 import ScreenWrapper from "@/src/components/screenWrapper/ScreenWrapper"
 import { useThemedStyles } from "@/src/styles/themedStyles"
-import { Alert, ScrollView } from "react-native"
+import { useMissionProgress } from "@/src/hooks/useMissionProgress"
 import { getCurrentUserId, getUserProfile } from "@/src/services/userService"
 import {
   getUserMissions,
@@ -26,7 +27,6 @@ import {
 } from "@/src/services/missionService"
 import type { MissionDefinition } from "@/src/constants/missionsData"
 import { RECENT_ACHIEVEMENT } from "@/src/constants/data"
-import { useMissionProgress } from "@/src/hooks/useMissionProgress"
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets()
@@ -40,6 +40,7 @@ export default function HomeScreen() {
   const [dailyMissions, setDailyMissions] = useState<MissionDisplay[]>([])
   const [weeklyMissions, setWeeklyMissions] = useState<MissionDisplay[]>([])
   const [expiredMissions, setExpiredMissions] = useState<MissionDisplay[]>([])
+
   const { reportProgress } = useMissionProgress()
 
   const toDisplay = (
@@ -101,6 +102,7 @@ export default function HomeScreen() {
     if (!uid) return
     try {
       await claimMissionReward(uid, missionId)
+      // Show confirmation per D-09
       Alert.alert(
         "¡Recompensa reclamada!",
         "Has recibido XP por completar la misión.",
@@ -117,10 +119,7 @@ export default function HomeScreen() {
       }
     } catch (error) {
       console.error("Error claiming reward:", error)
-      Alert.alert(
-        "Error",
-        "No se pudo reclamar la recompensa. Intenta de nuevo."
-      )
+      Alert.alert("Error", "No se pudo reclamar la recompensa. Intenta de nuevo.")
     }
   }
 
@@ -138,6 +137,7 @@ export default function HomeScreen() {
     })
   }, [loadMissions])
 
+  // Re-check mission progress when screen gets focus (user may have performed actions elsewhere)
   useFocusEffect(
     useCallback(() => {
       loadMissions()
