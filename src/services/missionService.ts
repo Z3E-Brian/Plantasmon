@@ -183,6 +183,7 @@ export async function assignDailyMissions(
         target: definition?.requirement.count ?? 1,
         completed: false,
         claimed: false,
+        assignedDate: today.toISOString(),
       };
     });
 
@@ -250,6 +251,7 @@ export async function assignWeeklyMissions(
         target: definition?.requirement.count ?? 1,
         completed: false,
         claimed: false,
+        assignedDate: today.toISOString(),
       };
     });
 
@@ -525,13 +527,22 @@ export async function getExpiredMissions(
     const missionProgress: any[] = missions.missionProgress ?? [];
     const assignedDailyIds: string[] = missions.assignedDailyIds ?? [];
 
-    // Filter: completed, not claimed, NOT in today's assignments (from previous day)
+    // Compute yesterday's date string for grace-period cutoff
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = toDateStr(yesterday);
+
+    // Filter: completed, not claimed, NOT in today's assignments,
+    // AND assignedDate matches yesterday (grace period per D-10/D-11)
+    // Missions without assignedDate are excluded (cannot be claimed)
     const expired = missionProgress
       .filter(
         (m: any) =>
           m.completed &&
           !m.claimed &&
-          !assignedDailyIds.includes(m.id)
+          !assignedDailyIds.includes(m.id) &&
+          m.assignedDate &&
+          toDateStr(new Date(m.assignedDate)) === yesterdayStr
       )
       .map((m: any) => ({
         id: m.id,
