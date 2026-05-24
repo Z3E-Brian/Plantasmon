@@ -123,6 +123,7 @@ From CONCERNS.md:
 - Phase 5 added: binnacle, test and QA @Clase_Asincronica.pdf
 - Phase 6 added: verification of hardcode vs actually functional for every user
 - Phase 7 added: missions and rewards
+- Phase 8 added: informative pop boxes
 
 </decisions>
 

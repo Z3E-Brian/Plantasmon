@@ -175,6 +175,18 @@ Plans:
 - [x] 07-04-PLAN.md — Obtenibles System + Profile Vitrina
 - [x] 07-05-PLAN.md — New Achievements (Streak, Account Age, Weekly)
 
+### Phase 8: informative pop boxes
+
+**Goal:** Users see informative bottom-sheet popups across the app — first-use explanations for features, celebration popups on unlocks (achievements/missions/items), and info tooltips on demand via info icons.
+**Requirements**: None (phase_req_ids: null — per CONTEXT.md decisions)
+**Depends on:** Phase 7
+**Plans:** 3 plans
+
+Plans:
+- [ ] 08-01-PLAN.md — Popup dismissal service + hooks
+- [ ] 08-02-PLAN.md — InfoBottomSheet + CelebrationSheet components
+- [ ] 08-03-PLAN.md — Screen integration (first-use, celebration, info icons)
+
 ---
 
 *Roadmap updated: 2026-05-24*

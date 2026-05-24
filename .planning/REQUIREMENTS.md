@@ -68,7 +68,7 @@
 - [ ] **MISS-02**: Weekly mission system (2 missions/week, rotated from pool of 10)
 - [ ] **MISS-03**: Multi-stage mission progress tracking
 - [x] **MISS-04**: Event-based completion detection after identify/water/scan/share actions
-- [ ] **MISS-05**: Tap-to-claim reward flow with XP grant + confirmation
+- [x] **MISS-05**: Tap-to-claim reward flow with XP grant + confirmation
 - [x] **MISS-06**: Grace period for unclaimed missions (visible as expired until midnight next day)
 - [ ] **OBT-01**: ~30 obtainable cosmetic items with rarity tiers
 - [ ] **OBT-02**: Profile vitrina showcase for obtained items
@@ -140,7 +140,7 @@
 | MISS-02 | Phase 7: Missions & Rewards | Pending |
 | MISS-03 | Phase 7: Missions & Rewards | Pending |
 | MISS-04 | Phase 7: Missions & Rewards | Complete |
-| MISS-05 | Phase 7: Missions & Rewards | Pending |
+| MISS-05 | Phase 7: Missions & Rewards | Complete |
 | MISS-06 | Phase 7: Missions & Rewards | Complete |
 | OBT-01 | Phase 7: Missions & Rewards | Pending |
 | OBT-02 | Phase 7: Missions & Rewards | Pending |
