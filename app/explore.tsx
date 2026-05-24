@@ -7,12 +7,15 @@ import {
   Pressable,
   RefreshControl,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native"
 import { router } from "expo-router"
 import { Image } from "expo-image"
 import * as Haptics from "expo-haptics"
 import ScreenWrapper from "@/src/components/screenWrapper/ScreenWrapper"
 import { useThemedStyles } from "@/src/styles/themedStyles"
+import { InfoBottomSheet } from "@/src/components/ui/InfoBottomSheet"
+import { COLORS } from "@/src/constants/theme"
 import {
   getAllPlants,
   CatalogPlant,
@@ -153,7 +156,7 @@ const PlantCard = React.memo(function PlantCard({
   onPress: (p: CatalogPlant) => void
 }) {
   const { theme, styles } = useThemedStyles("exploreScreen")
-  const [imageFailed, setImageFailed] = useState(false)
+  const [imageFailed, setImageFailed] = useState(!plant.image)
   const rarity = RARITY_COLORS[plant.rarity]
   const label = RARITY_LABELS[plant.rarity]
   const waterDrops = getWaterDropCount(plant.wateringDays)
@@ -245,6 +248,7 @@ export default function Explore() {
   const [refreshing, setRefreshing] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [debouncedQuery, setDebouncedQuery] = useState("")
+  const [showCatalogInfo, setShowCatalogInfo] = useState(false)
 
   // Debounce search query (300ms)
   useEffect(() => {
@@ -312,7 +316,16 @@ export default function Explore() {
   const renderSearchBar = () => {
     if (loading && plants.length === 0) return null
     return (
-      <View style={styles.searchContainer}>
+      <>
+        <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 20, marginBottom: 8 }}>
+          <Text style={{ fontSize: 28, fontWeight: "700", color: theme.colors.textPrimary, flex: 1 }}>
+            🔍 Explorar
+          </Text>
+          <TouchableOpacity onPress={() => setShowCatalogInfo(true)}>
+            <Text style={{ fontSize: 18, color: theme.colors.textSecondary }}>ℹ️</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.searchContainer}>
         <Text style={styles.searchIcon}>🔍</Text>
         <TextInput
           style={styles.searchInput}
@@ -334,6 +347,7 @@ export default function Explore() {
           </Pressable>
         )}
       </View>
+      </>
     )
   }
 
@@ -502,6 +516,16 @@ export default function Explore() {
           }
         />
       </View>
+
+      <InfoBottomSheet
+        visible={showCatalogInfo}
+        title="🔍 Explorar plantas"
+        message="Navegá el catálogo completo de plantas. Usá la lupa para buscar por nombre. Tocá una planta para ver sus detalles y cuidados."
+        icon="🌵"
+        showDontShowAgain={true}
+        onDismiss={() => setShowCatalogInfo(false)}
+        onDontShowAgain={() => setShowCatalogInfo(false)}
+      />
     </ScreenWrapper>
   )
 }
