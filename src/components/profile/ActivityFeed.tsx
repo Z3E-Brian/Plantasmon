@@ -1,23 +1,30 @@
-import { ACTIVITIES, Activity } from "@/src/constants/data"
 import { useThemedStyles } from "@/src/styles/themedStyles"
 import { Text, View } from "react-native"
 
-export function ActivityFeed() {
+export interface ActivityData {
+  id: number
+  type: "identified" | "watered" | "added" | "achievement" | "milestone"
+  title: string
+  description: string
+  time: string
+  iconType: "camera" | "water" | "leaf" | "award" | "sparkles"
+}
+
+export function ActivityFeed({ activities }: { activities: ActivityData[] }) {
   const { theme, styles } = useThemedStyles("activityFeed")
   
   return (
     <View style={styles.container}>
-      {/* Timeline line */}
       <View style={styles.timelineLine} />
 
-      {ACTIVITIES.map((activity) => (
+      {activities.map((activity) => (
         <ActivityItem key={activity.id} activity={activity} />
       ))}
     </View>
   )
 }
 
-function ActivityItem({ activity }: { activity: Activity }) {
+function ActivityItem({ activity }: { activity: ActivityData }) {
   const { styles } = useThemedStyles("activityFeed")
   
   return (

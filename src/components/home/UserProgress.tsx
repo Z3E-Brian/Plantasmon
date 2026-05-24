@@ -2,11 +2,11 @@ import { Text, View } from "react-native"
 import { Badge } from "@/src/components/ui/badge"
 import { Progress } from "@/src/components/ui/progress"
 import { useThemedStyles } from "@/src/styles/themedStyles"
-import { USER, getLevelProgress } from "@/src/constants/data"
+import { getLevelProgress } from "@/src/constants/data"
 
-export function UserProgress() {
+export function UserProgress({ xp }: { xp: number }) {
   const { styles, theme } = useThemedStyles("userProgress")
-  const { currentLevel, xpForNextLevel, progressPercentage } = getLevelProgress(USER.xp)
+  const { currentLevel, xpForNextLevel, progressPercentage } = getLevelProgress(xp)
 
   return (
     <View style={styles.container}>

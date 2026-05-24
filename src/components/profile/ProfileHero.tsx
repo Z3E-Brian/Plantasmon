@@ -1,8 +1,10 @@
 import styles from "@/src/components/profile/ProfileHero.styles"
 import * as Haptics from "expo-haptics"
+import * as ImagePicker from "expo-image-picker"
 import { Image } from "expo-image"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import {
+  Alert,
   Animated,
   Easing,
   Pressable,
@@ -10,7 +12,6 @@ import {
   View
 } from "react-native"
 
-import { getAccountAge } from "@/src/constants/data"
 import { BG_THEMES, COLORS, FLAG_THEMES, TIER_COLORS, TITLE_OPTIONS, TierKey } from "@/src/constants/theme"
 
 interface ProfileHeroProps {
@@ -57,6 +58,36 @@ export function ProfileHero({
   const colors = FLAG_THEMES[flagTheme].colors
   const currentTitle = TITLE_OPTIONS[titleIndex].title
   const currentTier = TITLE_OPTIONS[titleIndex].tier as TierKey
+  const [localAvatarUrl, setLocalAvatarUrl] = useState<string | undefined>(avatarUrl)
+
+  useEffect(() => {
+    setLocalAvatarUrl(avatarUrl)
+  }, [avatarUrl])
+
+  const initials = name
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2)
+
+  const handlePickAvatar = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync()
+    if (!permission.granted) {
+      Alert.alert("Permiso requerido", "Necesitamos acceso a tu galería para cambiar la foto de perfil.")
+      return
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.7,
+    })
+    if (!result.canceled && result.assets[0]) {
+      const uri = result.assets[0].uri
+      setLocalAvatarUrl(uri)
+    }
+  }
 
   const floatAnim = useRef(new Animated.Value(0)).current
   const spinAnim = useRef(new Animated.Value(0)).current
@@ -248,28 +279,36 @@ export function ProfileHero({
       </View>
 
       {/* Avatar with frame */}
-      <Animated.View style={[styles.avatarContainer, { transform: [{ translateY: floatAnim }] }]}>
-        <View style={[styles.avatarGlow, { backgroundColor: colors[2] + "40" }]} />
-        <Animated.View style={[styles.spinningRing, { transform: [{ rotate: spinInterpolate }] }]}>
-          <Image
-            source={require("@/assets/images/spinning-ring.png")}
-            style={styles.spinningRingImage}
-            contentFit="contain"
-          />
-        </Animated.View>
-        <View style={[styles.avatarFrame, { backgroundColor: colors[1] }]}>
-          <View style={styles.avatarInner}>
+      <Pressable onPress={handlePickAvatar}>
+        <Animated.View style={[styles.avatarContainer, { transform: [{ translateY: floatAnim }] }]}>
+          <View style={[styles.avatarGlow, { backgroundColor: colors[2] + "40" }]} />
+          <Animated.View style={[styles.spinningRing, { transform: [{ rotate: spinInterpolate }] }]}>
             <Image
-              source={avatarUrl || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200"}
-              style={styles.avatarImage}
-              contentFit="cover"
+              source={require("@/assets/images/spinning-ring.png")}
+              style={styles.spinningRingImage}
+              contentFit="contain"
             />
+          </Animated.View>
+          <View style={[styles.avatarFrame, { backgroundColor: colors[1] }]}>
+            <View style={styles.avatarInner}>
+              {localAvatarUrl ? (
+                <Image
+                  source={{ uri: localAvatarUrl }}
+                  style={styles.avatarImage}
+                  contentFit="cover"
+                />
+              ) : (
+                <View style={[styles.avatarImage, { alignItems: "center", justifyContent: "center", backgroundColor: colors[2] + "30" }]}>
+                  <Text style={{ fontSize: 32, fontWeight: "800", color: colors[2] }}>{initials}</Text>
+                </View>
+              )}
+            </View>
           </View>
-        </View>
-        <View style={[styles.levelBadge, { backgroundColor: colors[2] }]}>
-          <Text style={styles.levelText}>{level}</Text>
-        </View>
-      </Animated.View>
+          <View style={[styles.levelBadge, { backgroundColor: colors[2] }]}>
+            <Text style={styles.levelText}>{level}</Text>
+          </View>
+        </Animated.View>
+      </Pressable>
 
       {/* Banner ribbon */}
       <BannerRibbon title={currentTitle} colors={colors} tier={currentTier} />

@@ -1,6 +1,6 @@
 import { getUserAchievements, UserAchievement } from "@/src/services/userAchievementsService";
 import { getUserPlants, UserPlant } from "@/src/services/userPlantsService";
-import { getUserProfile, UserProfile } from "@/src/services/userService";
+import { getCurrentUserId, getUserProfile, UserProfile } from "@/src/services/userService";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 
@@ -13,18 +13,21 @@ interface ProfileState {
 }
 
 export function useProfile() {
-  // Hardcoded for now - fix later
-  const userId = "u_001";
-  
+  const userId = getCurrentUserId();
+
   const [state, setState] = useState<ProfileState>({
     user: null,
     plants: [],
     achievements: [],
-    loading: true,
+    loading: !!userId,
     error: null,
   });
 
   const loadProfile = useCallback(async () => {
+    if (!userId) {
+      setState({ user: null, plants: [], achievements: [], loading: false, error: null })
+      return
+    }
     setState((prev) => ({ ...prev, loading: true, error: null }));
 
     try {

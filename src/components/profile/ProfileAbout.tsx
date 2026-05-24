@@ -46,7 +46,7 @@ export function ProfileAbout({
         <QuickStat icon="streak" title="ID Streak"   value={`${streak} days`}                       subtitle="Keep it going!"      />
         <QuickStat icon="care"   title="Care Score"  value={`${careScore}%`}                        subtitle="Excellent caretaker" />
         <QuickStat icon="rare"   title="Rarest Find" value={rarestFind}                             subtitle="Ultra rare species"  />
-        <QuickStat icon="badges" title="Badges"      value={`${achievements}/${totalAchievements}`} subtitle="Keep collecting!"    />
+        <QuickStat icon="badges" title="Logros"      value={`${achievements}/${totalAchievements}`} subtitle="Sigue coleccionando!" />
       </View>
     </View>
   )

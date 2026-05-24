@@ -397,8 +397,35 @@ export async function getUserAchievements(userId?: string): Promise<{
     const achSnap = await getDocs(collection(db, "achievements"));
 
     if (achSnap.empty) {
-      console.warn("Colección achievements vacía");
-      return { achievements: [], earned: 0, total: 0 };
+      console.warn("Colección achievements vacía — usando definiciones locales");
+      const localAch = userAchievements.length > 0
+        ? userAchievements.map((a: any) => {
+            const def = INITIAL_ACHIEVEMENTS.find((d) => d.id === a.id)
+            return {
+              id: a.id,
+              name: def?.name ?? a.id,
+              description: def?.description ?? "",
+              category: def?.category ?? "special",
+              earned: a.unlocked ?? false,
+              emoji: mapEmoji(def?.category ?? "special", def?.name ?? ""),
+              progress: a.progress,
+              target: a.target ?? def?.requirement.count ?? 1,
+              xpReward: def?.xpReward ?? 0,
+            } as UserAchievement
+          })
+        : INITIAL_ACHIEVEMENTS.map((def) => ({
+            id: def.id,
+            name: def.name,
+            description: def.description,
+            category: def.category,
+            earned: false,
+            emoji: mapEmoji(def.category, def.name),
+            progress: 0,
+            target: def.requirement.count,
+            xpReward: def.xpReward ?? 0,
+          } as UserAchievement))
+      const earned = localAch.filter((a: UserAchievement) => a.earned).length
+      return { achievements: localAch, earned, total: localAch.length }
     }
 
     // Map de progreso del usuario por id para lookup rápido

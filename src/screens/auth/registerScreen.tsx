@@ -25,6 +25,7 @@ export default function RegisterScreen() {
   const router = useRouter()
 
   const [email, setEmail] = useState("")
+  const [name, setName] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [loading, setLoading] = useState(false)
@@ -32,6 +33,8 @@ export default function RegisterScreen() {
 
   // ── Validacion local ──
   const validate = (): string | null => {
+    if (!name.trim()) return "Por favor ingresa tu nombre."
+    if (name.trim().length < 2) return "El nombre debe tener al menos 2 caracteres."
     if (!email.trim()) return "Por favor ingresa tu correo electronico."
     if (!password) return "Por favor ingresa una contrasena."
     if (password.length < 6) return "La contrasena debe tener al menos 6 caracteres."
@@ -50,8 +53,7 @@ export default function RegisterScreen() {
     setLoading(true)
     try {
       const user = await register(email.trim(), password)
-      // Crear documento en Firestore con los campos que esperan Home, Profile, etc.
-      await createUserDocument(user.uid, email.trim())
+      await createUserDocument(user.uid, email.trim(), name.trim())
       router.replace("/")
     } catch (err: any) {
       setError(err.message)
@@ -198,6 +200,23 @@ export default function RegisterScreen() {
                 <Text style={styles.errorText}>{error}</Text>
               </View>
             )}
+
+            {/* Name */}
+            <View style={styles.field}>
+              <Text style={styles.label}>Nombre</Text>
+              <TextInput
+                placeholder="Tu nombre"
+                placeholderTextColor={theme.colors.textTertiary}
+                autoCapitalize="words"
+                autoCorrect={false}
+                style={[styles.input, error && styles.inputError]}
+                value={name}
+                onChangeText={(text) => {
+                  setName(text)
+                  setError(null)
+                }}
+              />
+            </View>
 
             {/* Email */}
             <View style={styles.field}>

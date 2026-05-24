@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: "100%",
     paddingHorizontal: 20,
-    paddingVertical: 12,
+    paddingVertical: 6,
   },
   backButton: {
     flexDirection: "row",
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   avatarContainer: {
-    marginTop: 24,
+    marginTop: 12,
     marginBottom: 8,
     alignItems: "center",
     justifyContent: "center",

@@ -1,19 +1,26 @@
 import { Text, View } from "react-native"
 import { useThemedStyles } from "@/src/styles/themedStyles"
-import { RECENT_ACHIEVEMENT } from "@/src/constants/data"
 
-export function RecentAchievement() {
+export interface RecentAchievementData {
+  id: number
+  name: string
+  description: string
+  icon: string
+  unlockedAt: string
+}
+
+export function RecentAchievement({ achievement }: { achievement: RecentAchievementData | null }) {
   const { styles } = useThemedStyles("recentAchievement")
 
-  if (!RECENT_ACHIEVEMENT) return null
+  if (!achievement) return null
 
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.badge}>{RECENT_ACHIEVEMENT.icon}</Text>
+        <Text style={styles.badge}>{achievement.icon}</Text>
         <View style={styles.info}>
           <Text style={styles.label}>¡Logro desbloqueado!</Text>
-          <Text style={styles.name}>{RECENT_ACHIEVEMENT.name}</Text>
+          <Text style={styles.name}>{achievement.name}</Text>
         </View>
       </View>
     </View>
