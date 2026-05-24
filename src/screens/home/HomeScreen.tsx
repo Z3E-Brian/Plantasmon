@@ -2,7 +2,7 @@ import * as Haptics from "expo-haptics"
 import { useRouter, useFocusEffect } from "expo-router"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useEffect, useState, useCallback } from "react"
-import { Alert, ScrollView } from "react-native"
+import { Alert, ScrollView, TouchableOpacity, Text, View } from "react-native"
 
 import { DailyMissions, type MissionDisplay } from "@/src/components/home/DailyMissions"
 import { WeeklyMissions } from "@/src/components/home/WeeklyMissions"
@@ -26,7 +26,10 @@ import {
   type AssignedMission,
 } from "@/src/services/missionService"
 import type { MissionDefinition } from "@/src/constants/missionsData"
-import { RECENT_ACHIEVEMENT } from "@/src/constants/data"
+import { getUserAchievements } from "@/src/services/userAchievementsService"
+import { InfoBottomSheet } from "@/src/components/ui/InfoBottomSheet"
+import { CelebrationSheet } from "@/src/components/ui/CelebrationSheet"
+import { usePopupDismissal } from "@/src/hooks/usePopupDismissal"
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets()
@@ -36,12 +39,16 @@ export default function HomeScreen() {
   const [userPlants, setUserPlants] = useState<number>(0)
   const [userStreak, setUserStreak] = useState<number>(0)
   const [userXp, setUserXp] = useState<number>(0)
+  const [recentAchievement, setRecentAchievement] = useState<{ name: string; description: string; icon: string; id: number; unlockedAt: string } | null>(null)
 
   const [dailyMissions, setDailyMissions] = useState<MissionDisplay[]>([])
   const [weeklyMissions, setWeeklyMissions] = useState<MissionDisplay[]>([])
   const [expiredMissions, setExpiredMissions] = useState<MissionDisplay[]>([])
 
   const { reportProgress } = useMissionProgress()
+  const missionsPopup = usePopupDismissal({ popupKey: "missions_first_use" })
+  const [claimedCelebration, setClaimedCelebration] = useState<{ title: string; message: string; icon: string } | null>(null)
+  const [showMissionInfo, setShowMissionInfo] = useState(false)
 
   const toDisplay = (
     assigned: AssignedMission[],
@@ -102,12 +109,12 @@ export default function HomeScreen() {
     if (!uid) return
     try {
       await claimMissionReward(uid, missionId)
-      // Show confirmation per D-09
-      Alert.alert(
-        "¡Recompensa reclamada!",
-        "Has recibido XP por completar la misión.",
-        [{ text: "¡Genial!" }]
-      )
+      // Show celebration popup per D-09
+      setClaimedCelebration({
+        title: "¡Misión completada! 🎉",
+        message: "Has ganado XP por completar la misión. ¡Seguí así!",
+        icon: "⭐",
+      })
       // Reload missions to reflect claimed state
       await loadMissions()
       // Reload user profile to update XP display
@@ -135,6 +142,19 @@ export default function HomeScreen() {
         setUserXp(profile.xp)
       }
     })
+    getUserAchievements(uid).then((result) => {
+      const earned = result.achievements.filter((a) => a.earned)
+      if (earned.length > 0) {
+        const last = earned[earned.length - 1]
+        setRecentAchievement({
+          name: last.name,
+          description: last.description,
+          icon: last.emoji || "🏆",
+          id: 0,
+          unlockedAt: new Date().toISOString(),
+        })
+      }
+    })
   }, [loadMissions])
 
   // Re-check mission progress when screen gets focus (user may have performed actions elsewhere)
@@ -160,7 +180,7 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Header con saludo y stats */}
-        <HomeHeader name={userName} plantsOwned={userPlants} streak={userStreak} />
+        <HomeHeader name={userName} />
 
         {/* Barra de estadísticas rápidas (Fase 4) */}
         <StatsBar />
@@ -175,6 +195,14 @@ export default function HomeScreen() {
         <UserProgress xp={userXp} />
 
         {/* Misiones diarias */}
+        <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 16, marginBottom: 8 }}>
+          <Text style={{ fontSize: 18, fontWeight: "700", color: theme.colors.textPrimary, flex: 1 }}>
+            📋 Misiones diarias
+          </Text>
+          <TouchableOpacity onPress={() => setShowMissionInfo(true)}>
+            <Text style={{ fontSize: 18, color: theme.colors.textSecondary }}>ℹ️</Text>
+          </TouchableOpacity>
+        </View>
         <DailyMissions
           missions={dailyMissions}
           expiredMissions={expiredMissions}
@@ -185,11 +213,39 @@ export default function HomeScreen() {
         <WeeklyMissions missions={weeklyMissions} onClaim={handleClaim} />
 
         {/* Logro reciente (condicional) */}
-        <RecentAchievement achievement={RECENT_ACHIEVEMENT} />
+        <RecentAchievement achievement={recentAchievement} />
 
         {/* Tip del día */}
         <TipCard />
       </ScrollView>
+
+      <InfoBottomSheet
+        visible={showMissionInfo}
+        title="🏠 Misiones diarias"
+        message="Completá misiones para ganar experiencia y desbloquear logros. Tocá una misión para ver más detalles. Las misiones se renuevan todos los días."
+        icon="📋"
+        onDismiss={() => setShowMissionInfo(false)}
+      />
+
+      <InfoBottomSheet
+        visible={missionsPopup.visible}
+        title="🏠 Misiones diarias"
+        message="Completá misiones para ganar experiencia y desbloquear logros. Tocá una misión para ver más detalles. Las misiones se renuevan todos los días."
+        icon="📋"
+        showDontShowAgain={true}
+        onDismiss={missionsPopup.dismiss}
+        onDontShowAgain={missionsPopup.dismissForeverFn}
+      />
+
+      {claimedCelebration && (
+        <CelebrationSheet
+          visible={!!claimedCelebration}
+          title={claimedCelebration.title}
+          message={claimedCelebration.message}
+          icon={claimedCelebration.icon}
+          onDismiss={() => setClaimedCelebration(null)}
+        />
+      )}
     </ScreenWrapper>
   )
 }
