@@ -15,6 +15,8 @@ import {
 import { useRouter, useLocalSearchParams } from "expo-router"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useNetworkStatus } from "@/src/hooks/useNetworkStatus"
+import { InfoBottomSheet } from "@/src/components/ui/InfoBottomSheet"
+import { usePopupDismissal } from "@/src/hooks/usePopupDismissal"
 
 export default function Identify() {
   const insets = useSafeAreaInsets()
@@ -27,6 +29,7 @@ export default function Identify() {
   const [result, setResult] = useState<PlantIdentificationResult | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [adding, setAdding] = useState(false)
+  const identifyPopup = usePopupDismissal({ popupKey: "identify_first_use" })
 
   useEffect(() => {
     if (photoUri) {
@@ -185,6 +188,16 @@ export default function Identify() {
           </View>
         )}
       </ScrollView>
+
+      <InfoBottomSheet
+        visible={identifyPopup.visible}
+        title="📸 Identificar una planta"
+        message="Sacá una foto de una planta para identificarla con nuestra base de datos. La app analiza la foto y te muestra el nombre, cuidados y más información. Asegurate de tener buena iluminación."
+        icon="🌱"
+        showDontShowAgain={true}
+        onDismiss={identifyPopup.dismiss}
+        onDontShowAgain={identifyPopup.dismissForeverFn}
+      />
     </ScreenWrapper>
   )
 }
