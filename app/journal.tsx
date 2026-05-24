@@ -10,19 +10,51 @@ import { useThemedStyles } from "@/src/styles/themedStyles"
 import { getCurrentUserId, getUserProfile } from "@/src/services/userService"
 import { getUserPlants, UserPlant } from "@/src/services/userPlantsService"
 import { getUserAchievements, UserAchievement } from "@/src/services/userAchievementsService"
-import { DailyMissions } from "@/src/components/home/DailyMissions"
+import {
+  getUserMissions,
+  assignDailyMissions,
+  getMissionDefinitions,
+  getExpiredMissions,
+  type AssignedMission,
+} from "@/src/services/missionService"
+import type { MissionDefinition } from "@/src/constants/missionsData"
+import { DailyMissions, type MissionDisplay } from "@/src/components/home/DailyMissions"
 import { UserProgress } from "@/src/components/home/UserProgress"
-import { RECENT_ACHIEVEMENT } from "@/src/constants/data"
+import { InfoBottomSheet } from "@/src/components/ui/InfoBottomSheet"
+import { usePopupDismissal } from "@/src/hooks/usePopupDismissal"
+
+function toDisplay(
+  assigned: AssignedMission[],
+  defs: MissionDefinition[]
+): MissionDisplay[] {
+  return assigned.map((a) => {
+    const def = defs.find((d) => d.id === a.id)
+    return {
+      id: a.id,
+      title: def?.title ?? a.id,
+      icon: def?.icon ?? "📋",
+      xpReward: def?.xpReward ?? 0,
+      progress: a.progress,
+      target: a.target,
+      completed: a.completed,
+      claimed: a.claimed,
+      claimedAt: a.claimedAt,
+    }
+  })
+}
 
 export default function Journal() {
   const { theme, styles } = useThemedStyles("journalScreen")
   const [userPlants, setUserPlants] = useState<UserPlant[]>([])
   const [achievements, setAchievements] = useState<UserAchievement[]>([])
   const [userXp, setUserXp] = useState<number>(0)
+  const [dailyMissions, setDailyMissions] = useState<MissionDisplay[]>([])
+  const [expiredMissions, setExpiredMissions] = useState<MissionDisplay[]>([])
   const [failedImages, setFailedImages] = useState<Record<string, boolean>>({})
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const journalPopup = usePopupDismissal({ popupKey: "journal_first_use" })
 
   const handleImageError = useCallback((plantId: string) => {
     setFailedImages((prev) => ({ ...prev, [plantId]: true }))
@@ -65,6 +97,27 @@ export default function Journal() {
       }
     } catch (e) {
       console.error("Profile fetch error:", e)
+    }
+
+    try {
+      const uid = getCurrentUserId()
+      if (uid) {
+        const result = await getUserMissions(uid)
+        const allDefs = await getMissionDefinitions()
+        if (result.needsRefresh.daily) {
+          await assignDailyMissions(uid)
+          const refreshed = await getUserMissions(uid)
+          setDailyMissions(toDisplay(refreshed.daily, allDefs))
+        } else {
+          setDailyMissions(toDisplay(result.daily, allDefs))
+        }
+        const expired = await getExpiredMissions(uid)
+        setExpiredMissions(
+          toDisplay(expired, allDefs).map((m) => ({ ...m, expired: true }))
+        )
+      }
+    } catch (e) {
+      console.error("Missions fetch error:", e)
     }
 
     setUserPlants(plants)
@@ -264,7 +317,20 @@ export default function Journal() {
           <View style={styles.cardHeader}>
             <Text style={styles.cardTitle}>🎯 Objetivos de Hoy</Text>
           </View>
-          <DailyMissions missions={[]} expiredMissions={[]} onClaim={async () => {}} />
+          <DailyMissions
+            missions={dailyMissions}
+            expiredMissions={expiredMissions}
+            onClaim={async () => {}}
+          />
+          <Text style={{
+            fontSize: 13,
+            color: theme.colors.textSecondary,
+            marginTop: theme.spacing.sm,
+            paddingHorizontal: 4,
+            lineHeight: 18,
+          }}>
+            Completá misiones diarias para ganar XP y desbloquear logros. ¡Volvé mañana para nuevas misiones!
+          </Text>
         </View>
 
         {/* ═══════ Card 3: Tu Progreso ═══════ */}
@@ -340,6 +406,16 @@ export default function Journal() {
           </Pressable>
         )}
       </ScrollView>
+
+      <InfoBottomSheet
+        visible={journalPopup.visible}
+        title="📖 Tu diario de plantas"
+        message="Acá vas a encontrar un resumen de tu actividad: las plantas que identificaste, tus misiones activas, tu progreso y los últimos logros obtenidos."
+        icon="🌿"
+        showDontShowAgain={true}
+        onDismiss={journalPopup.dismiss}
+        onDontShowAgain={journalPopup.dismissForeverFn}
+      />
     </ScreenWrapper>
   )
 }
