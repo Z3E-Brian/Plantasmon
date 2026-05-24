@@ -115,12 +115,8 @@ export async function logActivity(
 ): Promise<string> {
   try {
     const resolvedUserId = requireUserId(userId);
-    const activitiesRef = collection(
-      db,
-      "users",
-      resolvedUserId,
-      "activities"
-    );
+    const userRef = doc(db, "users", resolvedUserId);
+    const activitiesRef = collection(userRef, "activities");
     const docRef = await addDoc(activitiesRef, {
       ...event,
       timestamp: serverTimestamp(),
@@ -145,12 +141,8 @@ export async function getUserActivities(
 ): Promise<ActivityEventWithId[]> {
   try {
     const resolvedUserId = requireUserId(userId);
-    const activitiesRef = collection(
-      db,
-      "users",
-      resolvedUserId,
-      "activities"
-    );
+    const userRef = doc(db, "users", resolvedUserId);
+    const activitiesRef = collection(userRef, "activities");
     const q = query(
       activitiesRef,
       orderBy("timestamp", "desc"),
@@ -192,12 +184,8 @@ export async function getRecentActivities(
     const cutoff = new Date();
     cutoff.setDate(cutoff.getDate() - days);
 
-    const activitiesRef = collection(
-      db,
-      "users",
-      resolvedUserId,
-      "activities"
-    );
+    const userRef = doc(db, "users", resolvedUserId);
+    const activitiesRef = collection(userRef, "activities");
     const q = query(
       activitiesRef,
       where("timestamp", ">=", cutoff),
