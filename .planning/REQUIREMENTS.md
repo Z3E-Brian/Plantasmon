@@ -67,9 +67,9 @@
 - [ ] **MISS-01**: Daily mission system (5 missions/day, rotated from pool of 25)
 - [ ] **MISS-02**: Weekly mission system (2 missions/week, rotated from pool of 10)
 - [ ] **MISS-03**: Multi-stage mission progress tracking
-- [ ] **MISS-04**: Event-based completion detection after identify/water/scan/share actions
+- [x] **MISS-04**: Event-based completion detection after identify/water/scan/share actions
 - [ ] **MISS-05**: Tap-to-claim reward flow with XP grant + confirmation
-- [ ] **MISS-06**: Grace period for unclaimed missions (visible as expired until midnight next day)
+- [x] **MISS-06**: Grace period for unclaimed missions (visible as expired until midnight next day)
 - [ ] **OBT-01**: ~30 obtainable cosmetic items with rarity tiers
 - [ ] **OBT-02**: Profile vitrina showcase for obtained items
 - [ ] **ACH-02**: Streak achievements based on longestStreak (historical max)
@@ -139,9 +139,9 @@
 | MISS-01 | Phase 7: Missions & Rewards | Pending |
 | MISS-02 | Phase 7: Missions & Rewards | Pending |
 | MISS-03 | Phase 7: Missions & Rewards | Pending |
-| MISS-04 | Phase 7: Missions & Rewards | Pending |
+| MISS-04 | Phase 7: Missions & Rewards | Complete |
 | MISS-05 | Phase 7: Missions & Rewards | Pending |
-| MISS-06 | Phase 7: Missions & Rewards | Pending |
+| MISS-06 | Phase 7: Missions & Rewards | Complete |
 | OBT-01 | Phase 7: Missions & Rewards | Pending |
 | OBT-02 | Phase 7: Missions & Rewards | Pending |
 | ACH-02 | Phase 7: Missions & Rewards | Pending |
