@@ -499,6 +499,21 @@ export async function claimMissionReward(
       "stats.xp": currentXp + xpReward,
     });
 
+    // Log mission completion activity — Phase 9: D-02
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const { logActivity } = require("@/src/services/activityService");
+      logActivity(resolvedUserId, {
+        type: "mission",
+        title: "⭐ Misión completada",
+        description: "Reclamaste recompensa de misión",
+        iconType: "sparkles",
+        metadata: { missionId: missionId || undefined },
+      }).catch((err: unknown) => console.error("Error logging mission activity:", err));
+    } catch (e) {
+      /* silent */
+    }
+
     return xpReward;
   } catch (error) {
     console.error("Error reclamando recompensa de misión:", error);

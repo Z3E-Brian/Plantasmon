@@ -33,6 +33,25 @@ export interface AchievementDefinition {
   rewardItemId?: string; // NEW: optional item granted on unlock (D-21)
 }
 
+export function logAchievementUnlockActivity(
+  userId: string,
+  achievement: { id: string; name?: string }
+): void {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { logActivity } = require("@/src/services/activityService");
+    logActivity(userId, {
+      type: "achievement",
+      title: "🏅 Logro desbloqueado",
+      description: `Desbloqueaste "${achievement.name || "nuevo logro"}"`,
+      iconType: "award",
+      metadata: { achievementId: achievement.id || undefined },
+    }).catch((err: unknown) => console.error("Error logging achievement activity:", err));
+  } catch (e) {
+    /* silent */
+  }
+}
+
 export const INITIAL_ACHIEVEMENTS: AchievementDefinition[] = [
   // ── Collection ──────────────────────────────────────────────
   {

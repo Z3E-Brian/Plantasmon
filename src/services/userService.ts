@@ -230,6 +230,21 @@ export async function logWateringActivity(
       // Fire-and-forget: report water mission progress (D-08)
       reportWaterMissionProgress(resolvedUserId);
 
+      // Log watering activity — Phase 9: D-02
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const { logActivity } = require("@/src/services/activityService");
+        logActivity(resolvedUserId, {
+          type: "water",
+          title: "💧 Riego registrado",
+          description: `Riego registrado el ${toDateStr(today)}`,
+          iconType: "water",
+          metadata: { plantName: undefined },
+        }).catch((err: unknown) => console.error("Error logging water activity:", err));
+      } catch (e) {
+        /* silent — logging must not block watering */
+      }
+
       return;
     }
 
@@ -259,6 +274,21 @@ export async function logWateringActivity(
 
     // Fire-and-forget: report water mission progress (D-08)
     reportWaterMissionProgress(resolvedUserId);
+
+    // Log watering activity — Phase 9: D-02
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const { logActivity } = require("@/src/services/activityService");
+      logActivity(resolvedUserId, {
+        type: "water",
+        title: "💧 Riego registrado",
+        description: `Riego registrado el ${toDateStr(today)}`,
+        iconType: "water",
+        metadata: { plantName: undefined },
+      }).catch((err: unknown) => console.error("Error logging water activity:", err));
+    } catch (e) {
+      /* silent — logging must not block watering */
+    }
   } catch (error) {
     console.error("Error registrando actividad de riego:", error);
     throw error;

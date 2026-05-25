@@ -3,6 +3,7 @@ import { getUserProfile } from "@/src/services/userService";
 import {
   AchievementDefinition,
   INITIAL_ACHIEVEMENTS,
+  logAchievementUnlockActivity,
 } from "@/src/services/userAchievementsService";
 import { getUserPlants } from "@/src/services/userPlantsService";
 import {
@@ -166,6 +167,9 @@ export async function checkAndUnlockAchievements(
         if (onUnlock) {
           onUnlock(achievement);
         }
+
+        // Log achievement unlock activity — Phase 9: D-02
+        logAchievementUnlockActivity(userId, achievement);
       }
     }
 

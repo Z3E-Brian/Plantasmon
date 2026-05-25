@@ -296,6 +296,21 @@ export async function addUserPlant(
       reportMissionProgress("identify", resolvedUserId).catch((err) =>
         console.error("Error reporting identify mission progress:", err)
       );
+
+      // Log identification activity — Phase 9: D-02
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const { logActivity } = require("@/src/services/activityService");
+        logActivity(resolvedUserId, {
+          type: "identify",
+          title: "🌿 Planta identificada",
+          description: `Identificaste ${normalizedCommonName || "una nueva planta"}`,
+          iconType: "camera",
+          metadata: { plantName: normalizedCommonName || undefined },
+        }).catch((err: unknown) => console.error("Error logging ID activity:", err));
+      } catch (e) {
+        /* silent */
+      }
     } else {
       // Offline: add to sync queue
       await addToSyncQueue({
