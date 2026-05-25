@@ -80,7 +80,7 @@
 | 2 - Lab3 | 5/5 | Complete   | 2026-05-14 |
 | 3 - Calendar + Missing Screens | 3/3 | Complete | 2026-05-13 |
 | 4 - 4 plants cards, home and general rewards | 3/3 | Complete   | 2026-05-14 |
-| 5 - Binnacle, Test & QA | 1/3 | In Progress|  |
+| 5 - Binnacle, Test & QA | 2/3 | In Progress|  |
 | 6 - Verification of hardcode | 0/0 | Planned | - |
 | 7 - Missions & Rewards | 7/7 | Complete   | 2026-05-25 |
 | 8 - Informative Pop Boxes | 3/3 | Complete | 2026-05-25 |
@@ -132,11 +132,11 @@
 **Requirements**:
 - QA-01, QA-02, DOC-01
 **Depends on:** Phase 4
-**Plans:** 1/3 plans executed
+**Plans:** 2/3 plans executed
 
 Plans:
 - [x] 05-01-PLAN.md — Configurar Jest/RTL + unit test validación planta
-- [ ] 05-02-PLAN.md — Component test LoginScreen error
+- [x] 05-02-PLAN.md — Component test CalendarScreen (loading, empty, legend, title)
 - [ ] 05-03-PLAN.md — Bitácora + investigación QA + borrador PDF
 
 ### Phase 6: verification of hardcode vs actually functional for every user

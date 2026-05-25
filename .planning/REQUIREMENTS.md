@@ -59,7 +59,7 @@
 ### QA & Documentation (Phase 5)
 
 - [ ] **QA-01**: Investigación y comparación de herramientas de testing/QA para Expo/RN
-- [ ] **QA-02**: Implementar 2 pruebas básicas (unit + component) y documentar resultados
+- [x] **QA-02**: Implementar 2 pruebas básicas (unit + component) y documentar resultados
 - [ ] **DOC-01**: Bitácora Lab 4 + funcionalidad propia + PDF con link al repo
 
 ### Missions & Rewards (Phase 7)
@@ -134,7 +134,7 @@
 | EXPL-01 | Phase 4: Polish | Pending |
 | JOUR-01 | Phase 4: Polish | Pending |
 | QA-01 | Phase 5: Binnacle + Testing/QA | Pending |
-| QA-02 | Phase 5: Binnacle + Testing/QA | Pending |
+| QA-02 | Phase 5: Binnacle + Testing/QA | Completed |
 | DOC-01 | Phase 5: Binnacle + Testing/QA | Pending |
 | MISS-01 | Phase 7: Missions & Rewards | Completed |
 | MISS-02 | Phase 7: Missions & Rewards | Completed |
