@@ -84,7 +84,7 @@
 | 6 - Verification of hardcode | 0/0 | Planned | - |
 | 7 - Missions & Rewards | 7/7 | Complete   | 2026-05-25 |
 | 8 - Informative Pop Boxes | 3/3 | Complete | 2026-05-25 |
-| 9 - Activity & Calendar | 1/3 | In Progress|  |
+| 9 - Activity & Calendar | 2/3 | In Progress|  |
 
 ---
 
@@ -195,11 +195,11 @@ Plans:
 
 **Requirements:** TBD (planned via D-01 through D-12 from CONTEXT.md)
 **Depends on:** Phase 8
-**Plans:** 1/3 plans executed
+**Plans:** 2/3 plans executed
 
 Plans:
 - [x] 09-01-PLAN.md — Activity Service + Hook (Firestore subcollection + useActivityFeed)
-- [ ] 09-02-PLAN.md — Calendar Screen (react-native-calendars + route + event markers)
+- [x] 09-02-PLAN.md — Calendar Screen (react-native-calendars + route + event markers)
 - [ ] 09-03-PLAN.md — Profile Wire + Home Timeline + Logging (wire real data + log calls)
 
 ---
