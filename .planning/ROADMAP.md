@@ -80,11 +80,11 @@
 | 2 - Lab3 | 5/5 | Complete   | 2026-05-14 |
 | 3 - Calendar + Missing Screens | 3/3 | Complete | 2026-05-13 |
 | 4 - 4 plants cards, home and general rewards | 3/3 | Complete   | 2026-05-14 |
-| 5 - Binnacle, Test & QA | 3/3 | Complete | 2026-05-14 |
+| 5 - Binnacle, Test & QA | 1/3 | In Progress|  |
 | 6 - Verification of hardcode | 0/0 | Planned | - |
 | 7 - Missions & Rewards | 7/7 | Complete   | 2026-05-25 |
 | 8 - Informative Pop Boxes | 3/3 | Complete | 2026-05-25 |
-| 9 - Activity & Calendar | 2/3 | In Progress|  |
+| 9 - Activity & Calendar | 3/3 | Complete   | 2026-05-25 |
 
 ---
 
@@ -132,10 +132,10 @@
 **Requirements**:
 - QA-01, QA-02, DOC-01
 **Depends on:** Phase 4
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 
 Plans:
-- [ ] 05-01-PLAN.md — Configurar Jest/RTL + unit test validación planta
+- [x] 05-01-PLAN.md — Configurar Jest/RTL + unit test validación planta
 - [ ] 05-02-PLAN.md — Component test LoginScreen error
 - [ ] 05-03-PLAN.md — Bitácora + investigación QA + borrador PDF
 
@@ -195,12 +195,12 @@ Plans:
 
 **Requirements:** TBD (planned via D-01 through D-12 from CONTEXT.md)
 **Depends on:** Phase 8
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 - [x] 09-01-PLAN.md — Activity Service + Hook (Firestore subcollection + useActivityFeed)
 - [x] 09-02-PLAN.md — Calendar Screen (react-native-calendars + route + event markers)
-- [ ] 09-03-PLAN.md — Profile Wire + Home Timeline + Logging (wire real data + log calls)
+- [x] 09-03-PLAN.md — Profile Wire + Home Timeline + Logging (wire real data + log calls)
 
 ---
 
