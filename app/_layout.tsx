@@ -65,6 +65,7 @@ export default function RootLayout() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
         <Stack.Screen name="camera" />
+        <Stack.Screen name="calendar" />
         <Stack.Screen name="explore" />
         <Stack.Screen name="identify" />
         <Stack.Screen name="journal" />
