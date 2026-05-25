@@ -1,35 +1,37 @@
 import * as Haptics from "expo-haptics"
-import { useRouter, useFocusEffect } from "expo-router"
+import { useFocusEffect, useRouter } from "expo-router"
+import { useCallback, useEffect, useState } from "react"
+import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { useEffect, useState, useCallback } from "react"
-import { Alert, ScrollView, TouchableOpacity, Text, View } from "react-native"
 
 import { DailyMissions, type MissionDisplay } from "@/src/components/home/DailyMissions"
-import { WeeklyMissions } from "@/src/components/home/WeeklyMissions"
 import { HomeHeader } from "@/src/components/home/HomeHeader"
 import { LastIdentified } from "@/src/components/home/LastIdentified"
 import { RecentAchievement } from "@/src/components/home/RecentAchievement"
+import { HomeTimeline } from "@/src/components/home/HomeTimeline"
 import { StatsBar } from "@/src/components/home/StatsBar"
 import { TipCard } from "@/src/components/home/TipCard"
 import { UserProgress } from "@/src/components/home/UserProgress"
+import { WeeklyCalendarCard } from "@/src/components/home/WeeklyCalendarCard"
+import { WeeklyMissions } from "@/src/components/home/WeeklyMissions"
 import ScreenWrapper from "@/src/components/screenWrapper/ScreenWrapper"
-import { useThemedStyles } from "@/src/styles/themedStyles"
+import { CelebrationSheet } from "@/src/components/ui/CelebrationSheet"
+import { InfoBottomSheet } from "@/src/components/ui/InfoBottomSheet"
+import type { MissionDefinition } from "@/src/constants/missionsData"
 import { useMissionProgress } from "@/src/hooks/useMissionProgress"
-import { getCurrentUserId, getUserProfile } from "@/src/services/userService"
+import { usePopupDismissal } from "@/src/hooks/usePopupDismissal"
 import {
-  getUserMissions,
   assignDailyMissions,
   assignWeeklyMissions,
-  getMissionDefinitions,
   claimMissionReward,
   getExpiredMissions,
+  getMissionDefinitions,
+  getUserMissions,
   type AssignedMission,
 } from "@/src/services/missionService"
-import type { MissionDefinition } from "@/src/constants/missionsData"
 import { getUserAchievements } from "@/src/services/userAchievementsService"
-import { InfoBottomSheet } from "@/src/components/ui/InfoBottomSheet"
-import { CelebrationSheet } from "@/src/components/ui/CelebrationSheet"
-import { usePopupDismissal } from "@/src/hooks/usePopupDismissal"
+import { getCurrentUserId, getUserProfile } from "@/src/services/userService"
+import { useThemedStyles } from "@/src/styles/themedStyles"
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets()
@@ -77,7 +79,6 @@ export default function HomeScreen() {
       const result = await getUserMissions(uid)
       const allDefs = await getMissionDefinitions()
 
-      // Refresh assignments if needed
       if (result.needsRefresh.daily) {
         await assignDailyMissions(uid)
         const refreshed = await getUserMissions(uid)
@@ -94,7 +95,6 @@ export default function HomeScreen() {
         setWeeklyMissions(toDisplay(result.weekly, allDefs))
       }
 
-      // Grace period: load yesterday's unclaimed
       const expired = await getExpiredMissions(uid)
       setExpiredMissions(
         toDisplay(expired, allDefs).map((m) => ({ ...m, expired: true }))
@@ -109,15 +109,12 @@ export default function HomeScreen() {
     if (!uid) return
     try {
       await claimMissionReward(uid, missionId)
-      // Show celebration popup per D-09
       setClaimedCelebration({
         title: "¡Misión completada! 🎉",
         message: "Has ganado XP por completar la misión. ¡Seguí así!",
         icon: "⭐",
       })
-      // Reload missions to reflect claimed state
       await loadMissions()
-      // Reload user profile to update XP display
       const profile = await getUserProfile(uid)
       if (profile) {
         setUserXp(profile.xp)
@@ -157,7 +154,6 @@ export default function HomeScreen() {
     })
   }, [loadMissions])
 
-  // Re-check mission progress when screen gets focus (user may have performed actions elsewhere)
   useFocusEffect(
     useCallback(() => {
       loadMissions()
@@ -179,22 +175,15 @@ export default function HomeScreen() {
         ]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header con saludo y stats */}
         <HomeHeader name={userName} />
-
-        {/* Barra de estadísticas rápidas (Fase 4) */}
         <StatsBar />
-
-        {/* Planta del día oculto (D-02) — reemplazar cuando haya catálogo suficiente */}
-        {/* <PlantOfTheDay onLearnMore={handleLearnMore} /> */}
-
-        {/* Última planta identificada */}
         <LastIdentified onPress={handlePlantPress} />
 
-        {/* Progreso del usuario */}
+        {/* ── Card semanal del calendario ── */}
+        <WeeklyCalendarCard />
+
         <UserProgress xp={userXp} />
 
-        {/* Misiones diarias */}
         <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 16, marginBottom: 8 }}>
           <Text style={{ fontSize: 18, fontWeight: "700", color: theme.colors.textPrimary, flex: 1 }}>
             📋 Misiones diarias
@@ -209,13 +198,9 @@ export default function HomeScreen() {
           onClaim={handleClaim}
         />
 
-        {/* Misiones semanales */}
         <WeeklyMissions missions={weeklyMissions} onClaim={handleClaim} />
-
-        {/* Logro reciente (condicional) */}
+        <HomeTimeline />
         <RecentAchievement achievement={recentAchievement} />
-
-        {/* Tip del día */}
         <TipCard />
       </ScrollView>
 
