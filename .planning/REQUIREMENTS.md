@@ -64,18 +64,18 @@
 
 ### Missions & Rewards (Phase 7)
 
-- [ ] **MISS-01**: Daily mission system (5 missions/day, rotated from pool of 25)
-- [ ] **MISS-02**: Weekly mission system (2 missions/week, rotated from pool of 10)
-- [ ] **MISS-03**: Multi-stage mission progress tracking
+- [x] **MISS-01**: Daily mission system (5 missions/day, rotated from pool of 25)
+- [x] **MISS-02**: Weekly mission system (2 missions/week, rotated from pool of 10)
+- [x] **MISS-03**: Multi-stage mission progress tracking
 - [x] **MISS-04**: Event-based completion detection after identify/water/scan/share actions
 - [x] **MISS-05**: Tap-to-claim reward flow with XP grant + confirmation
 - [x] **MISS-06**: Grace period for unclaimed missions (visible as expired until midnight next day)
-- [ ] **OBT-01**: ~30 obtainable cosmetic items with rarity tiers
-- [ ] **OBT-02**: Profile vitrina showcase for obtained items
-- [ ] **ACH-02**: Streak achievements based on longestStreak (historical max)
-- [ ] **ACH-03**: Account age achievements (100 days, 1 year)
-- [ ] **ACH-04**: Weekly active achievement (complete all missions in one week)
-- [ ] **ACH-05**: Architecture supports rewardItemId on achievements for future item grants
+- [x] **OBT-01**: ~30 obtainable cosmetic items with rarity tiers
+- [x] **OBT-02**: Profile vitrina showcase for obtained items
+- [x] **ACH-02**: Streak achievements based on longestStreak (historical max)
+- [x] **ACH-03**: Account age achievements (100 days, 1 year)
+- [x] **ACH-04**: Weekly active achievement (complete all missions in one week)
+- [x] **ACH-05**: Architecture supports rewardItemId on achievements for future item grants
 
 ---
 
@@ -136,18 +136,18 @@
 | QA-01 | Phase 5: Binnacle + Testing/QA | Pending |
 | QA-02 | Phase 5: Binnacle + Testing/QA | Pending |
 | DOC-01 | Phase 5: Binnacle + Testing/QA | Pending |
-| MISS-01 | Phase 7: Missions & Rewards | Pending |
-| MISS-02 | Phase 7: Missions & Rewards | Pending |
-| MISS-03 | Phase 7: Missions & Rewards | Pending |
+| MISS-01 | Phase 7: Missions & Rewards | Complete |
+| MISS-02 | Phase 7: Missions & Rewards | Complete |
+| MISS-03 | Phase 7: Missions & Rewards | Complete |
 | MISS-04 | Phase 7: Missions & Rewards | Complete |
 | MISS-05 | Phase 7: Missions & Rewards | Complete |
 | MISS-06 | Phase 7: Missions & Rewards | Complete |
-| OBT-01 | Phase 7: Missions & Rewards | Pending |
-| OBT-02 | Phase 7: Missions & Rewards | Pending |
-| ACH-02 | Phase 7: Missions & Rewards | Pending |
-| ACH-03 | Phase 7: Missions & Rewards | Pending |
-| ACH-04 | Phase 7: Missions & Rewards | Pending |
-| ACH-05 | Phase 7: Missions & Rewards | Pending |
+| OBT-01 | Phase 7: Missions & Rewards | Complete |
+| OBT-02 | Phase 7: Missions & Rewards | Complete |
+| ACH-02 | Phase 7: Missions & Rewards | Complete |
+| ACH-03 | Phase 7: Missions & Rewards | Complete |
+| ACH-04 | Phase 7: Missions & Rewards | Complete |
+| ACH-05 | Phase 7: Missions & Rewards | Complete |
 
 ---
 
