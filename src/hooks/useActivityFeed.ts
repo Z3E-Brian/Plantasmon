@@ -1,105 +1,70 @@
-// Hook React para obtener el feed de actividades del usuario.
-// Se actualiza automáticamente cuando la pantalla recibe foco (useProfile pattern).
-// Retorna actividades ya convertidas al formato ActivityData para ActivityFeed.
 import { useCallback, useState } from "react";
 import { useFocusEffect } from "expo-router";
 import { getCurrentUserId } from "@/src/services/userService";
 import {
-  getUserActivities,
   getRecentActivities,
+  getUserActivities,
   toActivityData,
 } from "@/src/services/activityService";
 import type { ActivityData } from "@/src/components/profile/ActivityFeed";
 
-// ─── Types ──────────────────────────────────────────────────────
-
-export interface UseActivityFeedOptions {
-  /** Número máximo de actividades (default: 50) */
-  limit?: number;
-  /** Si se especifica, filtra a los últimos N días */
-  days?: number;
-  /** Si true (default), recarga al recibir foco la pantalla */
-  autoRefresh?: boolean;
-}
-
-export interface UseActivityFeedReturn {
-  /** Actividades ya convertidas al formato del componente ActivityFeed */
+interface ActivityFeedState {
   activities: ActivityData[];
-  /** Indicador de carga */
   loading: boolean;
-  /** Mensaje de error (null si no hay error) */
   error: string | null;
-  /** Función para recargar manualmente */
-  reload: () => Promise<void>;
 }
 
-// ─── Hook ───────────────────────────────────────────────────────
-
-/**
- * Obtiene el feed de actividades del usuario autenticado.
- *
- * @param options - Opciones de configuración
- * @returns Estado del feed y función de recarga
- *
- * @example
- * const { activities, loading, error, reload } = useActivityFeed();
- * const { activities } = useActivityFeed({ days: 7, limit: 20 });
- */
-export function useActivityFeed(
-  options?: UseActivityFeedOptions
-): UseActivityFeedReturn {
+export function useActivityFeed(options?: {
+  limit?: number;
+  days?: number;
+  autoRefresh?: boolean;
+}): {
+  activities: ActivityData[];
+  loading: boolean;
+  error: string | null;
+  reload: () => Promise<void>;
+} {
   const { limit = 50, days, autoRefresh = true } = options ?? {};
   const userId = getCurrentUserId();
 
-  // Estado inicial: loading solo si hay userId
-  const [activities, setActivities] = useState<ActivityData[]>([]);
-  const [loading, setLoading] = useState<boolean>(!!userId);
-  const [error, setError] = useState<string | null>(null);
+  const [state, setState] = useState<ActivityFeedState>({
+    activities: [],
+    loading: !!userId,
+    error: null,
+  });
 
-  /**
-   * Carga las actividades desde Firestore.
-   * Usa getRecentActivities si se especificó days, sino getUserActivities.
-   */
   const loadActivities = useCallback(async () => {
     if (!userId) {
-      setActivities([]);
-      setLoading(false);
-      setError(null);
+      setState({ activities: [], loading: false, error: null });
       return;
     }
 
-    setLoading(true);
-    setError(null);
+    setState((prev) => ({ ...prev, loading: true, error: null }));
 
     try {
-      const events =
-        days !== undefined
-          ? await getRecentActivities(userId, days)
-          : await getUserActivities(userId, limit);
-
-      setActivities(events.map(toActivityData));
-      setLoading(false);
-    } catch (err) {
-      setLoading(false);
-      setError("Error al cargar actividades");
-      // No se limpian las actividades en error — se mantienen los datos anteriores
-      // (mismo patrón que useProfile.ts)
+      const events = days
+        ? await getRecentActivities(userId, days)
+        : await getUserActivities(userId, limit);
+      const activities = events.map((event) => toActivityData(event));
+      setState({ activities, loading: false, error: null });
+    } catch (error) {
+      setState((prev) => ({
+        ...prev,
+        loading: false,
+        error: "Error cargando actividad",
+      }));
     }
-  }, [userId, limit, days]);
+  }, [days, limit, userId]);
 
-  // Auto-refresh cada vez que la pantalla recibe foco (useFocusEffect)
   useFocusEffect(
     useCallback(() => {
-      if (autoRefresh) {
-        loadActivities();
-      }
+      if (autoRefresh === false) return;
+      loadActivities();
     }, [autoRefresh, loadActivities])
   );
 
   return {
-    activities,
-    loading,
-    error,
+    ...state,
     reload: loadActivities,
   };
 }
