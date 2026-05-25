@@ -80,7 +80,7 @@
 | 2 - Lab3 | 5/5 | Complete   | 2026-05-14 |
 | 3 - Calendar + Missing Screens | 3/3 | Complete | 2026-05-13 |
 | 4 - 4 plants cards, home and general rewards | 3/3 | Complete   | 2026-05-14 |
-| 5 - Binnacle, Test & QA | 2/3 | In Progress|  |
+| 5 - Binnacle, Test & QA | 3/3 | Complete | 2026-05-24 |
 | 6 - Verification of hardcode | 0/0 | Planned | - |
 | 7 - Missions & Rewards | 7/7 | Complete   | 2026-05-25 |
 | 8 - Informative Pop Boxes | 3/3 | Complete | 2026-05-25 |
@@ -132,12 +132,12 @@
 **Requirements**:
 - QA-01, QA-02, DOC-01
 **Depends on:** Phase 4
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans executed
 
 Plans:
 - [x] 05-01-PLAN.md — Configurar Jest/RTL + unit test validación planta
 - [x] 05-02-PLAN.md — Component test CalendarScreen (loading, empty, legend, title)
-- [ ] 05-03-PLAN.md — Bitácora + investigación QA + borrador PDF
+- [x] 05-03-PLAN.md — Bitácora + investigación QA + borrador PDF
 
 ### Phase 6: verification of hardcode vs actually functional for every user
 
@@ -204,7 +204,7 @@ Plans:
 
 ---
 
-*Roadmap updated: 2026-05-24*
+*Roadmap updated: 2026-05-24 (Plan 05-03 completed)*
 
 ## Execution Status
 
@@ -224,8 +224,11 @@ Plans:
 | 04-01-PLAN.md — Home Stats Bar | ✓ Complete | 2026-05-13 |
 | 04-02-PLAN.md — Achievements Backend | ✓ Complete | 2026-05-13 |
 | 04-03-PLAN.md — Achievements UI | ✓ Complete | 2026-05-14 |
+| 05-01-PLAN.md — Jest/RTL + unit test | ✓ Complete | 2026-05-24 |
+| 05-02-PLAN.md — Component tests | ✓ Complete | 2026-05-24 |
+| 05-03-PLAN.md — Bitácora + QA + PDF | ✓ Complete | 2026-05-24 |
 | 07-01-PLAN.md — Mission Service + Firestore seed | ✓ Complete | 2026-05-23 |
 | 07-02-PLAN.md — Mission UI + HomeScreen + Rotation | ✓ Complete | 2026-05-23 |
 | 07-03-PLAN.md — Claim Flow + Grace Period + Events | ✓ Complete | 2026-05-24 |
-| 07-04-PLAN.md — Obtenibles + Profile Vitrina | ◆ Planned | — |
-| 07-05-PLAN.md — New Achievements | ◆ Planned | — |
+| 07-04-PLAN.md — Obtenibles + Profile Vitrina | ✓ Complete | 2026-05-24 |
+| 07-05-PLAN.md — New Achievements | ✓ Complete | 2026-05-24 |
