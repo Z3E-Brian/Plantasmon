@@ -82,7 +82,7 @@
 | 4 - 4 plants cards, home and general rewards | 3/3 | Complete   | 2026-05-14 |
 | 5 - Binnacle, Test & QA | 3/3 | Complete | 2026-05-14 |
 | 6 - Verification of hardcode | 0/0 | Planned | - |
-| 7 - Missions & Rewards | 6/7 | In Progress|  |
+| 7 - Missions & Rewards | 7/7 | Complete   | 2026-05-25 |
 | 8 - Informative Pop Boxes | 3/3 | Complete | 2026-05-25 |
 | 9 - Activity & Calendar | 0/3 | Planned | - |
 
@@ -168,7 +168,7 @@ Plans:
 - ACH-05: Architecture supports rewardItemId on achievements for future item grants
 
 **Depends on:** Phase 6
-**Plans:** 6/7 plans complete
+**Plans:** 7/7 plans complete
 
 Plans:
 - [x] 07-01-PLAN.md — Mission Service + Firestore seed
