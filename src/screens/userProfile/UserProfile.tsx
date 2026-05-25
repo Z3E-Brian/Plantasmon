@@ -25,8 +25,8 @@ import { PlantCollection } from "@/src/components/profile/PlantCollection"
 import { ProfileAbout } from "@/src/components/profile/ProfileAbout"
 import { ProfileHero } from "@/src/components/profile/ProfileHero"
 import ScreenWrapper from "@/src/components/screenWrapper/ScreenWrapper"
-import { ACTIVITIES } from "@/src/constants/data"
 import { BG_THEMES, COLORS } from "@/src/constants/theme"
+import { useActivityFeed } from "@/src/hooks/useActivityFeed"
 import { useProfile } from "@/src/hooks/useProfile"
 import styles from "@/src/screens/userProfile/UserProfile.styles"
 import { useRouter } from "expo-router"
@@ -51,6 +51,7 @@ export default function UserProfile() {
   const [showEditInfo, setShowEditInfo] = useState(false)
 
   const { user, plants, achievements, loading } = useProfile()
+  const { activities: activityFeed } = useActivityFeed()
   const currentBg = BG_THEMES[bgTheme]
 
   useEffect(() => {
@@ -227,7 +228,9 @@ export default function UserProfile() {
 
               <View style={styles.tabContent}>
                 {activeTab === "collection" && <PlantCollection plants={plants} />}
-                {activeTab === "activity"   && <ActivityFeed activities={ACTIVITIES as ActivityData[]} />}
+                {activeTab === "activity" && (
+                  <ActivityFeed activities={activityFeed as ActivityData[]} />
+                )}
                 {activeTab === "vitrina" && (
                   <View style={{ paddingHorizontal: 20, paddingTop: 12 }}>
                     <ProfileVitrina
