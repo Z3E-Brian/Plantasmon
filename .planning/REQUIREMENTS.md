@@ -136,18 +136,18 @@
 | QA-01 | Phase 5: Binnacle + Testing/QA | Pending |
 | QA-02 | Phase 5: Binnacle + Testing/QA | Pending |
 | DOC-01 | Phase 5: Binnacle + Testing/QA | Pending |
-| MISS-01 | Phase 7: Missions & Rewards | Complete |
-| MISS-02 | Phase 7: Missions & Rewards | Complete |
-| MISS-03 | Phase 7: Missions & Rewards | Complete |
-| MISS-04 | Phase 7: Missions & Rewards | Complete |
-| MISS-05 | Phase 7: Missions & Rewards | Complete |
-| MISS-06 | Phase 7: Missions & Rewards | Complete |
-| OBT-01 | Phase 7: Missions & Rewards | Complete |
-| OBT-02 | Phase 7: Missions & Rewards | Complete |
-| ACH-02 | Phase 7: Missions & Rewards | Complete |
-| ACH-03 | Phase 7: Missions & Rewards | Complete |
-| ACH-04 | Phase 7: Missions & Rewards | Complete |
-| ACH-05 | Phase 7: Missions & Rewards | Complete |
+| MISS-01 | Phase 7: Missions & Rewards | Completed |
+| MISS-02 | Phase 7: Missions & Rewards | Completed |
+| MISS-03 | Phase 7: Missions & Rewards | Completed |
+| MISS-04 | Phase 7: Missions & Rewards | Completed |
+| MISS-05 | Phase 7: Missions & Rewards | Completed |
+| MISS-06 | Phase 7: Missions & Rewards | Completed |
+| OBT-01 | Phase 7: Missions & Rewards | Completed |
+| OBT-02 | Phase 7: Missions & Rewards | Completed |
+| ACH-02 | Phase 7: Missions & Rewards | Completed |
+| ACH-03 | Phase 7: Missions & Rewards | Completed |
+| ACH-04 | Phase 7: Missions & Rewards | Completed |
+| ACH-05 | Phase 7: Missions & Rewards | Completed |
 
 ---
 
