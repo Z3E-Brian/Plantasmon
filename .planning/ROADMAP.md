@@ -81,7 +81,7 @@
 | 3 - Calendar + Missing Screens | 3/3 | Complete | 2026-05-13 |
 | 4 - 4 plants cards, home and general rewards | 3/3 | Complete   | 2026-05-14 |
 | 5 - Binnacle, Test & QA | 3/3 | Complete | 2026-05-24 |
-| 6 - Verification of hardcode | 0/0 | Planned | - |
+| 6 - Verification of hardcode | 0/3 | Planned | - |
 | 7 - Missions & Rewards | 7/7 | Complete   | 2026-05-25 |
 | 8 - Informative Pop Boxes | 3/3 | Complete | 2026-05-25 |
 | 9 - Activity & Calendar | 3/3 | Complete   | 2026-05-25 |
@@ -141,13 +141,16 @@ Plans:
 
 ### Phase 6: verification of hardcode vs actually functional for every user
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** End-to-end verification that all app features work with dynamic user data — not hardcoded values — for any authenticated user. Find remaining hardcoded patterns (auth UIDs, mock data, Firebase config exposure), then fix them.
+
+**Requirements**: None (phase_req_ids: null — per CONTEXT.md decisions)
 **Depends on:** Phase 5
-**Plans:** 0 plans
+**Plans:** 3 plans
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 6 to break down)
+- [ ] 06-01-PLAN.md — Hardcoded Pattern Scanner + Audit Report (create scanner, catalog findings)
+- [ ] 06-02-PLAN.md — Firebase Config → .env Extraction (env vars, update firebase.js)
+- [ ] 06-03-PLAN.md — Mock Data & Placeholder Cleanup + Empty State Verification
 
 ### Phase 7: missions and rewards
 
