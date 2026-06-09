@@ -49,7 +49,7 @@ export default function PlantDetail() {
           id,
           commonName: data.commonName ?? "Planta desconocida",
           scientificName: data.scientificName ?? "",
-          image: `https://picsum.photos/seed/${id}/600/400`,
+          image: data.image || `https://picsum.photos/seed/${id}/600/400`,
           description: data.description ?? "",
           difficulty: data.difficulty ?? "Media",
           light: data.light ?? "partial",

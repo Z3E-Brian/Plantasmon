@@ -13,3 +13,12 @@
 - src/components/home/WeeklyCalendarCard.tsx (untracked)
 - src/hooks/useCalendar.ts (untracked)
 - src/services/calendarService.ts (untracked)
+
+## 09-03 Out-of-scope files present in working tree
+
+- app/journal.tsx (modified)
+- Laboratorio3_Brian_Zeledon.pdf (untracked)
+- src/components/calendar/ (untracked directory)
+- src/components/home/WeeklyCalendarCard.tsx (untracked)
+- src/hooks/useCalendar.ts (untracked)
+- src/services/calendarService.ts (untracked)

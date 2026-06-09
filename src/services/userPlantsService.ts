@@ -1,10 +1,12 @@
-import { db } from "@/src/config/firebase";
+import { db, storage } from "@/src/config/firebase";
 import {
   doc,
   getDoc,
   updateDoc,
   setDoc,
 } from "firebase/firestore";
+import { ref, uploadString, getDownloadURL } from "firebase/storage";
+import * as FileSystem from "expo-file-system";
 import NetInfo from "@react-native-community/netinfo";
 // Reemplaza CURRENT_USER_ID por getCurrentUserId() (Phase 1: Authentication Foundation)
 // para que cada operación use el UID del usuario autenticado.
@@ -206,6 +208,18 @@ export interface AddPlantFromIdInput {
   sunlight?: string;
 }
 
+export async function uploadPlantImage(
+  imageUri: string,
+  plantId: string
+): Promise<string> {
+  const base64 = await FileSystem.readAsStringAsync(imageUri, {
+    encoding: FileSystem.EncodingType.Base64,
+  });
+  const storageRef = ref(storage, `plants/${plantId}/image.jpg`);
+  await uploadString(storageRef, base64, "base64", { contentType: "image/jpeg" });
+  return getDownloadURL(storageRef);
+}
+
 export async function addUserPlant(
   input: AddPlantFromIdInput
 ): Promise<void> {
@@ -268,18 +282,41 @@ export async function addUserPlant(
 
       const plantRef = doc(db, "plants", plantId);
       const plantSnap = await getDoc(plantRef);
+
+      // Upload image to Firebase Storage and get permanent URL
+      let permanentImageUrl = imageUri;
+      try {
+        permanentImageUrl = await uploadPlantImage(imageUri, plantId);
+      } catch (uploadErr) {
+        console.error("Error uploading plant image, using local URI:", uploadErr);
+      }
+
       if (!plantSnap.exists()) {
+        const difficulty = waterSchedule
+          ? (() => {
+              const days = matchDays ? Number(matchDays[0]) : 7;
+              if (days <= 3) return "Alta";
+              if (days <= 7) return "Media";
+              return "Baja";
+            })()
+          : "Media";
+
         await setDoc(plantRef, {
           commonName: normalizedCommonName,
           scientificName: normalizedScientificName,
           wateringDays,
           light,
+          image: permanentImageUrl,
+          description: "",
+          difficulty,
+          rarity: "common",
+          tips: ["Mantené la tierra húmeda pero no encharcada", "Evitá luz solar directa por largos períodos"],
         });
       }
 
       const newPlant = {
         id: plantId,
-        image: imageUri,
+        image: permanentImageUrl,
         firstIdentifiedAt: new Date().toISOString(),
         lastWatered: null,
         favorite: false,

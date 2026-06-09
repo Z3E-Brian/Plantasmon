@@ -2,9 +2,11 @@
 
 **Milestone:** v1.0
 **Fecha:** Mayo 2026
-**Autor:** Brian Z.
-**Curso:** Desarrollo de Aplicaciones Móviles
-**Repositorio:** [GitHub — main branch](https://github.com/bzelenka/PlantasMon)
+**Estudiante:** Brian Z.
+**Curso:** EIF209 Desarrollo y diseño de plataformas móviles
+**Profesor:** Daniel Granados Murillo
+**Universidad Nacional – Sede Regional Brunca**
+**Repositorio:** [GitHub — main branch](https://github.com/Z3E-Brian/Plantasmon)
 
 > **Para exportar a PDF:** Abrir este archivo en VS Code → Ctrl+Shift+P → "Markdown: Export to PDF".
 > O usar línea de comandos: `npx md-to-pdf BITACORA.md`
@@ -355,6 +357,24 @@ El sistema se integra transversalmente con múltiples módulos de la app:
 
 ---
 
+## 6.5 Pendientes y Plan de Acción (al 24/05/2026)
+
+Para alcanzar el 90%+ de completitud del Laboratorio 4 antes de la fecha de entrega (27/05/2026), se identifican los siguientes pendientes:
+
+| Módulo | Pendiente | Tiempo Est. | Acción Concreta |
+|--------|-----------|-------------|-----------------|
+| Calendar | Sincronizar eventos futuros (próximos riegos) | 2h | Agregar vista "upcoming" en CalendarScreen usando lastWateredDate de cada planta |
+| Profile | Editar perfil con foto de avatar desde cámara/galería | 3h | Integrar expo-image-picker en editProfile.tsx |
+| Home | PlantOfTheDay con rotación diaria desde Firestore | 2h | Agregar colección `plantOfTheDay` en Firestore con rotación automática vía Cloud Function o seed diario |
+| Missions | Balance de dificultad en misiones semanales | 1h | Ajustar targets de misiones semanales basado en datos de uso reales |
+| Testing | Agregar test E2E básico para flujo de login | 4h | Configurar Detox o Maestro con un flujo de login completo |
+| UI/UX | Modo oscuro consistente en todas las pantallas | 2h | Verificar que todas las pantallas nuevas (Calendar, popups) usen useThemedStyles |
+| Offline | Persistencia offline de Firestore (cache local) | 3h | Habilitar Firestore offline persistence y verificar comportamiento sin conexión |
+
+**Total estimado:** ~17 horas distribuidas en 3 días. Prioridad: editar perfil + plantOfTheDay + balance de misiones antes del 27/05.
+
+---
+
 ## 7. Investigación de Testing/QA
 
 ### 7.1 Herramientas Comparadas
@@ -594,10 +614,17 @@ it("muestra el título en español", () => { ... })
 Ejecutado el 24 de Mayo 2026:
 
 ```
+PASS src/lib/__tests__/plantValidation.test.ts
+PASS src/services/__tests__/activityService.test.ts
+PASS src/services/__tests__/missionService.test.ts
+PASS src/hooks/__tests__/useMissionProgress.test.ts
+PASS src/screens/calendar/__tests__/CalendarScreen.test.tsx
+PASS src/screens/auth/__tests__/loginScreen.test.tsx
+
 Test Suites: 6 passed, 6 total
 Tests:       30 passed, 30 total
 Snapshots:   0 total
-Time:        8.668 s
+Time:        9.011 s
 Ran all test suites.
 ```
 
@@ -629,9 +656,15 @@ Time:        8.668 s
 
 ---
 
+### 8.7 Reflexión sobre la Experiencia de Testing
+
+Integrar pruebas en un proyecto ya existente resultó ser un desafío significativo, principalmente por la dependencia de módulos nativos de React Native y Firebase que requirieron un sistema de mocks bastante extenso para poder ejecutar los tests en Node.js sin un dispositivo físico. Lo más complejo fue configurar correctamente los mocks para `expo-router`, `react-native-safe-area-context`, y los servicios de Firebase, ya que cualquier mock faltante rompía toda la suite. Si hubiera pensado en pruebas desde el inicio del desarrollo, habría estructurado mejor la separación entre lógica de negocio y componentes de UI — por ejemplo, extrayendo funciones puras (como `formatRelativeTime` o `safeParseDate`) a módulos independientes desde el principio, lo que habría hecho los tests unitarios mucho más simples sin necesidad de mockear Firebase. También habría establecido un patrón de inyección de dependencias para los servicios de Firebase desde el día uno, permitiendo reemplazar fácilmente la base de datos real con mocks en los tests de componentes. A pesar de estos desafíos, una vez que la infraestructura de mocks estuvo en su lugar, agregar nuevos tests resultó bastante directo — los 17 tests del activityService se escribieron en minutos porque las funciones puras no requieren ningún mock. La lección principal es que la testabilidad debería ser un requisito arquitectónico desde la primera línea de código, no algo que se agrega al final.
+
+---
+
 ## 9. Repositorio
 
-- **URL:** [https://github.com/bzelenka/PlantasMon](https://github.com/bzelenka/PlantasMon)
+- **URL:** [https://github.com/Z3E-Brian/Plantasmon](https://github.com/Z3E-Brian/Plantasmon)
 - **Branch:** main
 - **Último commit:** `7e12cc7` — docs(05-binnacle-test-and-qa-clase-asincronica-pdf): complete 05-02 component test plan
 
@@ -675,6 +708,11 @@ El desarrollo del milestone v1.0 de PlantasMon a través de 9 fases ha demostrad
 
 La infraestructura de pruebas (Jest + React Native Testing Library) está sólidamente establecida con 30 tests que cubren validación de datos, servicios de actividad, lógica de misiones, y renderizado de pantallas críticas. Esto proporciona una base confiable para el desarrollo futuro y la refactorización segura del código existente.
 
+**Bug fixes aplicados (27/05/2026):**
+- **addUserPlant:** ahora guarda datos completos (description, difficulty, rarity, tips, image) en `plants/{id}`, no solo 4 campos
+- **app/plant/[id].tsx:** usa `data.image` del doc de Firestore en lugar de placeholder fijo de picsum
+- **app/identify.tsx:** pasa waterSchedule y sunlight a `addUserPlant` para mapping correcto de riego/luz
+
 ---
 
-*Documento generado el 24 de Mayo de 2026 para el milestone v1.0 de PlantasMon.*
+*Documento generado el 24 de Mayo de 2026 para el milestone v1.0 de PlantasMon. (Bug fixes 27/05)*

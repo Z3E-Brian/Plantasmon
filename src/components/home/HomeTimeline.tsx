@@ -6,8 +6,10 @@ import { getRecentActivities, toActivityData } from "@/src/services/activityServ
 import { getCurrentUserId } from "@/src/services/userService"
 import { useThemedStyles } from "@/src/styles/themedStyles"
 
+const TITLE = "🕐 Actividad reciente"
+
 export function HomeTimeline() {
-  const { theme } = useThemedStyles("homeTimeline")
+  const { theme } = useThemedStyles("homeScreen")
   const [activities, setActivities] = useState<ActivityData[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -39,8 +41,10 @@ export function HomeTimeline() {
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.title, { color: theme.colors.textPrimary }]}>🕐 Actividad reciente</Text>
-      <ActivityFeed activities={activities} />
+      <Text style={[styles.title, { color: theme.colors.textPrimary }]}>{TITLE}</Text>
+      <View style={styles.feedContainer}>
+        <ActivityFeed activities={activities} />
+      </View>
     </View>
   )
 }
@@ -60,5 +64,9 @@ const styles = StyleSheet.create({
     height: 60,
     justifyContent: "center",
     alignItems: "center",
+  },
+  feedContainer: {
+    paddingTop: 2,
+    borderRadius: 12,
   },
 })

@@ -76,6 +76,10 @@ export default function Identify() {
       await addUserPlant({
         plantId: result.plantId || result.scientificName,
         imageUri: uri,
+        commonName: result.commonName,
+        scientificName: result.scientificName,
+        waterSchedule: result.waterSchedule,
+        sunlight: result.sunlight,
       })
       Alert.alert("Éxito", `${result.commonName} agregada a tu colección`)
       router.push("/")

@@ -1,27 +1,31 @@
-import { useState, useEffect, useCallback } from "react"
-import {
-  View, Text, ScrollView, Pressable, RefreshControl,
-} from "react-native"
-import { router } from "expo-router"
-import { Image } from "expo-image"
-import * as Haptics from "expo-haptics"
-import ScreenWrapper from "@/src/components/screenWrapper/ScreenWrapper"
-import { useThemedStyles } from "@/src/styles/themedStyles"
-import { getCurrentUserId, getUserProfile } from "@/src/services/userService"
-import { getUserPlants, UserPlant } from "@/src/services/userPlantsService"
-import { getUserAchievements, UserAchievement } from "@/src/services/userAchievementsService"
-import {
-  getUserMissions,
-  assignDailyMissions,
-  getMissionDefinitions,
-  getExpiredMissions,
-  type AssignedMission,
-} from "@/src/services/missionService"
-import type { MissionDefinition } from "@/src/constants/missionsData"
+import { JournalCalendarSection } from "@/src/components/calendar/JournalCalendarSection"
 import { DailyMissions, type MissionDisplay } from "@/src/components/home/DailyMissions"
 import { UserProgress } from "@/src/components/home/UserProgress"
+import ScreenWrapper from "@/src/components/screenWrapper/ScreenWrapper"
 import { InfoBottomSheet } from "@/src/components/ui/InfoBottomSheet"
+import type { MissionDefinition } from "@/src/constants/missionsData"
 import { usePopupDismissal } from "@/src/hooks/usePopupDismissal"
+import {
+  assignDailyMissions,
+  getExpiredMissions,
+  getMissionDefinitions,
+  getUserMissions,
+  type AssignedMission,
+} from "@/src/services/missionService"
+import { getUserAchievements, UserAchievement } from "@/src/services/userAchievementsService"
+import { getUserPlants, UserPlant } from "@/src/services/userPlantsService"
+import { getCurrentUserId, getUserProfile } from "@/src/services/userService"
+import { useThemedStyles } from "@/src/styles/themedStyles"
+import * as Haptics from "expo-haptics"
+import { Image } from "expo-image"
+import { router } from "expo-router"
+import { useCallback, useEffect, useState } from "react"
+import {
+  Pressable, RefreshControl,
+  ScrollView,
+  Text,
+  View,
+} from "react-native"
 
 function toDisplay(
   assigned: AssignedMission[],
@@ -61,33 +65,23 @@ export default function Journal() {
   }, [])
 
   const fetchData = useCallback(async (isRefresh = false) => {
-    // Guard: prevent concurrent refreshes
     if (isRefresh && refreshing) return
-
     if (isRefresh) setRefreshing(true)
     else setLoading(true)
     setError(null)
 
-    // Individual service calls — only show error if BOTH fail
     let plants: UserPlant[] = []
     let achList: UserAchievement[] = []
     let hasError = false
     let xp = 0
 
-    try {
-      plants = await getUserPlants()
-    } catch (e) {
-      hasError = true
-      console.error("Plants fetch error:", e)
-    }
+    try { plants = await getUserPlants() }
+    catch (e) { hasError = true; console.error("Plants fetch error:", e) }
 
     try {
       const result = await getUserAchievements()
       achList = result.achievements
-    } catch (e) {
-      hasError = true
-      console.error("Achievements fetch error:", e)
-    }
+    } catch (e) { hasError = true; console.error("Achievements fetch error:", e) }
 
     try {
       const uid = getCurrentUserId()
@@ -95,9 +89,7 @@ export default function Journal() {
         const profile = await getUserProfile(uid)
         if (profile) xp = profile.xp
       }
-    } catch (e) {
-      console.error("Profile fetch error:", e)
-    }
+    } catch (e) { console.error("Profile fetch error:", e) }
 
     try {
       const uid = getCurrentUserId()
@@ -116,17 +108,14 @@ export default function Journal() {
           toDisplay(expired, allDefs).map((m) => ({ ...m, expired: true }))
         )
       }
-    } catch (e) {
-      console.error("Missions fetch error:", e)
-    }
+    } catch (e) { console.error("Missions fetch error:", e) }
 
     setUserPlants(plants)
     setAchievements(achList)
     setUserXp(xp)
 
-    if (hasError && plants.length === 0 && achList.length === 0) {
+    if (hasError && plants.length === 0 && achList.length === 0)
       setError("No pudimos cargar tus datos")
-    }
 
     setLoading(false)
     setRefreshing(false)
@@ -136,7 +125,6 @@ export default function Journal() {
 
   const recentAchievement = achievements.find((a) => a.earned)
 
-  // ─── Loading skeleton ─────────────────────────────────────────────────
   if (loading && !refreshing) {
     return (
       <ScreenWrapper>
@@ -150,7 +138,6 @@ export default function Journal() {
     )
   }
 
-  // ─── Full error state (no data at all) ───────────────────────────────
   if (error && userPlants.length === 0 && achievements.length === 0) {
     return (
       <ScreenWrapper>
@@ -158,11 +145,7 @@ export default function Journal() {
           <Text style={styles.screenTitle}>📖 Tu Diario</Text>
           <View style={styles.errorCard}>
             <Text style={styles.errorText}>{error}</Text>
-            <Pressable
-              style={styles.retryButton}
-              onPress={() => fetchData()}
-              android_ripple={{ color: "rgba(64,145,108,0.15)" }}
-            >
+            <Pressable style={styles.retryButton} onPress={() => fetchData()} android_ripple={{ color: "rgba(64,145,108,0.15)" }}>
               <Text style={styles.retryText}>Reintentar</Text>
             </Pressable>
           </View>
@@ -171,25 +154,6 @@ export default function Journal() {
     )
   }
 
-  // ─── Empty state ─────────────────────────────────────────────────────
-  if (!loading && !error && userPlants.length === 0 && achievements.length === 0) {
-    return (
-      <ScreenWrapper>
-        <View style={styles.container}>
-          <Text style={styles.screenTitle}>📖 Tu Diario</Text>
-          <View style={styles.emptyContainer}>
-            <Text style={{ fontSize: 48 }}>📖</Text>
-            <Text style={styles.emptyTitle}>Tu diario está vacío</Text>
-            <Text style={styles.emptyBody}>
-              Identifica tus primeras plantas para ver tu actividad aquí.
-            </Text>
-          </View>
-        </View>
-      </ScreenWrapper>
-    )
-  }
-
-  // ─── Main content ────────────────────────────────────────────────────
   const visiblePlants = userPlants.slice(0, 4)
   const remainingPlants = userPlants.length > 4 ? userPlants.length - 4 : 0
 
@@ -204,35 +168,25 @@ export default function Journal() {
             tintColor={theme.colors.primary}
           />
         }
-        contentContainerStyle={{
-          paddingTop: theme.spacing.md,
-          paddingBottom: 100,
-        }}
+        contentContainerStyle={{ paddingTop: theme.spacing.md, paddingBottom: 100 }}
       >
         <Text style={styles.screenTitle}>📖 Tu Diario</Text>
 
-        {/* Error toast when partial data fetch fails */}
         {error && (
           <View style={styles.errorCard}>
             <Text style={styles.errorText}>{error}</Text>
-            <Pressable
-              style={styles.retryButton}
-              onPress={() => fetchData()}
-              android_ripple={{ color: "rgba(64,145,108,0.15)" }}
-            >
+            <Pressable style={styles.retryButton} onPress={() => fetchData()} android_ripple={{ color: "rgba(64,145,108,0.15)" }}>
               <Text style={styles.retryText}>Reintentar</Text>
             </Pressable>
           </View>
         )}
 
-        {/* ═══════ Card 1: Tus Plantas Analizadas ═══════ */}
+        {/* ═══════ Card 1: Tus Plantas ═══════ */}
         <View style={styles.card}>
           <View style={styles.cardHeader}>
             <Text style={styles.cardTitle}>🌱 Tus Plantas Analizadas</Text>
             <View style={styles.countBadge}>
-              <Text style={styles.countBadgeText}>
-                {userPlants.length} plantas
-              </Text>
+              <Text style={styles.countBadgeText}>{userPlants.length} plantas</Text>
             </View>
           </View>
 
@@ -241,165 +195,72 @@ export default function Journal() {
               <View style={styles.plantRowItem}>
                 {visiblePlants.map((plant) =>
                   failedImages[plant.id] ? (
-                    <View
-                      key={plant.id}
-                      style={[
-                        styles.plantRowImage,
-                        {
-                          alignItems: "center",
-                          justifyContent: "center",
-                          backgroundColor: theme.colors.primarySoft,
-                        },
-                      ]}
-                    >
+                    <View key={plant.id} style={[styles.plantRowImage, { alignItems: "center", justifyContent: "center", backgroundColor: theme.colors.primarySoft }]}>
                       <Text style={{ fontSize: 20 }}>🌱</Text>
                     </View>
                   ) : (
-                    <Image
-                      key={plant.id}
-                      source={{ uri: plant.image }}
-                      style={styles.plantRowImage}
-                      contentFit="cover"
-                      onError={() => handleImageError(plant.id)}
-                    />
+                    <Image key={plant.id} source={{ uri: plant.image }} style={styles.plantRowImage} contentFit="cover" onError={() => handleImageError(plant.id)} />
                   )
                 )}
                 {remainingPlants > 0 && (
-                  <View
-                    style={{
-                      width: 48,
-                      height: 48,
-                      borderRadius: theme.radius.sm,
-                      backgroundColor: theme.colors.primarySoft,
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Text
-                      style={{
-                        fontSize: 12,
-                        fontWeight: "600",
-                        color: theme.colors.textSecondary,
-                      }}
-                    >
-                      +{remainingPlants}
-                    </Text>
+                  <View style={{ width: 48, height: 48, borderRadius: theme.radius.sm, backgroundColor: theme.colors.primarySoft, alignItems: "center", justifyContent: "center" }}>
+                    <Text style={{ fontSize: 12, fontWeight: "600", color: theme.colors.textSecondary }}>+{remainingPlants}</Text>
                   </View>
                 )}
               </View>
-
-              <Pressable
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-                  router.push("/profile")
-                }}
-                android_ripple={{ color: "rgba(64,145,108,0.15)" }}
-              >
+              <Pressable onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push("/profile") }} android_ripple={{ color: "rgba(64,145,108,0.15)" }}>
                 <Text style={styles.footerLink}>Ver todas →</Text>
               </Pressable>
             </>
           ) : (
-            <Text
-              style={{
-                fontSize: 14,
-                color: theme.colors.textSecondary,
-                textAlign: "center",
-                paddingVertical: theme.spacing.md,
-              }}
-            >
+            <Text style={{ fontSize: 14, color: theme.colors.textSecondary, textAlign: "center", paddingVertical: theme.spacing.md }}>
               Aún no has identificado plantas. ¡Usa la cámara para empezar!
             </Text>
           )}
         </View>
 
-        {/* ═══════ Card 2: Objetivos de Hoy ═══════ */}
+        {/* ═══════ Card 2: Calendario extendido ═══════ */}
+        <View style={styles.card}>
+          <JournalCalendarSection />
+        </View>
+
+        {/* ═══════ Card 3: Objetivos de Hoy ═══════ */}
         <View style={styles.card}>
           <View style={styles.cardHeader}>
             <Text style={styles.cardTitle}>🎯 Objetivos de Hoy</Text>
           </View>
-          <DailyMissions
-            missions={dailyMissions}
-            expiredMissions={expiredMissions}
-            onClaim={async () => {}}
-          />
-          <Text style={{
-            fontSize: 13,
-            color: theme.colors.textSecondary,
-            marginTop: theme.spacing.sm,
-            paddingHorizontal: 4,
-            lineHeight: 18,
-          }}>
+          <DailyMissions missions={dailyMissions} expiredMissions={expiredMissions} onClaim={async () => {}} />
+          <Text style={{ fontSize: 13, color: theme.colors.textSecondary, marginTop: theme.spacing.sm, paddingHorizontal: 4, lineHeight: 18 }}>
             Completá misiones diarias para ganar XP y desbloquear logros. ¡Volvé mañana para nuevas misiones!
           </Text>
         </View>
 
-        {/* ═══════ Card 3: Tu Progreso ═══════ */}
+        {/* ═══════ Card 4: Tu Progreso ═══════ */}
         <View style={styles.card}>
           <View style={styles.cardHeader}>
             <Text style={styles.cardTitle}>📊 Tu Progreso</Text>
           </View>
           <UserProgress xp={userXp} />
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-around",
-              marginTop: theme.spacing.md,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 14,
-                color: theme.colors.textSecondary,
-              }}
-            >
-              {userPlants.length} plantas
-            </Text>
+          <View style={{ flexDirection: "row", justifyContent: "space-around", marginTop: theme.spacing.md }}>
+            <Text style={{ fontSize: 14, color: theme.colors.textSecondary }}>{userPlants.length} plantas</Text>
           </View>
         </View>
 
-        {/* ═══════ Card 4: Logros Recientes (conditional) ═══════ */}
+        {/* ═══════ Card 5: Logros Recientes ═══════ */}
         {recentAchievement && (
           <Pressable
             style={styles.achievementCard}
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-              router.push("/profile")
-            }}
+            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push("/profile") }}
             android_ripple={{ color: "rgba(64,145,108,0.15)" }}
           >
             <View style={styles.achievementContent}>
-              <Text style={styles.achievementIcon}>
-                {recentAchievement.emoji || "🏆"}
-              </Text>
+              <Text style={styles.achievementIcon}>{recentAchievement.emoji || "🏆"}</Text>
               <View style={styles.achievementInfo}>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: "600",
-                    color: theme.colors.textPrimary,
-                    marginBottom: 4,
-                  }}
-                >
-                  🏆 Logros Recientes
-                </Text>
+                <Text style={{ fontSize: 14, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 4 }}>🏆 Logros Recientes</Text>
                 <Text style={styles.achievementLabel}>¡Desbloqueado!</Text>
-                <Text
-                  style={styles.achievementName}
-                  numberOfLines={1}
-                >
-                  {recentAchievement.name}
-                </Text>
+                <Text style={styles.achievementName} numberOfLines={1}>{recentAchievement.name}</Text>
                 {recentAchievement.description && (
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      color: theme.colors.textSecondary,
-                      marginTop: 4,
-                    }}
-                    numberOfLines={2}
-                  >
-                    {recentAchievement.description}
-                  </Text>
+                  <Text style={{ fontSize: 14, color: theme.colors.textSecondary, marginTop: 4 }} numberOfLines={2}>{recentAchievement.description}</Text>
                 )}
               </View>
             </View>
@@ -410,7 +271,7 @@ export default function Journal() {
       <InfoBottomSheet
         visible={journalPopup.visible}
         title="📖 Tu diario de plantas"
-        message="Acá vas a encontrar un resumen de tu actividad: las plantas que identificaste, tus misiones activas, tu progreso y los últimos logros obtenidos."
+        message="Acá vas a encontrar un resumen de tu actividad: las plantas que identificaste, tu calendario de cuidados, misiones activas y logros obtenidos."
         icon="🌿"
         showDontShowAgain={true}
         onDismiss={journalPopup.dismiss}
