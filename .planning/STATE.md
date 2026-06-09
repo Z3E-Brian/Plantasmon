@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: verifying
-stopped_at: Completed 07-06-PLAN.md
-last_updated: "2026-06-03T12:00:00.000Z"
-last_activity: 2026-06-03
+status: executing
+stopped_at: Completed 05-03-PLAN.md (BITACORA.md + Test Results + PDF export)
+last_updated: "2026-06-09T19:12:08.007Z"
+last_activity: 2026-06-09
 progress:
-  total_phases: 9
-  completed_phases: 7
-   total_plans: 31
-   completed_plans: 30
-   percent: 97
+  total_phases: 10
+  completed_phases: 8
+  total_plans: 37
+  completed_plans: 32
+  percent: 80
 ---
 
 # PlantasMon - Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-22)
 
 **Core value:** Plant care companion app that helps users identify plants, track their plant collection, and get care tips
-**Current focus:** Phase 07 — missions-and-rewards
+**Current focus:** Phase 10 — chat-y-pdf
 
 ## Current Position
 
-Phase: 05 (binnacle-test-and-qa-clase-asincronica-pdf) — COMPLETE
-Plan: 3 of 3
-Status: Phase complete — ready for verification
-Last activity: 2026-05-24
+Phase: 10 (chat-y-pdf) — EXECUTING
+Plan: 3 of 4
+Status: Ready to execute
+Last activity: 2026-06-09
 
-Progress: [██████████████████████████████] 100%
+Progress: [█████████░] 86%
 
 ## Performance Metrics
 
@@ -66,6 +66,7 @@ Progress: [███████████████████████
 | Phase 09 P02 | 1m 33s | 2 tasks | 7 files |
 | Phase 05 P01 | 5min | 2 tasks | 1 files |
 | Phase 05-binnacle P03 | 15min | 2 tasks | 1 files |
+| Phase 10-chat-y-pdf P01 | 12min | - tasks | - files |
 
 ## Accumulated Context
 
@@ -113,6 +114,9 @@ From execution (Phase 07 - Plan 01 - Mission Service):
 - [Phase 08-informative-pop-boxes]: Vitrina celebration shows first obtained item (no obtainedAt field available)
 - [Phase 08-informative-pop-boxes]: Explore screen title+info icon added to renderSearchBar header
 - [Phase 07]: None - followed plan as specified — None
+- [Phase ?]: Chat uses its own auth (join endpoint) separate from Firebase auth
+- [Phase ?]: Chat JWT token stored in expo-secure-store per threat model T-10-05/T-10-06
+- [Phase ?]: Chat nav added as 6th BottomNav tab with space-around layout
 
 ### Pending Todos
 
@@ -137,12 +141,13 @@ From CONCERNS.md:
 - Phase 7 added: missions and rewards
 - Phase 8 added: informative pop boxes
 - Phase 9 added: activity in profile and calendar in app
+- Phase 10 added: chat y pdf
 
 </decisions>
 
 ## Session Continuity
 
-Last session: 2026-05-24T20:30:00.000Z
+Last session: 2026-06-09T19:11:55.791Z
 Stopped at: Completed 05-03-PLAN.md (BITACORA.md + Test Results + PDF export)
 Resume file: None
 
