@@ -66,6 +66,7 @@ export default function RootLayout() {
         <Stack.Screen name="index" />
         <Stack.Screen name="camera" />
         <Stack.Screen name="calendar" />
+        <Stack.Screen name="chat" />
         <Stack.Screen name="explore" />
         <Stack.Screen name="identify" />
         <Stack.Screen name="journal" />

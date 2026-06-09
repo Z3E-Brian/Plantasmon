@@ -1321,6 +1321,199 @@ export const createStatsBarStyles = (theme: AppTheme) =>
     },
   });
 
+// ==================== CHAT SCREEN ====================
+export const createChatScreenStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    joinContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 20,
+      gap: 16,
+    },
+    joinTitle: {
+      fontSize: 24,
+      fontWeight: "700",
+      color: theme.colors.textPrimary,
+    },
+    joinInput: {
+      width: "100%",
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radius.md,
+      padding: 14,
+      fontSize: 16,
+      color: theme.colors.textPrimary,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    joinButton: {
+      backgroundColor: theme.colors.primary,
+      borderRadius: theme.radius.md,
+      paddingVertical: 14,
+      paddingHorizontal: 32,
+    },
+    joinButtonText: {
+      color: theme.colors.primaryForeground,
+      fontSize: 16,
+      fontWeight: "700",
+    },
+    messagesList: {
+      flex: 1,
+      paddingHorizontal: 12,
+      paddingTop: 8,
+    },
+    statusBar: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      backgroundColor: theme.colors.surfaceMuted,
+      gap: 8,
+    },
+    statusDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+    },
+    statusText: {
+      fontSize: 12,
+      color: theme.colors.textSecondary,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      backgroundColor: theme.colors.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    headerTitle: {
+      fontSize: 18,
+      fontWeight: "700",
+      color: theme.colors.textPrimary,
+    },
+    onlineCount: {
+      fontSize: 12,
+      color: theme.colors.textTertiary,
+    },
+    emptyContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 40,
+    },
+    emptyText: {
+      fontSize: 14,
+      color: theme.colors.textTertiary,
+      textAlign: "center",
+    },
+    errorText: {
+      fontSize: 14,
+      color: COLORS.destructive,
+      textAlign: "center",
+    },
+  });
+
+// ==================== CHAT BUBBLE ====================
+export const createChatBubbleStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    container: {
+      marginVertical: 4,
+      maxWidth: "80%",
+      paddingHorizontal: 4,
+    },
+    ownContainer: {
+      alignSelf: "flex-end",
+    },
+    otherContainer: {
+      alignSelf: "flex-start",
+    },
+    bubble: {
+      padding: 12,
+      borderRadius: theme.radius.md,
+    },
+    ownBubble: {
+      backgroundColor: theme.colors.primary,
+      borderBottomRightRadius: 4,
+    },
+    otherBubble: {
+      backgroundColor: theme.colors.surface,
+      borderBottomLeftRadius: 4,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    senderName: {
+      fontSize: 11,
+      fontWeight: "700",
+      color: theme.colors.textTertiary,
+      marginBottom: 2,
+    },
+    messageText: {
+      fontSize: 15,
+      color: theme.colors.textPrimary,
+    },
+    ownMessageText: {
+      color: theme.colors.primaryForeground,
+    },
+    timestamp: {
+      fontSize: 10,
+      color: theme.colors.textTertiary,
+      marginTop: 4,
+      alignSelf: "flex-end",
+    },
+  });
+
+// ==================== CHAT INPUT ====================
+export const createChatInputStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      backgroundColor: theme.colors.surface,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.border,
+    },
+    input: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+      borderRadius: 20,
+      paddingHorizontal: 16,
+      paddingVertical: 10,
+      fontSize: 15,
+      color: theme.colors.textPrimary,
+      maxHeight: 80,
+    },
+    sendButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: theme.colors.primary,
+      alignItems: "center",
+      justifyContent: "center",
+      marginLeft: 8,
+    },
+    sendButtonDisabled: {
+      opacity: 0.5,
+    },
+    sendButtonText: {
+      fontSize: 18,
+      color: theme.colors.primaryForeground,
+    },
+  });
+
 // ==================== PROFILE VITRINA ====================
 export const createProfileVitrinaStyles = (theme: AppTheme) =>
   StyleSheet.create({
@@ -1489,6 +1682,18 @@ const stylesByComponent = {
     light: createProfileVitrinaStyles(getAppTheme("light")),
     dark: createProfileVitrinaStyles(getAppTheme("dark")),
   },
+  chatScreen: {
+    light: createChatScreenStyles(getAppTheme("light")),
+    dark: createChatScreenStyles(getAppTheme("dark")),
+  },
+  chatBubble: {
+    light: createChatBubbleStyles(getAppTheme("light")),
+    dark: createChatBubbleStyles(getAppTheme("dark")),
+  },
+  chatInput: {
+    light: createChatInputStyles(getAppTheme("light")),
+    dark: createChatInputStyles(getAppTheme("dark")),
+  },
 } as const;
 
 type ComponentName = keyof typeof stylesByComponent;
@@ -1531,6 +1736,12 @@ type StylesForComponent<T extends ComponentName> = ReturnType<
     ? typeof createJournalScreenStyles
     : T extends "profileVitrina"
     ? typeof createProfileVitrinaStyles
+    : T extends "chatScreen"
+    ? typeof createChatScreenStyles
+    : T extends "chatBubble"
+    ? typeof createChatBubbleStyles
+    : T extends "chatInput"
+    ? typeof createChatInputStyles
     : never
 >;
 
