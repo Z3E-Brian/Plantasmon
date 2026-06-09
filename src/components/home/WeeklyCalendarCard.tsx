@@ -1,4 +1,5 @@
 import { useAppTheme } from "@/src/constants/designSystem"
+import { auth } from "@/src/config/firebase"
 import { useCalendar } from "@/src/hooks/useCalendar"
 import { CalendarEventType, getEventEmoji } from "@/src/services/calendarService"
 import { useFocusEffect, useRouter } from "expo-router"
@@ -31,12 +32,12 @@ export function WeeklyCalendarCard() {
   const theme = useAppTheme()
   const router = useRouter()
   const { events, loading, selectedDate, setSelectedDate, selectedEvents, eventsByDate, load } =
-    useCalendar({ primaryColor: theme.colors.primary })
+    useCalendar({ primaryColor: theme.colors.primary, autoLoad: false })
 
   const week = getWeekDays()
 
-  // Recargar cuando la pantalla recibe foco
-  useFocusEffect(useCallback(() => { load() }, [load]))
+  // Recargar cuando la pantalla recibe foco (solo si hay sesión)
+  useFocusEffect(useCallback(() => { if (auth.currentUser) load() }, [load]))
 
   const s = styles(theme)
 

@@ -1,7 +1,10 @@
-.env
 __pycache__/
-*.pyc
-.Python
-env/
-venv/
+*.py[cod]
+*.pyo
+.env
+*.egg-info/
+dist/
+build/
 .venv/
+venv/
+serviceAccountKey.json

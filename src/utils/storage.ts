@@ -6,6 +6,7 @@ const KEYS = {
   NICKNAME: "chat_nickname",
   TOKEN: "chat_token",
   USER_ID: "chat_user_id",
+  GROUP_KEY: "chat_groupKey",
 } as const;
 
 export async function saveKeyPair(kp: { secretKey: string; publicKey: string }): Promise<void> {
@@ -56,10 +57,19 @@ export async function loadUserId(): Promise<string | null> {
   return await SecureStore.getItemAsync(KEYS.USER_ID);
 }
 
+export async function saveGroupKey(key: string): Promise<void> {
+  await SecureStore.setItemAsync(KEYS.GROUP_KEY, key);
+}
+
+export async function loadGroupKey(): Promise<string | null> {
+  return await SecureStore.getItemAsync(KEYS.GROUP_KEY);
+}
+
 export async function clearChatSession(): Promise<void> {
   await SecureStore.deleteItemAsync(KEYS.SECRET_KEY);
   await SecureStore.deleteItemAsync(KEYS.PUBLIC_KEY);
   await SecureStore.deleteItemAsync(KEYS.NICKNAME);
   await SecureStore.deleteItemAsync(KEYS.TOKEN);
   await SecureStore.deleteItemAsync(KEYS.USER_ID);
+  await SecureStore.deleteItemAsync(KEYS.GROUP_KEY);
 }

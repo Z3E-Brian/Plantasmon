@@ -25,9 +25,9 @@ export function ChatBubble({ message, isOwn }: Props) {
       <View
         style={[styles.bubble, isOwn ? styles.ownBubble : styles.otherBubble]}
       >
-        {!isOwn && (
-          <Text style={styles.senderName}>{message.sender_nickname}</Text>
-        )}
+        <Text style={[styles.senderName, isOwn && styles.ownSenderName]}>
+          {message.sender_nickname}
+        </Text>
         <Text style={[styles.messageText, isOwn && styles.ownMessageText]}>
           {message.content}
         </Text>

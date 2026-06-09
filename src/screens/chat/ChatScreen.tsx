@@ -22,13 +22,18 @@ import {
 } from "@/src/services/chatService";
 import {
   clearChatSession,
+  loadGroupKey,
+  loadKeyPair,
   loadNickname,
   loadToken,
   loadUserId,
+  saveGroupKey,
+  saveKeyPair,
   saveNickname,
   saveToken,
   saveUserId,
 } from "@/src/utils/storage";
+import { decryptGroup, encryptGroup, generateKeyPair } from "@/src/utils/crypto";
 import type { ChatMessage, WsEvent } from "@/src/types/chat";
 
 type ScreenState =
@@ -58,6 +63,7 @@ export default function ChatScreen() {
   const tokenRef = useRef<string>("");
   const myNicknameRef = useRef<string>("");
   const myUserIdRef = useRef<string>("");
+  const groupKeyRef = useRef<string>("");
 
   const flatListRef = useRef<FlatList>(null);
 
@@ -81,6 +87,18 @@ export default function ChatScreen() {
         myNicknameRef.current = storedNickname;
         myUserIdRef.current = storedUserId ?? "";
         setNickname(storedNickname);
+
+        // Restore group key from previous session
+        const storedGroupKey = await loadGroupKey();
+        if (storedGroupKey) groupKeyRef.current = storedGroupKey;
+
+        // Re-register public key if available
+        const kp = await loadKeyPair();
+        if (kp.publicKey) {
+          const rest = new ChatRestClient();
+          await rest.registerPublicKey(storedToken, kp.publicKey);
+        }
+
         connectWebSocket(storedToken, storedNickname);
       } else {
         setScreenState("join");
@@ -115,19 +133,52 @@ export default function ChatScreen() {
       }
     };
 
+    ws.onReconnectFailed = async () => {
+      console.log("[Chat] Reconexión fallida — sesión expirada");
+      wsRef.current?.disconnect();
+      await clearChatSession();
+      tokenRef.current = "";
+      myNicknameRef.current = "";
+      myUserIdRef.current = "";
+      groupKeyRef.current = "";
+      setNickname("");
+      setMessages([]);
+      setOnlineCount(0);
+      setErrorMsg("");
+      setScreenState("join");
+    };
+
     ws.onEvent(handleWsEvent);
     ws.connect();
+  }
+
+  // ── Decrypt message content with group key ────────
+  function decryptMsg(msg: ChatMessage): ChatMessage {
+    const key = groupKeyRef.current;
+    if (!key) return msg;
+    try {
+      const decrypted = decryptGroup(msg.content, key);
+      if (decrypted !== null) return { ...msg, content: decrypted };
+    } catch {
+      // Not encrypted or wrong key — keep original content
+    }
+    return msg;
   }
 
   // ── WebSocket Event Handler ───────────────────────
   const handleWsEvent = useCallback((event: WsEvent) => {
     switch (event.type) {
+      case "group_key":
+        groupKeyRef.current = event.key;
+        saveGroupKey(event.key);
+        break;
+
       case "group_history":
-        setMessages(event.messages);
+        setMessages(event.messages.map(decryptMsg));
         break;
 
       case "group_message":
-        setMessages((prev) => [...prev, event.message]);
+        setMessages((prev) => [...prev, decryptMsg(event.message)]);
         break;
 
       case "users_list":
@@ -168,6 +219,11 @@ export default function ChatScreen() {
       const result = await rest.join(trimmed);
       const { token, user } = result;
 
+      // Generate E2E keypair and register public key
+      const kp = generateKeyPair();
+      await saveKeyPair(kp);
+      await rest.registerPublicKey(token, kp.publicKey);
+
       tokenRef.current = token;
       myNicknameRef.current = user.nickname;
       myUserIdRef.current = user.id;
@@ -190,9 +246,16 @@ export default function ChatScreen() {
     }
   }
 
-  // ── Send Message ─────────────────────────────────
+  // ── Send Message (encrypted) ─────────────────────
   function handleSendMessage(text: string) {
-    wsRef.current?.sendGroupMessage(text);
+    const key = groupKeyRef.current;
+    if (key) {
+      const encrypted = encryptGroup(text, key);
+      wsRef.current?.sendGroupMessage(encrypted);
+    } else {
+      console.warn("[Chat] No group key, sending plaintext");
+      wsRef.current?.sendGroupMessage(text);
+    }
   }
 
   // ── Refresh messages (pull-to-refresh) ────────────
@@ -203,7 +266,7 @@ export default function ChatScreen() {
       const rest = restRef.current ?? new ChatRestClient();
       restRef.current = rest;
       const history = await rest.getGroupMessages(tokenRef.current, 50);
-      setMessages(history);
+      setMessages(history.map(decryptMsg));
     } catch (error) {
       console.error("Error al refrescar mensajes:", error);
     } finally {
@@ -226,6 +289,7 @@ export default function ChatScreen() {
     tokenRef.current = "";
     myNicknameRef.current = "";
     myUserIdRef.current = "";
+    groupKeyRef.current = "";
     setNickname("");
     setMessages([]);
     setOnlineCount(0);
@@ -330,74 +394,75 @@ export default function ChatScreen() {
 
   // ── Chat UI ───────────────────────────────────────
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.headerTitle}>💬 Chat grupal</Text>
-          <Text style={styles.onlineCount}>
-            {onlineCount > 0
-              ? `${onlineCount} online`
-              : "Sin conexión"}
-          </Text>
+    <KeyboardAvoidingView
+      style={[styles.container]}
+      behavior="padding"
+      keyboardVerticalOffset={Platform.OS === "android" ? insets.top : 0}
+    >
+      <View style={{ paddingTop: insets.top }}>
+        {/* Header */}
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.headerTitle}>💬 Chat grupal</Text>
+            <Text style={styles.onlineCount}>
+              {onlineCount > 0
+                ? `${onlineCount} online`
+                : "Sin conexión"}
+            </Text>
+          </View>
+          <Pressable onPress={handleLeave}>
+            <Text style={{ fontSize: 14, color: "#F44336", fontWeight: "600" }}>
+              Salir
+            </Text>
+          </Pressable>
         </View>
-        <Pressable onPress={handleLeave}>
-          <Text style={{ fontSize: 14, color: "#F44336", fontWeight: "600" }}>
-            Salir
-          </Text>
-        </Pressable>
-      </View>
 
-      {/* Status Bar */}
-      <View style={styles.statusBar}>
-        <View
-          style={[styles.statusDot, { backgroundColor: statusColor() }]}
-        />
-        <Text style={styles.statusText}>{statusLabel()}</Text>
+        {/* Status Bar */}
+        <View style={styles.statusBar}>
+          <View
+            style={[styles.statusDot, { backgroundColor: statusColor() }]}
+          />
+          <Text style={styles.statusText}>{statusLabel()}</Text>
+        </View>
       </View>
 
       {/* Messages List */}
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        style={{ flex: 1 }}
-      >
-        {messages.length === 0 ? (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>
-              No hay mensajes aún. ¡Escribí el primero!
-            </Text>
-          </View>
-        ) : (
-          <FlatList
-            ref={flatListRef}
-            data={messages}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <ChatBubble
-                message={item}
-                isOwn={item.sender_id === myUserIdRef.current}
-              />
-            )}
-            contentContainerStyle={styles.messagesList}
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={handleRefresh}
-                tintColor="#40916C"
-              />
-            }
-            onContentSizeChange={() =>
-              flatListRef.current?.scrollToEnd({ animated: false })
-            }
-          />
-        )}
-
-        {/* Input Bar */}
-        <ChatInput
-          onSend={handleSendMessage}
-          disabled={screenState !== "connected"}
+      {messages.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>
+            No hay mensajes aún. ¡Escribí el primero!
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          ref={flatListRef}
+          data={messages}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <ChatBubble
+              message={item}
+              isOwn={item.sender_id === myUserIdRef.current}
+            />
+          )}
+          contentContainerStyle={styles.messagesList}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              tintColor="#40916C"
+            />
+          }
+          onContentSizeChange={() =>
+            flatListRef.current?.scrollToEnd({ animated: false })
+          }
         />
-      </KeyboardAvoidingView>
-    </View>
+      )}
+
+      {/* Input Bar */}
+      <ChatInput
+        onSend={handleSendMessage}
+        disabled={screenState !== "connected"}
+      />
+    </KeyboardAvoidingView>
   );
 }

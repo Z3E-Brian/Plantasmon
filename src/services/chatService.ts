@@ -160,6 +160,7 @@ export class ChatWebSocketManager {
   private maxReconnectAttempts = 5;
 
   statusChanged?: (status: WsStatus) => void;
+  onReconnectFailed?: () => void;
 
   constructor(token: string, baseUrl: string = CHAT_API_URL) {
     this.token = token;
@@ -213,7 +214,10 @@ export class ChatWebSocketManager {
   }
 
   private scheduleReconnect(): void {
-    if (this.reconnectAttempts >= this.maxReconnectAttempts) return;
+    if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+      this.onReconnectFailed?.();
+      return;
+    }
     const delay = Math.min(
       1000 * Math.pow(2, this.reconnectAttempts),
       15000

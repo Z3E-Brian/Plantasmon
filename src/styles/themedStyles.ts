@@ -1367,9 +1367,9 @@ export const createChatScreenStyles = (theme: AppTheme) =>
       fontWeight: "700",
     },
     messagesList: {
-      flex: 1,
       paddingHorizontal: 12,
       paddingTop: 8,
+      paddingBottom: 8,
     },
     statusBar: {
       flexDirection: "row",
@@ -1458,6 +1458,10 @@ export const createChatBubbleStyles = (theme: AppTheme) =>
       fontWeight: "700",
       color: theme.colors.textTertiary,
       marginBottom: 2,
+    },
+    ownSenderName: {
+      color: theme.colors.primaryForeground,
+      opacity: 0.8,
     },
     messageText: {
       fontSize: 15,
