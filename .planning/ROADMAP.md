@@ -85,7 +85,7 @@
 | 7 - Missions & Rewards | 7/7 | Complete   | 2026-05-25 |
 | 8 - Informative Pop Boxes | 3/3 | Complete | 2026-05-25 |
 | 9 - Activity & Calendar | 3/3 | Complete   | 2026-05-25 |
-| 10 - Chat y PDF | 0/4 | Planned | - |
+| 10 - Chat y PDF | 2/4 | In Progress|  |
 
 ---
 
@@ -220,11 +220,11 @@ Plans:
 - PDF-01: PDF export with app progress report
 
 **Depends on:** Phase 9
-**Plans:** 4 plans
+**Plans:** 2/4 plans executed
 
 Plans:
-- [ ] 10-01-PLAN.md — Chat Backend Configuration (clone repo, .env, verify deployment)
-- [ ] 10-02-PLAN.md — Chat Frontend Integration (service + screen + navigation)
+- [x] 10-01-PLAN.md — Chat Backend Configuration (clone repo, .env, verify deployment)
+- [x] 10-02-PLAN.md — Chat Frontend Integration (service + screen + navigation)
 - [ ] 10-03-PLAN.md — Android Build (EAS Build preview APK)
 - [ ] 10-04-PLAN.md — PDF Export (expo-print, progress report with build link)
 
