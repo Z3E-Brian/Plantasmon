@@ -68,6 +68,7 @@ export default function RootLayout() {
         <Stack.Screen name="calendar" />
         <Stack.Screen name="chat" />
         <Stack.Screen name="explore" />
+        <Stack.Screen name="generate-pdf" />
         <Stack.Screen name="identify" />
         <Stack.Screen name="journal" />
         <Stack.Screen name="profile" />
