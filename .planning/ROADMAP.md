@@ -85,6 +85,7 @@
 | 7 - Missions & Rewards | 7/7 | Complete   | 2026-05-25 |
 | 8 - Informative Pop Boxes | 3/3 | Complete | 2026-05-25 |
 | 9 - Activity & Calendar | 3/3 | Complete   | 2026-05-25 |
+| 10 - Chat y PDF | 0/4 | Planned | - |
 
 ---
 
@@ -205,9 +206,31 @@ Plans:
 - [x] 09-02-PLAN.md — Calendar Screen (react-native-calendars + route + event markers)
 - [x] 09-03-PLAN.md — Profile Wire + Home Timeline + Logging (wire real data + log calls)
 
+### Phase 10: chat y pdf
+
+**Goal:** Users can chat in real-time with each other via WebSocket, and export a PDF with app progress report including screenshots and Android build link.
+
+**Requirements**:
+- CHAT-BACKEND-01: Chat backend cloned and configured with env vars
+- CHAT-BACKEND-02: Deployed backend verified healthy and operational
+- CHAT-FRONTEND-01: Chat screen with real-time messaging via WebSocket
+- CHAT-FRONTEND-02: Chat navigation integrated into app
+- CHAT-FRONTEND-03: Chat works with deployed backend
+- BUILD-01: Android APK/AAB generated via EAS Build
+- PDF-01: PDF export with app progress report
+
+**Depends on:** Phase 9
+**Plans:** 4 plans
+
+Plans:
+- [ ] 10-01-PLAN.md — Chat Backend Configuration (clone repo, .env, verify deployment)
+- [ ] 10-02-PLAN.md — Chat Frontend Integration (service + screen + navigation)
+- [ ] 10-03-PLAN.md — Android Build (EAS Build preview APK)
+- [ ] 10-04-PLAN.md — PDF Export (expo-print, progress report with build link)
+
 ---
 
-*Roadmap updated: 2026-05-24 (Plan 05-03 completed)*
+*Roadmap updated: 2026-06-09 (Phase 10 plans created)*
 
 ## Execution Status
 
