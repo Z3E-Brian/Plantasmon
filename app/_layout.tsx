@@ -18,7 +18,7 @@ export default function RootLayout() {
   const [initialized, setInitialized] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
-  const showNav = user && pathname !== "/login" && pathname !== "/register" && pathname !== "/camera" && pathname !== "/chat"
+  const showNav = user && pathname !== "/login" && pathname !== "/register" && pathname !== "/camera" && pathname !== "/chat" && pathname !== "/chat-list" && pathname !== "/chat-dm"
 
   useEffect(() => {
     const unsubscribe = onAuthChange((firebaseUser) => {
@@ -68,6 +68,8 @@ export default function RootLayout() {
         <Stack.Screen name="camera" />
         <Stack.Screen name="calendar" />
         <Stack.Screen name="chat" />
+        <Stack.Screen name="chat-list" />
+        <Stack.Screen name="chat-dm" />
         <Stack.Screen name="explore" />
         <Stack.Screen name="identify" />
         <Stack.Screen name="journal" />
@@ -83,7 +85,7 @@ export default function RootLayout() {
         </View>
       )}
       {showNav && <BottomNav />}
-      {showNav && pathname !== "/chat" && <ChatFab />}
+      {showNav && pathname !== "/chat" && pathname !== "/chat-list" && pathname !== "/chat-dm" && <ChatFab />}
       <Toast />
     </View>
     </SafeAreaProvider>

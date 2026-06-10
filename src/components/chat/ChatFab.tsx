@@ -10,7 +10,7 @@ export function ChatFab() {
 
   const handlePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-    router.push("/chat")
+    router.push("/chat-list")
   }
 
   return (

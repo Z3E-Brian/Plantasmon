@@ -25,7 +25,7 @@ Se integró un módulo de chat completo con:
 
 - **Backend FastAPI** desplegado en Render con conexiones persistentes vía WebSocket
 - **Reconexión automática** en caso de caída de conexión (hasta 5 intentos)
-- **Soporte de mensajes grupales** con subida de archivos multimedia a Cloudinary
+- **Soporte de mensajes grupales y privados (DM)** con subida de archivos multimedia a Cloudinary
 - **Cifrado de extremo a extremo** usando TweetNaCl (curva elíptica curve25519-xsalsa20-poly1305)
   - Cada usuario genera un par de llaves localmente
   - La llave pública se registra en el servidor
@@ -33,6 +33,15 @@ Se integró un módulo de chat completo con:
   - El servidor solo almacena texto cifrado, nunca mensajes en texto plano
 - **Botón flotante** (FAB) para acceso rápido al chat desde cualquier pantalla
 - **Mensajes temporales** auto-destructivos
+
+### 2.2 Lista de Chats (tipo WhatsApp)
+
+- Nueva pantalla de conversaciones al abrir el chat
+- Muestra **Chat grupal** como conversación principal
+- Lista de **mensajes directos (DM)** con otros usuarios
+- Vista de **usuarios en línea** en la parte superior para iniciar DM rápidamente
+- **Nombre de usuario autocompletado** desde Firebase (sin necesidad de ingresar apodo manualmente)
+- Sesión persistente: al volver a entrar no pide nombre otra vez
 
 ### 2.2 Navegación y UX
 
