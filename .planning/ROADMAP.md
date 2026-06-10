@@ -228,9 +228,19 @@ Plans:
 - [x] 10-03-PLAN.md — Android Build (EAS Build preview APK)
 - [x] 10-04-PLAN.md — PDF Export (expo-print, progress report with build link)
 
+### Phase 11: Resume PDF
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 10
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 11 to break down)
+
 ---
 
-*Roadmap updated: 2026-06-09 (Phase 10 plans created)*
+*Roadmap updated: 2026-06-09 (Phase 11 created)*
 
 ## Execution Status
 
