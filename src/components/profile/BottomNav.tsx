@@ -16,7 +16,6 @@ const NAV_ITEMS: NavItem[] = [
   { icon: "search", label: "Explore",  route: "/explore"  },
   { icon: "camera", label: "Identify", route: "/camera", isCenter: true },
   { icon: "book",   label: "Journal",  route: "/journal"  },
-  { icon: "chat",   label: "Chat",     route: "/chat"     },
   { icon: "user",   label: "Profile",  route: "/profile"  },
 ]
 
@@ -72,7 +71,6 @@ const NAV_EMOJI: Record<string, string> = {
   search: "🔍",
   camera: "📷",
   book:   "📖",
-  chat:   "💬",
   user:   "👤",
 }
 

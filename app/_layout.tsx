@@ -1,4 +1,5 @@
 import { BottomNav } from "@/src/components/profile/BottomNav"
+import { ChatFab } from "@/src/components/chat/ChatFab"
 import { SyncStatusIndicator } from "@/src/components/SyncStatusIndicator"
 import { onAuthChange } from "@/src/services/authService"
 import { seedAchievements } from "@/src/services/userAchievementsService"
@@ -68,7 +69,6 @@ export default function RootLayout() {
         <Stack.Screen name="calendar" />
         <Stack.Screen name="chat" />
         <Stack.Screen name="explore" />
-
         <Stack.Screen name="identify" />
         <Stack.Screen name="journal" />
         <Stack.Screen name="profile" />
@@ -83,6 +83,7 @@ export default function RootLayout() {
         </View>
       )}
       {showNav && <BottomNav />}
+      {showNav && pathname !== "/chat" && <ChatFab />}
       <Toast />
     </View>
     </SafeAreaProvider>
