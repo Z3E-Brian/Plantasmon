@@ -8,10 +8,8 @@ export default function GeneratePdfScreen() {
   const [loading, setLoading] = useState(false);
   const [pdfUri, setPdfUri] = useState<string | null>(null);
 
-  // NOTE: Replace with actual EAS build URL once available.
-  // See 10-03-SUMMARY.md — run: eas build --platform android --profile preview
   const buildUrl =
-    "Build pending — run eas build --platform android --profile preview";
+    "https://expo.dev/artifacts/eas/bhvnxFh3HVHvLzLETYjPDb.apk";
 
   const handleGenerate = async () => {
     setLoading(true);
@@ -31,17 +29,27 @@ export default function GeneratePdfScreen() {
           {
             title: "Resumen del Proyecto",
             content:
-              "PlantasMon es una aplicación companion para el cuidado de plantas. Permite identificar plantas mediante IA, llevar un registro de cuidados, completar misiones y logros, y chatear con otros usuarios en tiempo real.",
+              "PlantasMon es una aplicación companion para el cuidado de plantas. Permite identificar plantas mediante IA, llevar un registro de cuidados, completar misiones y logros, y chatear con otros usuarios en tiempo real con cifrado de extremo a extremo.",
           },
           {
             title: "Funcionalidades Implementadas",
             content:
-              "• Autenticación (email + Google OAuth)\n• Identificación de plantas con IA (Pl@ntNet)\n• Catálogo de plantas con búsqueda\n• Misiones diarias y semanales con recompensas\n• Sistema de logros (25+ logros)\n• Objetos cosméticos obtenibles\n• Calendario de cuidado de plantas\n• Feed de actividad en perfil\n• Chat en tiempo real con WebSockets",
+              "• Autenticación (email + Google OAuth)\n• Identificación de plantas con IA (Pl@ntNet)\n• Catálogo de plantas con búsqueda\n• Misiones diarias y semanales con recompensas\n• Sistema de logros (25+ logros)\n• Objetos cosméticos obtenibles\n• Calendario de cuidado de plantas\n• Feed de actividad en perfil\n• Chat en tiempo real con WebSockets\n• Cifrado E2E con TweetNaCl (NaCl)\n• Exportación de reportes en PDF\n• Generación de builds Android via EAS",
           },
           {
-            title: "Chat en Tiempo Real",
+            title: "Chat en Tiempo Real con Cifrado E2E",
             content:
-              "Nuevo módulo de chat integrado con backend FastAPI en Render. Soporta mensajes grupales y directos con WebSockets, subida de archivos multimedia a Cloudinary, cifrado de extremo a extremo con TweetNaCl, y mensajes temporales auto-destructivos.",
+              "Módulo de chat integrado con backend FastAPI desplegado en Render. Conexiones persistentes vía WebSocket con reconexión automática. Soporta mensajes grupales y subida de archivos multimedia a Cloudinary. Cifrado de extremo a extremo usando TweetNaCl: cada usuario genera un par de llaves (curve25519-xsalsa20-poly1305), las llaves públicas se registran en el servidor, y los mensajes se cifran/descifran localmente. Los mensajes se almacenan cifrados en el servidor (secreto compartido), nunca viajan en texto plano.",
+          },
+          {
+            title: "Exportación de Reportes PDF",
+            content:
+              "Nueva funcionalidad que genera un reporte de progreso en PDF directamente desde la aplicación usando expo-print y expo-sharing. El PDF incluye secciones descriptivas, información del proyecto, y el enlace de descarga del build de Android. Se puede compartir fácilmente desde la misma app.",
+          },
+          {
+            title: "Build Android (EAS)",
+            content:
+              "Build de preview generado con EAS Build (Expo Application Services) para Android. El APK se distribuye internamente y está disponible para descarga directa. Incluye todas las funcionalidades hasta la Fase 10: autenticación, identificación de plantas, misiones, logros, chat en tiempo real con cifrado E2E, y exportación de PDF.",
           },
         ],
       });
@@ -117,8 +125,8 @@ export default function GeneratePdfScreen() {
             ["Backend Chat", "FastAPI + WebSockets"],
             [
               "Build URL",
-              buildUrl.length > 50
-                ? buildUrl.substring(0, 50) + "..."
+              buildUrl.length > 40
+                ? "expo.dev/artifacts/eas/bhvnxFh3HVHvLzLETYjPDb.apk"
                 : buildUrl,
             ],
           ] as [string, string][]).map(([label, value]) => (
