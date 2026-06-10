@@ -34,22 +34,12 @@ export default function GeneratePdfScreen() {
           {
             title: "Funcionalidades Implementadas",
             content:
-              "• Autenticación (email + Google OAuth)\n• Identificación de plantas con IA (Pl@ntNet)\n• Catálogo de plantas con búsqueda\n• Misiones diarias y semanales con recompensas\n• Sistema de logros (25+ logros)\n• Objetos cosméticos obtenibles\n• Calendario de cuidado de plantas\n• Feed de actividad en perfil\n• Chat en tiempo real con WebSockets\n• Cifrado E2E con TweetNaCl (NaCl)\n• Exportación de reportes en PDF\n• Generación de builds Android via EAS",
+              "• Autenticación (email + Google OAuth)\n• Identificación de plantas con IA (Pl@ntNet)\n• Catálogo de plantas con búsqueda\n• Misiones diarias y semanales con recompensas\n• Sistema de logros (25+ logros)\n• Objetos cosméticos obtenibles\n• Calendario de cuidado de plantas\n• Feed de actividad en perfil\n• Chat en tiempo real con WebSockets\n• Cifrado E2E con TweetNaCl",
           },
           {
             title: "Chat en Tiempo Real con Cifrado E2E",
             content:
-              "Módulo de chat integrado con backend FastAPI desplegado en Render. Conexiones persistentes vía WebSocket con reconexión automática. Soporta mensajes grupales y subida de archivos multimedia a Cloudinary. Cifrado de extremo a extremo usando TweetNaCl: cada usuario genera un par de llaves (curve25519-xsalsa20-poly1305), las llaves públicas se registran en el servidor, y los mensajes se cifran/descifran localmente. Los mensajes se almacenan cifrados en el servidor (secreto compartido), nunca viajan en texto plano.",
-          },
-          {
-            title: "Exportación de Reportes PDF",
-            content:
-              "Nueva funcionalidad que genera un reporte de progreso en PDF directamente desde la aplicación usando expo-print y expo-sharing. El PDF incluye secciones descriptivas, información del proyecto, y el enlace de descarga del build de Android. Se puede compartir fácilmente desde la misma app.",
-          },
-          {
-            title: "Build Android (EAS)",
-            content:
-              "Build de preview generado con EAS Build (Expo Application Services) para Android. El APK se distribuye internamente y está disponible para descarga directa. Incluye todas las funcionalidades hasta la Fase 10: autenticación, identificación de plantas, misiones, logros, chat en tiempo real con cifrado E2E, y exportación de PDF.",
+              "Módulo de chat integrado con backend FastAPI desplegado en Render. Conexiones persistentes vía WebSocket con reconexión automática. Soporta mensajes grupales y subida de archivos multimedia a Cloudinary. Cifrado de extremo a extremo usando TweetNaCl: cada usuario genera un par de llaves (curve25519-xsalsa20-poly1305), los mensajes se cifran/descifran localmente y nunca viajan en texto plano.",
           },
         ],
       });
@@ -124,7 +114,7 @@ export default function GeneratePdfScreen() {
             ["Framework", "Expo SDK 54"],
             ["Backend Chat", "FastAPI + WebSockets"],
             [
-              "Build URL",
+              "Build APK",
               buildUrl.length > 40
                 ? "expo.dev/artifacts/eas/bhvnxFh3HVHvLzLETYjPDb.apk"
                 : buildUrl,
