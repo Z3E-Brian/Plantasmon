@@ -17,7 +17,7 @@ export default function RootLayout() {
   const [initialized, setInitialized] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
-  const showNav = user && pathname !== "/login" && pathname !== "/register" && pathname !== "/camera" && pathname !== "/chat" && pathname !== "/generate-pdf"
+  const showNav = user && pathname !== "/login" && pathname !== "/register" && pathname !== "/camera" && pathname !== "/chat"
 
   useEffect(() => {
     const unsubscribe = onAuthChange((firebaseUser) => {
@@ -68,7 +68,7 @@ export default function RootLayout() {
         <Stack.Screen name="calendar" />
         <Stack.Screen name="chat" />
         <Stack.Screen name="explore" />
-        <Stack.Screen name="generate-pdf" />
+
         <Stack.Screen name="identify" />
         <Stack.Screen name="journal" />
         <Stack.Screen name="profile" />
