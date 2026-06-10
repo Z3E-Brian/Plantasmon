@@ -18,7 +18,7 @@ export function ChatFab() {
       onPress={handlePress}
       style={[
         styles.fab,
-        { bottom: insets.bottom + 24, backgroundColor: "#2E5739" },
+        { bottom: insets.bottom + 80, backgroundColor: "#2E5739" },
       ]}
     >
       <Text style={styles.icon}>💬</Text>
